@@ -1,13 +1,28 @@
-# Stage 1: Build con Maven e Java 21
-FROM maven:3.9.6-eclipse-temurin-21 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Usa un'immagine con Miniconda
+FROM continuumio/miniconda3
 
-# Stage 2: Runtime con JRE Java 21
-FROM eclipse-temurin:21-jre-jammy
+# Crea una directory di lavoro
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8090
-CMD ["java", "-jar", "app.jar"]
+
+# Copia i file nella directory di lavoro
+COPY tree.py .
+COPY requirements.txt .
+
+# Crea un ambiente conda e installa i pacchetti necessari
+RUN conda create -n myenv python=3.10 \
+    scikit-learn \
+    fastapi \
+    uvicorn \
+    pandas \
+    matplotlib \
+    numpy \
+    -y
+
+# Imposta la shell per usare sempre l'ambiente conda
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+
+# Esponi la porta per FastAPI
+EXPOSE 8000
+
+# Comando di avvio
+CMD ["conda", "run", "-n", "myenv", "uvicorn", "tree:app", "--host", "0.0.0.0", "--port", "8000"]
