@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  cart-db:
+    image: postgres:15
+    container_name: spring_db_postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: cart_db
+      POSTGRES_USER: cart_user
+      POSTGRES_PASSWORD: cart_password
+    volumes:
+      - cart_db_data:/var/lib/postgresql/data
+    networks:
+      - cart_net
+
+  app:
+    build: .
+    container_name: spring_db_postgres_app
+    restart: always
+    depends_on:
+      - cart-db
+    ports:
+      - "8090:8090"
+    environment:
+      DB_USER: cart_user
+      DB_PASSWORD: cart_password
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - cart_net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: spring_db_pgadmin
+    restart: always
+    depends_on:
+      - cart-db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin-config/servers.json:/pgadmin4/servers.json:ro
+      - ./pgadmin-config/.pgpass:/pgpass:ro
+    networks:
+      - cart_net
+
+volumes:
+  cart_db_data:
+  pgadmin_data:
+
+networks:
+  cart_net:
