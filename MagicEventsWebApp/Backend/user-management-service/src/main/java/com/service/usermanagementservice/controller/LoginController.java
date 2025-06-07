@@ -1,11 +1,7 @@
 package com.service.usermanagementservice.controller;
 
-import com.service.usermanagementservice.dto.LoginDTO;
-import com.service.usermanagementservice.dto.UserDTO;
+import com.service.usermanagementservice.dto.LoginWithTokenDTO;
 import com.service.usermanagementservice.service.AuthService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,20 +13,26 @@ public class LoginController {
         this.authService = authService;
     }
 
+    // TODO: login with form
+    /*
     @PostMapping
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginDTO request) {
-        UserDTO loginResponse = authService.authenticate(request);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+    public LoginWithGoogleDTO login(@RequestParam String username, @RequestParam String password) {
+        return authService.login(username, password);
+    }*/
+
+    @GetMapping("/grantcode")
+    public LoginWithTokenDTO grantCode(
+            @RequestParam("code") String code,
+            @RequestParam("scope") String scope,
+            @RequestParam("authuser") String authUser,
+            @RequestParam("prompt") String prompt
+    ) {
+        return authService.processGrantCode(code);
     }
 
-    @GetMapping("/google")
-    public ResponseEntity<UserDTO> loginWithGoogle() {
-        UserDTO googleAuthUrl = authService.authenticateWithGoogle();
-        return ResponseEntity.ok(googleAuthUrl);
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        return "Hello World!";
-    }
+    /**
+     * TODO
+     * @PostMapping
+     * public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginDTO request) { }
+     */
 }
