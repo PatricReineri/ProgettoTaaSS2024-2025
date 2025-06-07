@@ -28,4 +28,9 @@ public class LoginController {
         UserDTO googleAuthUrl = authService.authenticateWithGoogle();
         return ResponseEntity.ok(googleAuthUrl);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Hello World!";
+    }
 }
