@@ -44,17 +44,19 @@ public class AuthService {
         User googleUser = getProfileDetailsGoogle(accessToken);
         User user = userRepository.findByEmail(googleUser.getEmail());
 
-        // TODO: insert new user in DB
-        /*
-        if(user.isEmpty()) {
-            user = User(
-                    googleUser.getMagicEventTag(),
-                    ...
-            );
-        }
-        */
-        return saveTokenForUser(user);
+        if (user == null) {
 
+            googleUser.setRole("USER");
+
+            if (googleUser.getUsername() == null || googleUser.getUsername().isEmpty()) {
+                String generatedUsername = googleUser.getEmail().split("@")[0];
+                googleUser.setUsername(generatedUsername);
+            }
+
+            user = userRepository.save(googleUser);
+        }
+
+        return saveTokenForUser(user);
     }
 
     private LoginWithTokenDTO generateToken() {
@@ -87,15 +89,18 @@ public class AuthService {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
         JsonObject jsonObject = new Gson().fromJson(response.getBody(), JsonObject.class);
 
-        // TODO: object user with value
         User user = new User();
-        /*
-        user.setEmail(jsonObject.get("email").toString().replace("\"", ""));
-        ...
-        */
+
+
+        user.setEmail(jsonObject.get("email").getAsString());
+        user.setUsername(jsonObject.get("email").getAsString().split("@")[0]);
+        user.setName(jsonObject.has("given_name") ? jsonObject.get("given_name").getAsString() : "");
+        user.setSurname(jsonObject.has("family_name") ? jsonObject.get("family_name").getAsString() : "");
+        user.setProfileImageUrl(jsonObject.has("picture") ? jsonObject.get("picture").getAsString() : "");
+        user.setRole("USER");
+
         return user;
     }
-
     private String getOauthAccessTokenGoogle(String code) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
