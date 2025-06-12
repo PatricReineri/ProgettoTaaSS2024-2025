@@ -10,9 +10,8 @@ import com.service.usermanagementservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -25,17 +24,13 @@ import java.util.UUID;
 @Slf4j
 public class AuthService {
     @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
     UserRepository userRepository;
     @Autowired
     OauthTokenRepository tokenRepository;
-    @Autowired
-    Environment environment;
 
-    @Value("${clientId}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String clientId;
-    @Value("${clientSecret}")
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     String clientSecret;
 
     public LoginWithTokenDTO processGrantCode(String code) {
@@ -45,17 +40,15 @@ public class AuthService {
         User user = userRepository.findByEmail(googleUser.getEmail());
 
         if (user == null) {
-
             googleUser.setRole("USER");
-
             if (googleUser.getUsername() == null || googleUser.getUsername().isEmpty()) {
                 String generatedUsername = googleUser.getEmail().split("@")[0];
                 googleUser.setUsername(generatedUsername);
             }
-
             user = userRepository.save(googleUser);
+        }else {
+            tokenRepository.deleteByUser(user);
         }
-
         return saveTokenForUser(user);
     }
 
@@ -91,7 +84,6 @@ public class AuthService {
 
         User user = new User();
 
-
         user.setEmail(jsonObject.get("email").getAsString());
         user.setUsername(jsonObject.get("email").getAsString().split("@")[0]);
         user.setName(jsonObject.has("given_name") ? jsonObject.get("given_name").getAsString() : "");
@@ -108,7 +100,7 @@ public class AuthService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
-        params.add("redirect_uri", "http://localhost:8080/grantcode");
+        params.add("redirect_uri", "https://localhost:8443/login/grantcode");
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("scope", "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile");
@@ -123,5 +115,21 @@ public class AuthService {
         JsonObject jsonObject = new Gson().fromJson(response, JsonObject.class);
 
         return jsonObject.get("access_token").toString().replace("\"", "");
+    }
+
+    public LoginWithTokenDTO refreshAccessToken(String refreshToken) {
+        OauthToken oauthToken = tokenRepository.findByRefreshToken(refreshToken);
+        if(oauthToken == null) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+        LoginWithTokenDTO res = saveTokenForUser(oauthToken.getUser());
+        tokenRepository.delete(oauthToken);
+        return res;
+    }
+
+    public String logout(String email) {
+        User user = userRepository.findByEmail(email);
+        tokenRepository.deleteByUser(user);
+        return "Signed out successfully";
     }
 }

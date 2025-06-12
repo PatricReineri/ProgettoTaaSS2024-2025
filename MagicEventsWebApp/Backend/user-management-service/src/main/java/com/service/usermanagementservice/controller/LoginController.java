@@ -2,6 +2,7 @@ package com.service.usermanagementservice.controller;
 
 import com.service.usermanagementservice.dto.LoginWithTokenDTO;
 import com.service.usermanagementservice.service.AuthService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,26 +14,34 @@ public class LoginController {
         this.authService = authService;
     }
 
-    // TODO: login with form
     /*
+    @PostMapping("/register")
+    public String register(@RequestParam("firstName") String firstName, @RequestParam("password") String password, @RequestParam("lastName") String lastName, @RequestParam("email") String email ) {
+        authService.registerUser(firstName, lastName, email, password);
+        return "User registered successfully!";
+    }
+
     @PostMapping
-    public LoginWithGoogleDTO login(@RequestParam String username, @RequestParam String password) {
+    public LoginWithTokenDTO login(@RequestParam String username, @RequestParam String password) {
         return authService.login(username, password);
-    }*/
+    }
+    */
 
     @GetMapping("/grantcode")
     public LoginWithTokenDTO grantCode(
-            @RequestParam("code") String code,
-            @RequestParam("scope") String scope,
-            @RequestParam("authuser") String authUser,
-            @RequestParam("prompt") String prompt
+            @RequestParam("code") String code
     ) {
         return authService.processGrantCode(code);
     }
 
-    /**
-     * TODO
-     * @PostMapping
-     * public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginDTO request) { }
-     */
+    @PutMapping("/logoutuser")
+    public String logoutUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return authService.logout(email);
+    }
+
+    @PostMapping("/refreshaccesstoken")
+    public LoginWithTokenDTO refreshAccessToken(@RequestParam("refresh_token") String refreshToken) {
+        return authService.refreshAccessToken(refreshToken);
+    }
 }

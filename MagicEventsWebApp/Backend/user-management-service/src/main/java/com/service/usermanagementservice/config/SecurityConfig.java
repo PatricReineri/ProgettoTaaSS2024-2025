@@ -16,10 +16,14 @@ public class SecurityConfig {
     BearerTokenAuthFilter bearerTokenAuthFilter;
 
     private static final String[] WHITELIST_URLS = {
-            "/register",
             "/login",
-            "/grantcode",
-            "/login/google"
+            "/login/register",
+            "/login/grantcode",
+            "/login/logoutuser",
+            "/login/refreshaccesstoken",
+            "/test",
+            "/test/users",
+            "/test/tokens"
     };
 
     @Bean

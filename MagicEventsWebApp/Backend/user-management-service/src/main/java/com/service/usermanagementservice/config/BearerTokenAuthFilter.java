@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 @Component
 public class BearerTokenAuthFilter extends OncePerRequestFilter {
-
     @Autowired
     OauthTokenRepository oauthTokenRepository;
 
@@ -44,14 +43,5 @@ public class BearerTokenAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private User isTokenValid(String token) {
-        OauthToken oauthToken = oauthTokenRepository.findById(token).orElse(null);
-
-        if(oauthToken == null || oauthToken.getExpirationTime().isBefore(LocalDateTime.now())) {
-            return null;
-        }
-        return oauthToken.getUser();
     }
 }

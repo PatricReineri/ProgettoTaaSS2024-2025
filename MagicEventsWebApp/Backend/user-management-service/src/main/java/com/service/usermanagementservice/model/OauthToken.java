@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "token")
 public class OauthToken {
     @Id
     private String accessToken;
@@ -13,7 +13,7 @@ public class OauthToken {
     private String refreshToken;
 
     @ManyToOne
-    @JoinColumn(name = "magicEventTag")
+    @JoinColumn(name = "magic_events_tag")
     private User user;
 
     private LocalDateTime expirationTime;

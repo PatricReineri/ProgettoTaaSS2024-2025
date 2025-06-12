@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### file with keys ###
+src/main/resources/keystore.p12
+

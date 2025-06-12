@@ -3,14 +3,13 @@ package com.service.usermanagementservice.model;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user_info")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +41,7 @@ public class User {
         this.profileImageUrl = profileImageUrl;
         this.name = name;
         this.surname = surname;
+        this.role = role;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
