@@ -5,7 +5,8 @@ CREATE TABLE user_info (
     profile_image_url VARCHAR(512),
     name VARCHAR(100),
     surname VARCHAR(100),
-    role VARCHAR(100)
+    role VARCHAR(100),
+    password VARCHAR(500)
 );
 
 CREATE TABLE token (

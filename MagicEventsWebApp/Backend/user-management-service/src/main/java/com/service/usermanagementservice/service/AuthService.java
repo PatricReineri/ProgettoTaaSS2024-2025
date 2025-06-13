@@ -3,6 +3,7 @@ package com.service.usermanagementservice.service;
 import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.service.usermanagementservice.dto.LoginWithTokenDTO;
+import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.model.User;
 import com.service.usermanagementservice.repository.OauthTokenRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -27,11 +29,55 @@ public class AuthService {
     UserRepository userRepository;
     @Autowired
     OauthTokenRepository tokenRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String clientId;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     String clientSecret;
+
+    public String registerUser(String name, String surname, String email, String password, String username) {
+        User user = new User();
+        user.setName(name);
+        user.setSurname(surname);
+        user.setUsername(username);
+        user.setRole("USER");
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+
+        String response;
+        User alreadyExists = userRepository.findByEmail(email);
+        if (alreadyExists == null) {
+            userRepository.save(user);
+            response = "User saved";
+        }else {
+            response = "User already exists";
+        }
+        return response;
+    }
+
+    public UserDTO login(String email, String password) {
+        User user = userRepository.findByEmail(email);
+
+        if(user != null && passwordEncoder.matches(password, user.getPassword())){
+            OauthToken oauthToken = tokenRepository.findByUser(user);
+            if(oauthToken == null) {
+                saveTokenForUser(user);
+            }
+            return new UserDTO(
+                    user.getMagicEventTag(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getProfileImageUrl(),
+                    user.getName(),
+                    user.getSurname(),
+                    user.getRole()
+            );
+        }
+
+        throw new BadCredentialsException("Invalid username or password");
+    }
 
     public LoginWithTokenDTO processGrantCode(String code) {
         String accessToken = getOauthAccessTokenGoogle(code);
@@ -46,9 +92,13 @@ public class AuthService {
                 googleUser.setUsername(generatedUsername);
             }
             user = userRepository.save(googleUser);
-        }else {
-            tokenRepository.deleteByUser(user);
         }
+
+        OauthToken oauthToken = tokenRepository.findByUser(user);
+        if (oauthToken != null) {
+            tokenRepository.delete(oauthToken);
+        }
+
         return saveTokenForUser(user);
     }
 
@@ -129,7 +179,8 @@ public class AuthService {
 
     public String logout(String email) {
         User user = userRepository.findByEmail(email);
-        tokenRepository.deleteByUser(user);
+        OauthToken oauthToken = tokenRepository.findByUser(user);
+        tokenRepository.delete(oauthToken);
         return "Signed out successfully";
     }
 }

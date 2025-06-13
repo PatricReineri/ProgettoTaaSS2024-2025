@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 @Component
 public class BearerTokenAuthFilter extends OncePerRequestFilter {
-    @Autowired
-    OauthTokenRepository oauthTokenRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
