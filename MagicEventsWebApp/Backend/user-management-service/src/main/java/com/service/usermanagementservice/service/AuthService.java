@@ -3,22 +3,30 @@ package com.service.usermanagementservice.service;
 import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.service.usermanagementservice.dto.LoginWithTokenDTO;
+import com.service.usermanagementservice.dto.UserDTO;
+import com.service.usermanagementservice.model.EmailDetails;
 import com.service.usermanagementservice.model.OauthToken;
+import com.service.usermanagementservice.model.ResetPasswordToken;
 import com.service.usermanagementservice.model.User;
 import com.service.usermanagementservice.repository.OauthTokenRepository;
+import com.service.usermanagementservice.repository.ResetPasswordTokenRepository;
 import com.service.usermanagementservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.core.env.Environment;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Base64;
+import java.security.SecureRandom;
 
 @Service
 @Slf4j
@@ -27,11 +35,61 @@ public class AuthService {
     UserRepository userRepository;
     @Autowired
     OauthTokenRepository tokenRepository;
+    @Autowired
+    ResetPasswordTokenRepository resetPasswordTokenRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    EmailSender emailSender;
+    @Autowired
+    Environment environment;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String clientId;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     String clientSecret;
+
+    public String registerUser(String name, String surname, String email, String password, String username) {
+        User user = new User();
+        user.setName(name);
+        user.setSurname(surname);
+        user.setUsername(username);
+        user.setRole("USER");
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+
+        String response;
+        User alreadyExists = userRepository.findByEmail(email);
+        if (alreadyExists == null) {
+            userRepository.save(user);
+            response = "User saved";
+        }else {
+            response = "User already exists";
+        }
+        return response;
+    }
+
+    public UserDTO login(String email, String password) {
+        User user = userRepository.findByEmail(email);
+
+        if(user != null && passwordEncoder.matches(password, user.getPassword())){
+            OauthToken oauthToken = tokenRepository.findByUser(user);
+            if(oauthToken == null) {
+                saveTokenForUser(user);
+            }
+            return new UserDTO(
+                    user.getMagicEventTag(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getProfileImageUrl(),
+                    user.getName(),
+                    user.getSurname(),
+                    user.getRole()
+            );
+        }
+
+        throw new BadCredentialsException("Invalid username or password");
+    }
 
     public LoginWithTokenDTO processGrantCode(String code) {
         String accessToken = getOauthAccessTokenGoogle(code);
@@ -46,9 +104,13 @@ public class AuthService {
                 googleUser.setUsername(generatedUsername);
             }
             user = userRepository.save(googleUser);
-        }else {
-            tokenRepository.deleteByUser(user);
         }
+
+        OauthToken oauthToken = tokenRepository.findByUser(user);
+        if (oauthToken != null) {
+            tokenRepository.delete(oauthToken);
+        }
+
         return saveTokenForUser(user);
     }
 
@@ -58,6 +120,20 @@ public class AuthService {
         res.setRefreshToken(UUID.randomUUID().toString());
         res.setExpirationTime(LocalDateTime.now().plusHours(1));
         return res;
+    }
+
+    public UserDTO getUserInfo(String accessToken){
+        OauthToken oauthToken = tokenRepository.findByAccessToken(accessToken);
+        User user = oauthToken.getUser();
+        return new UserDTO(
+                user.getMagicEventTag(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getProfileImageUrl(),
+                user.getName(),
+                user.getSurname(),
+                user.getRole()
+        );
     }
 
     private LoginWithTokenDTO saveTokenForUser(User user) {
@@ -129,7 +205,61 @@ public class AuthService {
 
     public String logout(String email) {
         User user = userRepository.findByEmail(email);
-        tokenRepository.deleteByUser(user);
+        OauthToken oauthToken = tokenRepository.findByUser(user);
+        tokenRepository.delete(oauthToken);
         return "Signed out successfully";
     }
+
+    public String initiateResetPasswordLink(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            return "Email address not registered";
+        }
+
+        ResetPasswordToken resetPasswordToken = new ResetPasswordToken();
+        resetPasswordToken.setToken(generateSecureToken());
+        resetPasswordToken.setUser(user);
+        resetPasswordToken.setExpirationTime(LocalDateTime.now().plusHours(1));
+
+        resetPasswordTokenRepository.save(resetPasswordToken);
+
+        String link = "http://localhost:3000/changepassword?token=" + resetPasswordToken.getToken();
+
+        EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(user.getEmail());
+        emailDetails.setSubject("Reset Password for your account");
+        emailDetails.setBody("Click the link to reset your account password " + link);
+
+        if(emailSender.sendMail(emailDetails)) {
+            return "Password reset link sent to registered email address";
+        }else{
+            return "Error";
+        }
+    }
+
+    private String generateSecureToken() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] tokenBytes = new byte[24];
+        secureRandom.nextBytes(tokenBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+    }
+
+    public String changePasswordWithToken(String token, String newPassword) {
+        ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findById(token).orElse(null);
+        if(resetPasswordToken == null) {
+            return "Invalid Token";
+        }
+
+        if(resetPasswordToken.getExpirationTime().isBefore(LocalDateTime.now())) {
+            return "Token expired";
+        }
+
+        User user = userRepository.findById(resetPasswordToken.getUser().getMagicEventTag()).orElse(null);
+        if(user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        }
+        return "Password changed successfully";
+    }
+
 }

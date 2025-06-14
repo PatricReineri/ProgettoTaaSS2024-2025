@@ -33,6 +33,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### file with keys ###
+### file with keys and password ###
 src/main/resources/keystore.p12
-
+pwd.txt

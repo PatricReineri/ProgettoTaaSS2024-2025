@@ -7,8 +7,26 @@ public class UserDTO {
     private String profileImageUrl;
     private String name;
     private String surname;
+    private String role;
 
-    // Getter e setter
+    public UserDTO(
+            Long magicEventTag,
+            String username,
+            String email,
+            String profileImageUrl,
+            String name,
+            String surname,
+            String role
+    ) {
+        this.magicEventTag = magicEventTag;
+        this.username = username;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+    }
+
     public Long getMagicEventTag() {
         return magicEventTag;
     }
@@ -55,6 +73,14 @@ public class UserDTO {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
 
