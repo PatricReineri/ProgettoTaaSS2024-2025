@@ -64,11 +64,6 @@ public class BoardService {
                 .build();
     }
 
-    @Transactional
-    public void deleteBoard(Long eventID) {
-        log.info("Deleting board for event ID: {}", eventID);
-        boardRepository.deleteByEventID(eventID);
-    }
 
     public Boolean isBoardExists(Long eventID) {
         log.info("Checking if board exists for event ID: {}", eventID);

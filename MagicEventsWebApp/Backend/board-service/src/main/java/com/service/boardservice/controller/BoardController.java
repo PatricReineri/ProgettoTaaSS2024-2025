@@ -19,16 +19,14 @@ public class BoardController {
 
 
     @PostMapping("/createBoard")
-    public ResponseEntity<Void> createBoard(@RequestBody CreateBoardRequestDTO request) {
-        log.error("0)-----REQUEST RECEIVE  ---:{}",request);
-        boardService.createBoard(request);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/deleteBoard/{eventID}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long eventID) {
-        boardService.deleteBoard(eventID);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Boolean> createBoard(@RequestBody CreateBoardRequestDTO request) {
+        try {
+            boardService.createBoard(request);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            log.error("Error creating board: {}", e.getMessage());
+            return ResponseEntity.status(500).body(false);
+        }
     }
 
     @GetMapping("/getBoard/{eventID}/{pageNumber}")
