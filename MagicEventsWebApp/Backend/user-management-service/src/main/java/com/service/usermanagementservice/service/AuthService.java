@@ -79,7 +79,7 @@ public class AuthService {
         throw new BadCredentialsException("Invalid username or password");
     }
 
-    public LoginWithTokenDTO processGrantCode(String code) {
+    public UserDTO processGrantCode(String code) {
         String accessToken = getOauthAccessTokenGoogle(code);
 
         User googleUser = getProfileDetailsGoogle(accessToken);
@@ -99,7 +99,16 @@ public class AuthService {
             tokenRepository.delete(oauthToken);
         }
 
-        return saveTokenForUser(user);
+        saveTokenForUser(user);
+        return new UserDTO(
+                user.getMagicEventTag(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getProfileImageUrl(),
+                user.getName(),
+                user.getSurname(),
+                user.getRole()
+        );
     }
 
     private LoginWithTokenDTO generateToken() {

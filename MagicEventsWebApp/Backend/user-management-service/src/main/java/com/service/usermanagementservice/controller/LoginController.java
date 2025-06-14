@@ -33,13 +33,13 @@ public class LoginController {
     }
 
     @GetMapping("/grantcode")
-    public LoginWithTokenDTO grantCode(@RequestParam("code") String code) {
+    public UserDTO grantCode(@RequestParam("code") String code) {
         return authService.processGrantCode(code);
     }
 
     @PutMapping("/logoutuser")
-    public String logoutUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String logoutUser(@RequestParam("email") String email) {
+        //String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return authService.logout(email);
     }
 
