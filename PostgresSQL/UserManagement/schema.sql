@@ -19,3 +19,13 @@ CREATE TABLE token (
         ON DELETE CASCADE
 );
 
+CREATE TABLE reset_pwd (
+    token VARCHAR(255) PRIMARY KEY,
+    expirationTime VARCHAR(255),
+    magic_events_tag BIGINT,
+    CONSTRAINT fk_user
+        FOREIGN KEY (magic_events_tag)
+        REFERENCES users(magic_events_tag)
+        ON DELETE CASCADE
+);
+

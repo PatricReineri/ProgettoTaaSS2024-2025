@@ -26,7 +26,11 @@ public class SecurityConfig {
             "/login/refreshaccesstoken",
             "/test",
             "/test/users",
-            "/test/tokens"
+            "/test/tokens",
+            "/favicon.ico",
+            "login/userprofile",
+            "login/changepassword",
+            "login/generateresetpasswordlink"
     };
 
     @Bean
@@ -34,7 +38,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000"));
+                    config.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://localhost:8443"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT"));
                     return config;
                 }))

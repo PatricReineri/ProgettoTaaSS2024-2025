@@ -1,3 +1,3 @@
 #### TODO list:
-- Check logout
-- Add 'forgot password'
+- Add delete user features
+- Check refresh token mechanism
