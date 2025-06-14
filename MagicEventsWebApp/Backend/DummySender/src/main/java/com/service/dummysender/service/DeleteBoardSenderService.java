@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DeleteBoardSenderService {
-
     private final RabbitTemplate rabbitTemplate;
 
     @Value("${spring.rabbitmq.exchange}")
@@ -20,7 +19,7 @@ public class DeleteBoardSenderService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // every 10seconds, send a message to delete a board
+    /** Every 10 seconds, send a message to delete a board */
     @Scheduled(fixedRate = 10000)
     public void sendDeleteBoardMessage() {
         Long eventID = 2L;
