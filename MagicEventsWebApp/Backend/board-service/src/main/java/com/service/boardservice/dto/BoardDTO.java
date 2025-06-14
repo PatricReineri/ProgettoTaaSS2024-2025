@@ -1,4 +1,5 @@
 package com.service.boardservice.dto;
+
 import lombok.Builder;
 import lombok.Data;
 

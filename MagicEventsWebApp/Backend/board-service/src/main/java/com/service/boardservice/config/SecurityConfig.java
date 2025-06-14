@@ -7,15 +7,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-
-    //disable CSRF protection in order i can test the application with postman
+    // TODO: linking user-management service for security
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable() // Disable CSRF protection
+        http.csrf().disable()
                 .authorizeRequests()
-                .anyRequest().permitAll(); // Allow all requests without authentication
+                .anyRequest().permitAll();
         return http.build();
     }
-    // Note: In a production application, you would typically configure more secure settings,
-    // such as enabling CSRF protection, configuring authentication, etc.
 }

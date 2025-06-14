@@ -1,6 +1,5 @@
 package com.service.boardservice.controller;
 
-
 import com.service.boardservice.dto.AddNewMessageRequestDTO;
 import com.service.boardservice.dto.BoardDTO;
 import com.service.boardservice.dto.CreateBoardRequestDTO;
@@ -9,14 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
 @Slf4j
 public class BoardController {
     private final com.service.boardservice.service.BoardService boardService;
-
 
     @PostMapping("/createBoard")
     public ResponseEntity<Boolean> createBoard(@RequestBody CreateBoardRequestDTO request) {

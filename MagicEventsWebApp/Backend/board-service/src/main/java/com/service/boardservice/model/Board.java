@@ -1,10 +1,9 @@
 package com.service.boardservice.model;
+
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Setter;
 
 import java.util.List;
-
 
 @Entity
 @Table(name = "board")
@@ -20,7 +19,7 @@ public class Board {
     @Column(nullable = false)
     private String description;
 
-    //foreign key to a list of messages of the board
+    /** Foreign key to a list of messages of the board */
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Message> messages;
 

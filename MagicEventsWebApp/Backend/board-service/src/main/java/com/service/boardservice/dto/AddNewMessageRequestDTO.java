@@ -1,4 +1,5 @@
 package com.service.boardservice.dto;
+
 import lombok.Data;
 import lombok.NonNull;
 
