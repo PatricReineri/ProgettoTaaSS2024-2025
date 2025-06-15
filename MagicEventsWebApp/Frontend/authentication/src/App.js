@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import UserProfilePage from './pages/UserProfilePage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import ModifyUserValuePage from './pages/ModifyUserValuePage';
 
 function App() {
 	return (
@@ -15,6 +16,7 @@ function App() {
 				<Route path="/userprofile" element={<UserProfilePage />} />
 				<Route path="/googlecallback" element={<GoogleCallbackPage />} />
 				<Route path="/changepassword" element={<ChangePasswordPage />} />
+				<Route path="/modifyuser" element={<ModifyUserValuePage />} />
 			</Routes>
 		</Router>
 	);

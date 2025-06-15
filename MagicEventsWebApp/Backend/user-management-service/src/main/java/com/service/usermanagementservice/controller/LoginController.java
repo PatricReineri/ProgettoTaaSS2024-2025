@@ -36,6 +36,11 @@ public class LoginController {
         return authService.login(email, password);
     }
 
+    @PostMapping("/modify")
+    public UserDTO modifyUser(@RequestBody UserDTO userDTO) {
+        return authService.modify(userDTO);
+    }
+
     @PostMapping("/generateresetpasswordlink")
     public String generateResetPasswordLink(@RequestParam String email) {
         return authService.initiateResetPasswordLink(email);
@@ -54,12 +59,17 @@ public class LoginController {
     @GetMapping("/grantcode")
     public void grantCode(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         LoginWithTokenDTO oauthToken = authService.processGrantCode(code);
-        response.sendRedirect("https://localhost:3000/googlecallback?accessToken=" + oauthToken.getAccessToken());
+        response.sendRedirect("http://localhost:3000/googlecallback?accessToken=" + oauthToken.getAccessToken());
     }
 
     @PutMapping("/logoutuser")
     public String logoutUser(@RequestParam("email") String email) {
         return authService.logout(email);
+    }
+
+    @PutMapping("/deleteuser")
+    public String deleteUser(@RequestParam("email") String email) {
+        return authService.deleteUser(email);
     }
 
     @PostMapping("/refreshaccesstoken")

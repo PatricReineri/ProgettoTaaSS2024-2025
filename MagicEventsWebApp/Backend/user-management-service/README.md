@@ -1,3 +1,4 @@
 #### TODO list:
-- Add delete user features
+- Testing modify user operation
 - Check refresh token mechanism
+- Structure the UI

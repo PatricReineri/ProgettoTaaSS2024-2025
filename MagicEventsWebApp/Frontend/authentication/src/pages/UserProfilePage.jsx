@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAuth } from '../auth/AuthContext';
 import LogoutButton from '../components/buttons/LogoutButton';
+import DeleteUserButton from '../components/buttons/DeleteUserButton';
+import ModifierUserButton from '../components/buttons/ModifierUserButton';
 
 function UserProfilePage() {
     const { user } = useAuth();
@@ -37,6 +39,14 @@ function UserProfilePage() {
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <LogoutButton></LogoutButton>
+      </div>
+
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <DeleteUserButton></DeleteUserButton>
+      </div>
+
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        <ModifierUserButton></ModifierUserButton>
       </div>
     </div>
   );

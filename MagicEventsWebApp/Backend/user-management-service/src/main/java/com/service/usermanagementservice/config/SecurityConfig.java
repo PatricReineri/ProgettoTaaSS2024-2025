@@ -30,7 +30,9 @@ public class SecurityConfig {
             "/favicon.ico",
             "login/userprofile",
             "login/changepassword",
-            "login/generateresetpasswordlink"
+            "login/generateresetpasswordlink",
+            "login/deleteuser",
+            "login/modifyuser"
     };
 
     @Bean
