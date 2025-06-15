@@ -1,6 +1,5 @@
 package com.service.boardservice.controller;
 
-import com.service.boardservice.dto.AddNewMessageRequestDTO;
 import com.service.boardservice.dto.BoardDTO;
 import com.service.boardservice.dto.CreateBoardRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +40,14 @@ public class BoardController {
         return ResponseEntity.ok(exists);
     }
 
-    @PostMapping("/writeMessage")
-    public ResponseEntity<Void> writeMessage(@RequestBody AddNewMessageRequestDTO request) {
-        boardService.addNewMessage(request);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/deleteBoard/{eventID}")
+    public ResponseEntity<Boolean> deleteBoard(@PathVariable Long eventID) {
+        try {
+            boardService.deleteBoard(eventID);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            log.error("Error deleting board: {}", e.getMessage());
+            return ResponseEntity.status(500).body(false);
+        }
     }
 }

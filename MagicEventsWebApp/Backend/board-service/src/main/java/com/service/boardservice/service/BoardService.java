@@ -78,25 +78,18 @@ public class BoardService {
         return boardRepository.findByEventID(eventID) != null;
     }
 
-    public void addNewMessage(AddNewMessageRequestDTO request){
-        log.info("Adding new message to board for event ID: {}", request.getEventID());
-        Board board = boardRepository.findByEventID(request.getEventID());
-
-        if (board == null) {
-            log.warn("Board not found for event ID, can't add new Message: {}", request.getEventID());
-            return;
+    @Transactional
+    public void deleteBoard(Long eventID) {
+        log.info("Deleting board for event ID: {}", eventID);
+        Board board = boardRepository.findByEventID(eventID);
+        if (board != null) {
+            boardRepository.delete(board); // Delete the board itself
+            log.info("Board and its messages deleted successfully for event ID: {}", eventID);
+        } else {
+            log.warn("No board found for event ID: {}", eventID);
         }
-
-        // Create a new message and associate it with the board
-        Message message = new Message();
-        message.setContent(request.getContent());
-        message.setUsername(request.getUsername());
-        message.setDate(request.getDateTime());
-        message.setBoard(board);
-        messageRepository.save(message);
-        log.info("Message added successfully to board for event ID: {}", request.getEventID());
-
     }
+
 
 
 }

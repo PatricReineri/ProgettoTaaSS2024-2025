@@ -20,9 +20,9 @@ public class DeleteBoardSenderService {
     }
 
     /** Every 10 seconds, send a message to delete a board */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 20000)
     public void sendDeleteBoardMessage() {
-        Long eventID = 2L;
+        Long eventID = 1L;
         rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventID);
     }
 }
