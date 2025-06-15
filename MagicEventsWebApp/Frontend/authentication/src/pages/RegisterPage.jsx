@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 function RegisterPage() {
-  const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     surname: '',
@@ -25,14 +23,7 @@ function RegisterPage() {
     for (const key in formData) {
         params.append(key, formData[key]);
     }
-    setError('');
-    setSuccessMsg('');
 
-    const password = formData.password
-    if (password.length < 6) {
-      setError('Password must contain at least 6 characters');
-      return;
-    }
     try {
         const res = await fetch("https://localhost:8443/login/register", {
             method: "POST",
@@ -47,7 +38,6 @@ function RegisterPage() {
         console.log("Success:", data);
     } catch (err) {
         console.error("Error:", err.message);
-        setError(err.message);
     }
     };
 
@@ -116,9 +106,6 @@ function RegisterPage() {
             />
           </div>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {successMsg && <p style={{ color: 'green' }}>{successMsg}</p>}
-          
           <button type="submit" style={styles.button}>
             Register
           </button>
