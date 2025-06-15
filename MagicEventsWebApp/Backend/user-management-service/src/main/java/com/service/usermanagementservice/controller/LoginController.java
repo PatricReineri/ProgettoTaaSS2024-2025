@@ -4,7 +4,9 @@ import com.service.usermanagementservice.dto.LoginWithTokenDTO;
 import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,9 @@ import java.io.IOException;
 @RequestMapping("/login")
 public class LoginController {
     private final AuthService authService;
+
+    @Value("${client.url:localhost:3000}")
+    private String clientUrl;
 
     public LoginController(AuthService authService) {
         this.authService = authService;
@@ -36,7 +41,7 @@ public class LoginController {
         return authService.login(email, password);
     }
 
-    @PostMapping("/modify")
+    @PostMapping("/modifyuser")
     public UserDTO modifyUser(@RequestBody UserDTO userDTO) {
         return authService.modify(userDTO);
     }
@@ -57,9 +62,20 @@ public class LoginController {
     }
 
     @GetMapping("/grantcode")
-    public void grantCode(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
+    public void grantCode(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         LoginWithTokenDTO oauthToken = authService.processGrantCode(code);
-        response.sendRedirect("http://localhost:3000/googlecallback?accessToken=" + oauthToken.getAccessToken());
+
+        // Determine protocol from request
+        String protocol = request.isSecure() ? "https" : "http";
+
+        // Check for X-Forwarded-Proto header (for reverse proxies)
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        if (forwardedProto != null && !forwardedProto.isEmpty()) {
+            protocol = forwardedProto;
+        }
+
+        String redirectUrl = protocol + "://" + clientUrl + "/googlecallback?accessToken=" + oauthToken.getAccessToken();
+        response.sendRedirect(redirectUrl);
     }
 
     @PutMapping("/logoutuser")
