@@ -64,10 +64,8 @@ public class LoginController {
     @GetMapping("/grantcode")
     public void grantCode(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         LoginWithTokenDTO oauthToken = authService.processGrantCode(code);
-
         // Determine protocol from request
         String protocol = request.isSecure() ? "https" : "http";
-
         // Check for X-Forwarded-Proto header (for reverse proxies)
         String forwardedProto = request.getHeader("X-Forwarded-Proto");
         if (forwardedProto != null && !forwardedProto.isEmpty()) {

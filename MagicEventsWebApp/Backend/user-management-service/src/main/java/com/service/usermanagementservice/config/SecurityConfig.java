@@ -41,10 +41,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://localhost:8443"));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
-                    config.setMaxAge(3600L);
                     return config;
                 }))
                 .authorizeHttpRequests(request -> {
