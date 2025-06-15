@@ -1,38 +1,4 @@
-:root {
-	margin: 0px !important;
-	padding: 0px !important;
-	height: 100%;
-}
-
 body {
-	margin: 0px !important;
-	padding: 0px !important;
-	height: 100%;
-	font-family: Arial, sans-serif;
-}
-
-.button {
-	background-color: #ee0e51;
-	color: #e4dcef;
-	padding: 0.5rem;
-	font-size: medium;
-	display: flex;
-	align-items: center;
-	width: 100%;
-	justify-content: center;
-	border: 0;
-	border-radius: 16rem !important;
-	cursor: pointer;
-}
-
-.buttonGoogle {
-	background-color: #e4dcef !important;
-	color: black;
-}
-
-.background {
-	background-clip: border-box;
-	background-image: url('../public/background.jpg');
-	height: 100dvh;
-	background-color: #ee0e51;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
