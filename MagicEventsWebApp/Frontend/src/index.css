@@ -1,4 +1,10 @@
+@import 'tailwindcss';
+
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+	margin: 0;
+	font-family: Arial, sans-serif;
+}
+
+.backgroundLogin {
+	background-image: url('./img/background.jpg');
 }
