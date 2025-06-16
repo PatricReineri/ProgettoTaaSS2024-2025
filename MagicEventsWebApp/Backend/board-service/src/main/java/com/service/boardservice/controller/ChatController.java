@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatController {
-
     private final ChatService chatService;
 
     @MessageMapping("chat/sendMessage/{eventID}")

@@ -22,7 +22,7 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime date;
 
-    // Foreign key to the board this message belongs to
+    /** Foreign key to the board this message belongs to */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_event_id", nullable = false)
     private Board board;

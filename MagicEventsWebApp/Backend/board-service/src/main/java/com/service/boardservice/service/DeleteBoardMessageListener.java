@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class DeleteBoardMessageListener {
-
     private final BoardRepository boardRepository;
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.delete-board}")
