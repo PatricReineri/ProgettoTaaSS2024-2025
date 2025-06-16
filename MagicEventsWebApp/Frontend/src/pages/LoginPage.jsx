@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import GoogleButton from '../components/buttons/GoogleButton';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,23 @@ function LoginPage() {
 	const { setUser } = useAuth();
 
 	const [formData, setFormData] = useState({ email: '', password: '' });
+
+	useEffect(() => {
+		const protocol = window.location.protocol.replace(":", "");
+		console.log("✅ Trying to contact server...");
+		const detectClientProtocol = async () => {
+			try {
+				const res = await fetch("https://localhost:8443/login/helloserver?protocol="+ protocol, {
+					method: "GET"
+				});
+				if (!res.ok) console.warn("Protocol detection failed");
+			} catch (err) {
+				console.error("Error contacting server:", err);
+			}
+		};
+
+		detectClientProtocol();
+	}, []);
 
 	const handleChange = (e) => {
 		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));

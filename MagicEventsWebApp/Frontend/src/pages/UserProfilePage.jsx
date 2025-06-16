@@ -5,7 +5,7 @@ import DeleteUserButton from '../components/buttons/DeleteUserButton';
 import ModifierUserButton from '../components/buttons/ModifierUserButton';
 
 function UserProfilePage() {
-    const { user } = useAuth();
+  const { user } = useAuth();
   if (!user) return <p style={{ textAlign: 'center' }}>User not found</p>;
 
   return (

@@ -32,7 +32,8 @@ public class SecurityConfig {
             "login/changepassword",
             "login/generateresetpasswordlink",
             "login/deleteuser",
-            "login/modifyuser"
+            "login/modifyuser",
+            "login/helloserver"
     };
 
     @Bean

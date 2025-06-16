@@ -18,6 +18,8 @@ import java.io.IOException;
 public class LoginController {
     private final AuthService authService;
 
+    private String clientProtocol;
+
     @Value("${client.url:localhost:3000}")
     private String clientUrl;
 
@@ -61,18 +63,16 @@ public class LoginController {
         return authService.getUserInfo(accessToken);
     }
 
+    @GetMapping("/helloserver")
+    public void identifyClientProtocol(@RequestParam("protocol") String protocol) {
+        System.out.println(protocol);
+        this.clientProtocol = protocol;
+    }
+
     @GetMapping("/grantcode")
     public void grantCode(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         LoginWithTokenDTO oauthToken = authService.processGrantCode(code);
-        // Determine protocol from request
-        String protocol = request.isSecure() ? "https" : "http";
-        // Check for X-Forwarded-Proto header (for reverse proxies)
-        String forwardedProto = request.getHeader("X-Forwarded-Proto");
-        if (forwardedProto != null && !forwardedProto.isEmpty()) {
-            protocol = forwardedProto;
-        }
-
-        String redirectUrl = protocol + "://" + clientUrl + "/googlecallback?accessToken=" + oauthToken.getAccessToken();
+        String redirectUrl = this.clientProtocol + "://" + clientUrl + "/googlecallback?accessToken=" + oauthToken.getAccessToken();
         response.sendRedirect(redirectUrl);
     }
 

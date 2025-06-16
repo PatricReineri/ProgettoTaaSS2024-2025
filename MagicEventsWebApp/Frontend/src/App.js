@@ -6,12 +6,14 @@ import UserProfilePage from './pages/UserProfilePage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ModifyUserValuePage from './pages/ModifyUserValuePage';
+import HomePage from './pages/HomePage'
 
 function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" element={<LoginPage />} />
+				<Route path="/" element={<HomePage />} />
+				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/userprofile" element={<UserProfilePage />} />
 				<Route path="/googlecallback" element={<GoogleCallbackPage />} />

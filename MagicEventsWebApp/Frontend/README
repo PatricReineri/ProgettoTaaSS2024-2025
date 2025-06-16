@@ -1,4 +1,4 @@
-#### Setting https protocol 
+### Setting https protocol 
 In Windows:
 ```bash
     $env:HTTPS="true"
@@ -6,3 +6,10 @@ In Windows:
 ```bash
     npm start
 ```
+
+#### TODO list:
+- Home page
+- Stylize authentication
+
+#### Actual UI bugs
+- When you are in the user data page and you refresh the page the data is lost
