@@ -65,7 +65,6 @@ public class LoginController {
 
     @GetMapping("/helloserver")
     public void identifyClientProtocol(@RequestParam("protocol") String protocol) {
-        System.out.println(protocol);
         this.clientProtocol = protocol;
     }
 
