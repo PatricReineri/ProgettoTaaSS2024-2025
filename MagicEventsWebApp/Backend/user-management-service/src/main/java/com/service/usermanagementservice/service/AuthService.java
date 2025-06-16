@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.core.env.Environment;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.Base64;
 import java.security.SecureRandom;
@@ -210,6 +212,14 @@ public class AuthService {
         return "Signed out successfully";
     }
 
+    public String deleteUser(String email) {
+        User user = userRepository.findByEmail(email);
+        OauthToken oauthToken = tokenRepository.findByUser(user);
+        tokenRepository.delete(oauthToken);
+        userRepository.delete(user);
+        return "Delete user with email {" + email + "} successfully";
+    }
+
     public String initiateResetPasswordLink(String email) {
         User user = userRepository.findByEmail(email);
         if(user == null) {
@@ -262,4 +272,28 @@ public class AuthService {
         return "Password changed successfully";
     }
 
+    @Scheduled(fixedRate = 1200000)
+    public void deleteTokenExpired() {
+        List<ResetPasswordToken> tokens = resetPasswordTokenRepository.findAll();
+        for (ResetPasswordToken token : tokens) {
+            if(token.getExpirationTime().isAfter(LocalDateTime.now())) {
+                resetPasswordTokenRepository.delete(token);
+            }
+        }
+    }
+
+    public UserDTO modify(UserDTO userDTO) {
+        User user = userRepository.findById(userDTO.getMagicEventTag()).orElse(null);
+        if(user == null) {
+            return null;
+        }else{
+            user.setEmail(userDTO.getEmail());
+            user.setName(userDTO.getName());
+            user.setUsername(userDTO.getUsername());
+            user.setSurname(userDTO.getSurname());
+            user.setProfileImageUrl(userDTO.getProfileImageUrl());
+            userRepository.save(user);
+            return userDTO;
+        }
+    }
 }

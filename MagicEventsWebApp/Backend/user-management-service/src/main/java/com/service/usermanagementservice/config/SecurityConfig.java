@@ -30,7 +30,10 @@ public class SecurityConfig {
             "/favicon.ico",
             "login/userprofile",
             "login/changepassword",
-            "login/generateresetpasswordlink"
+            "login/generateresetpasswordlink",
+            "login/deleteuser",
+            "login/modifyuser",
+            "login/helloserver"
     };
 
     @Bean
@@ -40,6 +43,8 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://localhost:8443"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
                     return config;
                 }))
                 .authorizeHttpRequests(request -> {
