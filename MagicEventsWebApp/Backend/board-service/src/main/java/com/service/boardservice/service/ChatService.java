@@ -9,13 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ChatService {
-
     private final BoardRepository boardRepository;
     private final MessageRepository messageRepository;
 
@@ -36,6 +33,5 @@ public class ChatService {
         message.setBoard(board);
         messageRepository.save(message);
         log.info("Message added successfully to board for event ID: {}", request.getEventID());
-
     }
 }

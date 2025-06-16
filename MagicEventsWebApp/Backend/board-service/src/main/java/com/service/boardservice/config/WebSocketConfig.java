@@ -17,7 +17,6 @@ import org.springframework.messaging.MessageChannel;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint for clients to connect
@@ -33,7 +32,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Prefix for client-to-server messages
         registry.setApplicationDestinationPrefixes("/app");
     }
-
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
