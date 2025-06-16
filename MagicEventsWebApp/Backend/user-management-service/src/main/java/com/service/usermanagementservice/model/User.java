@@ -23,7 +23,6 @@ public class User {
     private String name;
     private String surname;
     private String role;
-    private String password;
 
     public User() {}
 
@@ -34,8 +33,7 @@ public class User {
             String profileImageUrl,
             String name,
             String surname,
-            String role,
-            String password
+            String role
     ) {
         this.magicEventTag = magicEventTag;
         this.username = username;
@@ -44,7 +42,6 @@ public class User {
         this.name = name;
         this.surname = surname;
         this.role = role;
-        this.password = password;
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -107,13 +104,5 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

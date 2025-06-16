@@ -38,7 +38,9 @@ public class BearerTokenAuth implements Authentication {
     }
 
     @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException { }
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
+    }
 
     @Override
     public String getName() {

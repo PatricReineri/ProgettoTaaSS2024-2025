@@ -8,9 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -19,34 +16,19 @@ public class SecurityConfig {
     BearerTokenAuthFilter bearerTokenAuthFilter;
 
     private static final String[] WHITELIST_URLS = {
-            "/login/form",
+            "/login",
             "/login/register",
             "/login/grantcode",
             "/login/logoutuser",
             "/login/refreshaccesstoken",
             "/test",
             "/test/users",
-            "/test/tokens",
-            "/favicon.ico",
-            "login/userprofile",
-            "login/changepassword",
-            "login/generateresetpasswordlink",
-            "login/deleteuser",
-            "login/modifyuser",
-            "login/helloserver"
+            "/test/tokens"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://localhost:8443"));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT"));
-                    config.setAllowedHeaders(List.of("*"));
-                    config.setAllowCredentials(true);
-                    return config;
-                }))
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers(WHITELIST_URLS).permitAll();
                     request.anyRequest().authenticated();
