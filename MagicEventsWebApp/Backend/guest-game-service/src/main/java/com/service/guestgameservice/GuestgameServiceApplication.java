@@ -1,11 +1,11 @@
-package com.service.eventsmanagementservice;
+package com.service.guestgameservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EventsManagementServiceApplication {
+public class GuestgameServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EventsManagementServiceApplication.class, args);
+        SpringApplication.run(GuestgameServiceApplication.class, args);
     }
 }

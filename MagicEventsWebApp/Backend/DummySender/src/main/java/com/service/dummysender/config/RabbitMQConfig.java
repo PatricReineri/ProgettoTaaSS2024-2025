@@ -16,3 +16,5 @@ public class RabbitMQConfig {
         return new DirectExchange(exchangeName, true, false);
     }
 }
+
+
