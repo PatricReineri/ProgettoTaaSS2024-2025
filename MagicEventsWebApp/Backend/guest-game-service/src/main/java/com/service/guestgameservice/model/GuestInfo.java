@@ -9,7 +9,6 @@ import lombok.Data;
 })
 @Data
 public class GuestInfo {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,6 +43,4 @@ public class GuestInfo {
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
-
-
 }

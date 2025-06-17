@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class GameService {
-
     private final GuestGameRepository guestGameRepository;
     private final GameRepository gameRepository;
 

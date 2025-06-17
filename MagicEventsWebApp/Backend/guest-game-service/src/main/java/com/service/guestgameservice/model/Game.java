@@ -1,23 +1,21 @@
 package com.service.guestgameservice.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.List;
 
 @Entity
+@Table(name = "game")
 @Data
-@NoArgsConstructor
 public class Game {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private int currentIndex;
-    public Game(String name, int currentIndex) {
-        this.name = name;
-        this.currentIndex = currentIndex;
-    }
+    @Column(name = "event_id")
+    private Long eventId;
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GuestInfo> guests;
 }
