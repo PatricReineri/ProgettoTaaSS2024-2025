@@ -1,10 +1,10 @@
-package com.service.guestgameservice;
+package com.service.usermanagementservice.eventsmanagementservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GuestgameServiceApplicationTests {
+class EventsManagementServiceApplicationTests {
 
     @Test
     void contextLoads() {
