@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 
-const Button = ({ text = 'Button', onClick, link = false, custom = '' }) => {
+const Button = ({ text = 'Button', onClick, link = false, custom = '', disabled = false }) => {
 	return (
 		<button
+			disabled={disabled}
 			onClick={onClick}
 			className={clsx({
 				' bg-[#EE0E51] text-[#E4DCEF] p-2 px-4 rounded-md hover:shadow-2xl hover:bg-[#ee0e51d5]  ': !link,

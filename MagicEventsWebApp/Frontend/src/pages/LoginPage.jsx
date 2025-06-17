@@ -63,9 +63,9 @@ function LoginPage() {
 	};
 
 	return (
-		<div className=" backgroundLogin  h-screen p-4 ">
+		<div className=" backgroundLogin   h-full sh-[calc(100vh-3.5rem)] p-4 ">
 			<div className="relative bg-[#363540] text-[#E8F2FC] p-4 h-fit max-h-full max-w-[30rem] flex flex-col rounded-md shadow-2xl space-y-4 ">
-				<h2 style={{ textAlign: 'center' }}>Login</h2>
+				<h2 className=" font-bold text-2xl">Login</h2>
 				{/* Login with email e password */}
 				<form
 					className={clsx({ hidden: forgotFlag })}
