@@ -17,6 +17,7 @@ public class EventGestorController {
 
     @PostMapping("/create")
     public Long createEvent(@RequestBody EventDTO eventDTO) {
+        // TODO: check if end of event is after start else return "Error"
         return eventGestorService.create(eventDTO);
     }
 

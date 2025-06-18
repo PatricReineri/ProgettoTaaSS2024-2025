@@ -9,12 +9,11 @@ import java.util.List;
 @Table(name = "partecipants")
 public class Partecipant {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "magic_events_tag")
     private Long magicEventTag;
 
     @ManyToMany(mappedBy = "partecipants")
-    private List<Event> events = new ArrayList<>(); ;
+    private List<Event> events = new ArrayList<>();
 
     public Partecipant() {}
 

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,16 +28,12 @@ public class EventGestorService {
 
     public String updateEventAdmins(ArrayList<Long> admins, Long eventId, Long creatorId) {
         // TODO: check if the request is send by creatorId else return "Error"
-        List<Admin> adminsAdded = addAdmins(admins, eventId);
-        // Problem with this operation in this repository
-        adminsRepository.saveAll(adminsAdded);
+        addAdmins(admins, eventId);
         return "Success";
     }
     public String updateEventPartecipants(ArrayList<Long> partecipants, Long eventId, Long creatorId) {
         // TODO: check if the request is send by creatorId else return "Error"
-        List<Partecipant> partecipantsAdded = addPartecipants(partecipants, eventId);
-        // Problem with this operation in this repository
-        partecipantsRepository.saveAll(partecipantsAdded);
+        addPartecipants(partecipants, eventId);
         return "Success";
     }
 
@@ -73,16 +70,11 @@ public class EventGestorService {
                 eventDTO.getCreator()
         );
         event = eventsRepository.save(event);
-        //List<Admin> admins = addAdmins(eventDTO.getAdmins(), event.getEventId());
-        //List<Partecipant> partecipants = partecipantsRepository.findAllById(eventDTO.getAdmins());
+        List<Admin> admins = addAdmins(eventDTO.getAdmins(), event.getEventId());
 
-        //partecipantsRepository.saveAll(partecipants);
-        //event.setPartecipants(partecipants);
+        event.setAdmins(admins);
 
-        //adminsRepository.saveAll(admins);
-        //event.setAdmins(admins);
-
-        //eventsRepository.save(event);
+        eventsRepository.save(event);
 
         return event.getEventId();
     }
@@ -90,7 +82,8 @@ public class EventGestorService {
     // Correctly build of list of admins
     public List<Admin> addAdmins(List<Long> admins, Long eventId){
         List<Partecipant> partecipantList = addPartecipants(new ArrayList<>(admins), eventId);
-        Event event = eventsRepository.findById(eventId).orElse(null);
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         ArrayList<Admin> saveAdmin = new ArrayList<>();
         for (Partecipant adminAccount : partecipantList) {
             ArrayList<Event> events = new ArrayList<>();
@@ -111,33 +104,29 @@ public class EventGestorService {
                 saveAdmin.add(newAdmin);
             }
         }
+        adminsRepository.saveAll(saveAdmin);
         return saveAdmin;
     }
 
-    // Correctly build of list of partecipants
-    public List<Partecipant> addPartecipants(ArrayList<Long> partecipants, Long eventId) {
-        Event event = eventsRepository.findById(eventId).orElse(null);
-        ArrayList<Partecipant> partecipantsAccount = new ArrayList<>();
-        if(event.getPartecipants() != null){
-            partecipantsAccount = new ArrayList<>(event.getPartecipants());
-        }
-        for (Long partecipantId : partecipants) {
-            Partecipant partecipant = partecipantsRepository.findById(partecipantId).orElse(null);
-            if(partecipant == null){
-                ArrayList<Event> events = new ArrayList<>();
-                events.add(event);
-                Partecipant newPartecipant = new Partecipant(
-                        partecipantId,
-                        events
-                );
-                partecipantsAccount.add(newPartecipant);
-            }else {
-                ArrayList<Event> events = new ArrayList<>(partecipant.getEvents());
-                events.add(event);
-                partecipant.setEvents(events);
-                partecipantsAccount.add(partecipant);
+    // Correctly build list of partecipants and update join table via Event owning side
+    @Transactional
+    public List<Partecipant> addPartecipants(List<Long> partecipantIds, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        List<Partecipant> added = new ArrayList<>();
+        for (Long id : partecipantIds) {
+            Partecipant p = partecipantsRepository.findById(id)
+                    .orElseGet(() -> {
+                        Partecipant newP = new Partecipant();
+                        newP.setMagicEventTag(id);
+                        return partecipantsRepository.save(newP);
+                    });
+            if (!event.getPartecipants().contains(p)) {
+                event.getPartecipants().add(p);
             }
+            added.add(p);
         }
-        return partecipantsAccount;
+        eventsRepository.save(event);
+        return added;
     }
 }
