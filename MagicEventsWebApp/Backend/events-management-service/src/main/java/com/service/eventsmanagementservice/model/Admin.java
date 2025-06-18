@@ -12,7 +12,7 @@ public class Admin {
     private Long admin_id;
 
     @ManyToOne
-    @JoinColumn(name = "magic_events_tag")
+    @JoinColumn(name = "magic_events_tag", unique = true)
     private Partecipant user;
 
     @ManyToMany(mappedBy = "admins")

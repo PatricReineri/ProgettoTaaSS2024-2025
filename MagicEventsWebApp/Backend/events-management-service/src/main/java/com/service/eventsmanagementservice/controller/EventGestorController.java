@@ -1,6 +1,7 @@
 package com.service.eventsmanagementservice.controller;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
+import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class EventGestorController {
 
     @PostMapping("/create")
     public ResponseEntity<Long> createEvent(@RequestBody EventDTO eventDTO) {
+        for(Long partecipantId : eventDTO.getPartecipants()){
+            if(eventDTO.getAdmins().contains(partecipantId)){
+                eventDTO.getPartecipants().remove(partecipantId);
+            }
+        }
         if(eventDTO.getEnding().isAfter(eventDTO.getStarting())) {
             Long eventId = eventGestorService.create(eventDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(eventId);

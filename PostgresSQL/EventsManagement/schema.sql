@@ -6,7 +6,7 @@ CREATE TABLE partecipants (
 -- Tabella admin (associati agli utenti)
 CREATE TABLE admins (
     admin_id BIGINT PRIMARY KEY,
-    magic_events_tag BIGINT,
+    magic_events_tag BIGINT UNIQUE,
     FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );
 

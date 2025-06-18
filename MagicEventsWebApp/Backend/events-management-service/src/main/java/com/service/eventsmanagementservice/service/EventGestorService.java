@@ -83,41 +83,32 @@ public class EventGestorService {
                 eventDTO.getCreator()
         );
         event = eventsRepository.save(event);
-        List<Admin> admins = addAdmins(eventDTO.getAdmins(), event.getEventId());
-
-        event.setAdmins(admins);
-
-        eventsRepository.save(event);
-
+        addAdmins(eventDTO.getAdmins(), event.getEventId());
         return event.getEventId();
     }
 
+    @Transactional
     public List<Admin> addAdmins(List<Long> admins, Long eventId){
         List<Partecipant> partecipantList = addPartecipants(new ArrayList<>(admins), eventId);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        ArrayList<Admin> saveAdmin = new ArrayList<>();
-        for (Partecipant adminAccount : partecipantList) {
-            ArrayList<Event> events = new ArrayList<>();
-            if(adminsRepository.existsByUser(adminAccount)){
-                Admin adminUpdate = adminsRepository.findByUser(adminAccount);
-                if(!adminUpdate.getEvents().contains(event.getEventId())) {
-                    adminUpdate.getEvents().add(event);
-                }
-                saveAdmin.add(adminUpdate);
-            }else{
-                events.add(event);
-                Long newAdminId = adminAccount.getMagicEventTag() + eventId;
-                Admin newAdmin = new Admin(
-                        newAdminId,
-                        adminAccount,
-                        events
-                );
-                saveAdmin.add(newAdmin);
+        ArrayList<Admin> newAdmins = new ArrayList<>();
+        for (Partecipant partecipant : partecipantList) {
+            Admin admin = adminsRepository.findById(partecipant.getMagicEventTag())
+                    .orElseGet(() -> {
+                        Admin newAdmin = new Admin();
+                        newAdmin.setAdminId(partecipant.getMagicEventTag());
+                        newAdmin.setUser(partecipant);
+                        newAdmin.setEvents(new ArrayList<>());
+                        return adminsRepository.saveAndFlush(newAdmin);
+                    });
+            if (!event.getAdmins().contains(admin)) {
+                event.getAdmins().add(admin);
             }
+            newAdmins.add(admin);
         }
-        adminsRepository.saveAll(saveAdmin);
-        return saveAdmin;
+        eventsRepository.save(event);
+        return newAdmins;
     }
 
     @Transactional
@@ -130,7 +121,7 @@ public class EventGestorService {
                     .orElseGet(() -> {
                         Partecipant newP = new Partecipant();
                         newP.setMagicEventTag(id);
-                        return partecipantsRepository.save(newP);
+                        return partecipantsRepository.saveAndFlush(newP);
                     });
             if (!event.getPartecipants().contains(partecipant)) {
                 event.getPartecipants().add(partecipant);
@@ -175,7 +166,6 @@ public class EventGestorService {
             rabbitTemplate.convertAndSend(eventId);
             return true;
         }catch (Exception e){
-            log.error(e.getMessage());
             return false;
         }
     }

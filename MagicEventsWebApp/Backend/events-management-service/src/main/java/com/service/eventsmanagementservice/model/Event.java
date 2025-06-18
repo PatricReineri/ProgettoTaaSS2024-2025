@@ -25,7 +25,7 @@ public class Event {
 
     private String location;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id"),
@@ -33,7 +33,7 @@ public class Event {
     )
     private List<Partecipant> partecipants = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "event_admins",
             joinColumns = @JoinColumn(name = "event_id"),
