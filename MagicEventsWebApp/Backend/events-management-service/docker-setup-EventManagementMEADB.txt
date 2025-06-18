@@ -1,5 +1,5 @@
 docker run --hostname=121282d3a85f 
---env=POSTGRES_DB=EventManagementMEADB
+--env=POSTGRES_DB=EventsManagementMEADB
 --env=POSTGRES_USER=user 
 --env=POSTGRES_PASSWORD=password 
 --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/17/bin 

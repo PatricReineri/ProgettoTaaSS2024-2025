@@ -2,50 +2,51 @@ package com.service.eventsmanagementservice.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "admins")
 public class Admin {
     @Id
-    private String admin_id;
+    private Long admin_id;
 
     @ManyToOne
     @JoinColumn(name = "magic_events_tag")
-    private User user;
+    private Partecipant user;
 
     @ManyToMany(mappedBy = "admins")
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>(); ;
 
     public Admin() {}
 
-    public Admin(String adminId, User user, List<Event> events) {
+    public Admin(Long adminId, Partecipant user, List<Event> events) {
         this.admin_id = adminId;
         this.user = user;
         this.events = events;
     }
 
-    public String getAdmin_id() {
+    public Long getAdminId() {
         return admin_id;
     }
 
-    public void setAdmin_id(String id) {
+    public void setAdminId(Long id) {
         this.admin_id = id;
     }
 
-    public List<Event> getEvent() {
+    public List<Event> getEvents() {
         return events;
     }
-    public void setEvent(List<Event> events) {
+
+    public void setEvents(List<Event> events) {
         this.events = events;
     }
 
-    public User getUser() {
+    public Partecipant getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Partecipant user) {
         this.user = user;
     }
 }

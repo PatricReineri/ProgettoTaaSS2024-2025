@@ -2,6 +2,7 @@ package com.service.eventsmanagementservice.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,12 +19,18 @@ public class Event {
     private String starting;
     @Column(nullable = false)
     private String ending;
+    @Column(nullable = false)
+    private Long creatorMagicEventsTag;
 
     private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "magic_events_tag")
-    private User creator;
+    @ManyToMany
+    @JoinTable(
+            name = "event_participants",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "magic_events_tag")
+    )
+    private List<Partecipant> partecipants = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -31,7 +38,7 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "admin_id")
     )
-    private List<Admin> admins;
+    private List<Admin> admins = new ArrayList<>(); ;
 
     public Event() {}
 
@@ -41,7 +48,8 @@ public class Event {
             String start,
             String end,
             String location,
-            User creator,
+            Long creator,
+            List<Partecipant> partecipants,
             List<Admin> admins
     ) {
       this.title = title;
@@ -49,8 +57,25 @@ public class Event {
       this.starting = start;
       this.ending = end;
       this.location = location;
-      this.creator = creator;
+      this.creatorMagicEventsTag = creator;
+      this.partecipants = partecipants;
       this.admins = admins;
+    }
+
+    public Event(
+            String title,
+            String description,
+            String start,
+            String end,
+            String location,
+            Long creator
+    ) {
+        this.title = title;
+        this.description = description;
+        this.starting = start;
+        this.ending = end;
+        this.location = location;
+        this.creatorMagicEventsTag = creator;
     }
 
     public Long getEventId() {
@@ -61,11 +86,11 @@ public class Event {
         return this.description;
     }
 
-    public String getEnd() {
+    public String getEnding() {
         return this.ending;
     }
 
-    public String getStart() {
+    public String getStarting() {
         return this.starting;
     }
 
@@ -77,12 +102,16 @@ public class Event {
         return this.location;
     }
 
-    public User getCreator() {
-        return this.creator;
+    public Long getCreator() {
+        return this.creatorMagicEventsTag;
     }
 
     public List<Admin> getAdmins() {
         return this.admins;
+    }
+
+    public List<Partecipant> getPartecipants() {
+        return this.partecipants;
     }
 
     public void setEventId(Long event_id) {
@@ -93,11 +122,11 @@ public class Event {
         this.description = description;
     }
 
-    public void setEnd(String end) {
+    public void setEnding(String end) {
         this.ending = end;
     }
 
-    public void setStart(String start) {
+    public void setStarting(String start) {
         this.starting = start;
     }
 
@@ -109,11 +138,15 @@ public class Event {
         this.location = location;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreator(Long creator) {
+        this.creatorMagicEventsTag = creator;
     }
 
     public void setAdmins(List<Admin> admins) {
         this.admins = admins;
+    }
+
+    public void setPartecipants(List<Partecipant> partecipants) {
+        this.partecipants = partecipants;
     }
 }

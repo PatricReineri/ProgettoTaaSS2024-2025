@@ -1,10 +1,9 @@
 package com.service.eventsmanagementservice.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventDTO {
-    private Long id;
-
     private String title;
 
     private String description;
@@ -18,8 +17,9 @@ public class EventDTO {
     /** User magic_events_tag */
     private Long creator;
 
-    /** User magic_events_tag */
-    private List<Long> admins;
+    private ArrayList<Long> partecipants;
+
+    private ArrayList<Long> admins;
 
     public EventDTO() {}
 
@@ -30,7 +30,8 @@ public class EventDTO {
             String end,
             String location,
             Long creator,
-            List<Long> admins
+            ArrayList<Long> partecipants,
+            ArrayList<Long> admins
     ) {
         this.title = title;
         this.description = description;
@@ -38,42 +39,19 @@ public class EventDTO {
         this.ending = end;
         this.location = location;
         this.creator = creator;
+        this.partecipants = partecipants;
         this.admins = admins;
-    }
-
-    public EventDTO(
-            Long id,
-            String title,
-            String description,
-            String start,
-            String end,
-            String location,
-            Long creator,
-            List<Long> admins
-    ) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.starting = start;
-        this.ending = end;
-        this.location = location;
-        this.creator = creator;
-        this.admins = admins;
-    }
-
-    public Long getId() {
-        return this.id;
     }
 
     public String getDescription() {
         return this.description;
     }
 
-    public String getEnd() {
+    public String getEnding() {
         return this.ending;
     }
 
-    public String getStart() {
+    public String getStarting() {
         return this.starting;
     }
 
@@ -89,23 +67,23 @@ public class EventDTO {
         return this.creator;
     }
 
-    public List<Long> getAdmins() {
-        return this.admins;
+    public List<Long> getPartecipants() {
+        return this.partecipants;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public ArrayList<Long> getAdmins() {
+        return this.admins;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setEnd(String end) {
+    public void setEnding(String end) {
         this.ending = end;
     }
 
-    public void setStart(String start) {
+    public void setStarting(String start) {
         this.starting = start;
     }
 
@@ -121,8 +99,12 @@ public class EventDTO {
         this.creator = creator;
     }
 
-    public void setAdmins(List<Long> admins) {
+    public void setAdmins(ArrayList<Long> admins) {
         this.admins = admins;
+    }
+
+    public void setPartecipants(ArrayList<Long> partecipants) {
+        this.partecipants = partecipants;
     }
 }
 

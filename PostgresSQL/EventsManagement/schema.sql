@@ -1,8 +1,13 @@
 -- Tabella utenti
-CREATE TABLE user_info (
-    magic_events_tag SERIAL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE
+CREATE TABLE partecipants (
+    magic_events_tag SERIAL PRIMARY KEY
+);
+
+-- Tabella admin (associati agli utenti)
+CREATE TABLE admins (
+    admin_id BIGINT PRIMARY KEY,
+    magic_events_tag BIGINT,
+    FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );
 
 -- Tabella eventi
@@ -14,21 +19,23 @@ CREATE TABLE event_info (
     ending VARCHAR(50) NOT NULL,
     location VARCHAR(255),
     magic_events_tag BIGINT,
-    FOREIGN KEY (magic_events_tag) REFERENCES user_info(magic_events_tag)
+    FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );
 
--- Tabella admin
-CREATE TABLE admins (
-    admin_id VARCHAR(64) PRIMARY KEY,
+-- Tabella di join eventi-user partecipants
+CREATE TABLE event_participants (
+    event_id BIGINT,
     magic_events_tag BIGINT,
-    FOREIGN KEY (magic_events_tag) REFERENCES user_info(magic_events_tag)
+    PRIMARY KEY (event_id, magic_events_tag),
+    FOREIGN KEY (event_id) REFERENCES event_info(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );
 
--- Tabella di join ManyToMany tra eventi e admin
+-- Tabella di join eventi-admins
 CREATE TABLE event_admins (
     event_id BIGINT,
-    admin_id VARCHAR(64),
+    admin_id BIGINT,
     PRIMARY KEY (event_id, admin_id),
-    FOREIGN KEY (event_id) REFERENCES event_info(event_id),
-    FOREIGN KEY (admin_id) REFERENCES admins(admin_id)
+    FOREIGN KEY (event_id) REFERENCES event_info(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES admins(admin_id) ON DELETE CASCADE
 );

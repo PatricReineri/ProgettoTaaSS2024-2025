@@ -4,7 +4,7 @@ import com.service.eventsmanagementservice.dto.EventDTO;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/gestion")
@@ -20,13 +20,26 @@ public class EventGestorController {
         return eventGestorService.create(eventDTO);
     }
 
-    /*@GetMapping("/addadmins")
-    public String addNewAdmins(@RequestBody List<String> admins) {
-        return eventGestorService.addAdmins(admins);
-    }*/
+    @GetMapping("/updateadmins")
+    public String addNewAdmins(
+            @RequestParam("admins") ArrayList<Long> admins,
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("creatorId") Long creatorId
+    ) {
+        return eventGestorService.updateEventAdmins(admins, eventId, creatorId);
+    }
 
-    /*@PostMapping("/geteventinfo")
+    @GetMapping("/addpartecipants")
+    public String addNewPartecipants(
+            @RequestParam("partecipants") ArrayList<Long> partecipants,
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("creatorId") Long creatorId
+            ) {
+        return eventGestorService.updateEventPartecipants(partecipants, eventId, creatorId);
+    }
+
+    @PostMapping("/geteventinfo")
     public EventDTO getEventInfo(@RequestParam("eventId") Long eventId) {
-        return eventGestorService.getEventInfo(admins);
-    }*/
+        return eventGestorService.getEventInfo(eventId);
+    }
 }
