@@ -1,5 +1,6 @@
 package com.service.eventsmanagementservice.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +9,9 @@ public class EventDTO {
 
     private String description;
 
-    private String starting;
+    private LocalDateTime starting;
 
-    private String ending;
+    private LocalDateTime ending;
 
     private String location;
 
@@ -26,8 +27,8 @@ public class EventDTO {
     public EventDTO(
             String title,
             String description,
-            String start,
-            String end,
+            LocalDateTime start,
+            LocalDateTime end,
             String location,
             Long creator,
             ArrayList<Long> partecipants,
@@ -47,11 +48,11 @@ public class EventDTO {
         return this.description;
     }
 
-    public String getEnding() {
+    public LocalDateTime getEnding() {
         return this.ending;
     }
 
-    public String getStarting() {
+    public LocalDateTime getStarting() {
         return this.starting;
     }
 
@@ -79,11 +80,11 @@ public class EventDTO {
         this.description = description;
     }
 
-    public void setEnding(String end) {
+    public void setEnding(LocalDateTime end) {
         this.ending = end;
     }
 
-    public void setStarting(String start) {
+    public void setStarting(LocalDateTime start) {
         this.starting = start;
     }
 

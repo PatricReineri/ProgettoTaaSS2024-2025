@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/*@Configuration
+@Configuration
 public class RabbitMQConfig {
     @Value("${spring.rabbitmq.exchange.event}")
     private String exchangeName;
@@ -33,4 +33,4 @@ public class RabbitMQConfig {
                 .with(deleteEventRoutingKey)
                 .noargs();
     }
-}*/
+}

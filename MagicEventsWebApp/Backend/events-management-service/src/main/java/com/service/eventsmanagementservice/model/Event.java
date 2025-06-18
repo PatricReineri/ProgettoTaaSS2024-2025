@@ -2,6 +2,7 @@ package com.service.eventsmanagementservice.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +17,9 @@ public class Event {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    private String starting;
+    private LocalDateTime starting;
     @Column(nullable = false)
-    private String ending;
+    private LocalDateTime ending;
     @Column(nullable = false)
     private Long creatorMagicEventsTag;
 
@@ -45,8 +46,8 @@ public class Event {
     public Event(
             String title,
             String description,
-            String start,
-            String end,
+            LocalDateTime start,
+            LocalDateTime end,
             String location,
             Long creator,
             List<Partecipant> partecipants,
@@ -65,8 +66,8 @@ public class Event {
     public Event(
             String title,
             String description,
-            String start,
-            String end,
+            LocalDateTime start,
+            LocalDateTime end,
             String location,
             Long creator
     ) {
@@ -86,11 +87,11 @@ public class Event {
         return this.description;
     }
 
-    public String getEnding() {
+    public LocalDateTime getEnding() {
         return this.ending;
     }
 
-    public String getStarting() {
+    public LocalDateTime getStarting() {
         return this.starting;
     }
 
@@ -122,11 +123,11 @@ public class Event {
         this.description = description;
     }
 
-    public void setEnding(String end) {
+    public void setEnding(LocalDateTime end) {
         this.ending = end;
     }
 
-    public void setStarting(String start) {
+    public void setStarting(LocalDateTime start) {
         this.starting = start;
     }
 

@@ -15,8 +15,8 @@ CREATE TABLE event_info (
     event_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
-    starting VARCHAR(50) NOT NULL,
-    ending VARCHAR(50) NOT NULL,
+    starting TIMESTAMP NOT NULL,
+    ending TIMESTAMP NOT NULL,
     location VARCHAR(255),
     magic_events_tag BIGINT,
     FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE

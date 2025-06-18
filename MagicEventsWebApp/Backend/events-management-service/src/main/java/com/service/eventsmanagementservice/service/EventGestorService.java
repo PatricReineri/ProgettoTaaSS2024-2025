@@ -11,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,20 +25,33 @@ public class EventGestorService {
     AdminsRepository adminsRepository;
     @Autowired
     PartecipantsRepository partecipantsRepository;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public String updateEventAdmins(ArrayList<Long> admins, Long eventId, Long creatorId) {
-        // TODO: check if the request is send by creatorId else return "Error"
-        addAdmins(admins, eventId);
-        return "Success";
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            addAdmins(admins, eventId);
+            return "Success";
+        }else{
+            return "Error";
+        }
     }
     public String updateEventPartecipants(ArrayList<Long> partecipants, Long eventId, Long creatorId) {
-        // TODO: check if the request is send by creatorId else return "Error"
-        addPartecipants(partecipants, eventId);
-        return "Success";
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            addPartecipants(partecipants, eventId);
+            return "Success";
+        }else {
+            return "Error";
+        }
     }
 
     public EventDTO getEventInfo(Long eventId) {
-        Event event = eventsRepository.findById(eventId).orElse(null);
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         ArrayList<Long> admins = new ArrayList<>();
         for (Admin admin : event.getAdmins()) {
             admins.add(admin.getAdminId());
@@ -79,7 +92,6 @@ public class EventGestorService {
         return event.getEventId();
     }
 
-    // Correctly build of list of admins
     public List<Admin> addAdmins(List<Long> admins, Long eventId){
         List<Partecipant> partecipantList = addPartecipants(new ArrayList<>(admins), eventId);
         Event event = eventsRepository.findById(eventId)
@@ -89,9 +101,9 @@ public class EventGestorService {
             ArrayList<Event> events = new ArrayList<>();
             if(adminsRepository.existsByUser(adminAccount)){
                 Admin adminUpdate = adminsRepository.findByUser(adminAccount);
-                events = new ArrayList<>(adminUpdate.getEvents());
-                events.add(event);
-                adminUpdate.setEvents(events);
+                if(!adminUpdate.getEvents().contains(event.getEventId())) {
+                    adminUpdate.getEvents().add(event);
+                }
                 saveAdmin.add(adminUpdate);
             }else{
                 events.add(event);
@@ -108,25 +120,63 @@ public class EventGestorService {
         return saveAdmin;
     }
 
-    // Correctly build list of partecipants and update join table via Event owning side
     @Transactional
     public List<Partecipant> addPartecipants(List<Long> partecipantIds, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         List<Partecipant> added = new ArrayList<>();
         for (Long id : partecipantIds) {
-            Partecipant p = partecipantsRepository.findById(id)
+            Partecipant partecipant = partecipantsRepository.findById(id)
                     .orElseGet(() -> {
                         Partecipant newP = new Partecipant();
                         newP.setMagicEventTag(id);
                         return partecipantsRepository.save(newP);
                     });
-            if (!event.getPartecipants().contains(p)) {
-                event.getPartecipants().add(p);
+            if (!event.getPartecipants().contains(partecipant)) {
+                event.getPartecipants().add(partecipant);
             }
-            added.add(p);
+            added.add(partecipant);
         }
         eventsRepository.save(event);
         return added;
+    }
+
+    public String modifyEvent(EventDTO eventDTO, Long creatorId, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            event.setTitle(eventDTO.getTitle());
+            event.setDescription(eventDTO.getDescription());
+            event.setStarting(eventDTO.getStarting());
+            event.setEnding(eventDTO.getEnding());
+            event.setLocation(eventDTO.getLocation());
+            eventsRepository.save(event);
+            return "Success";
+        }else {
+            return "Error";
+        }
+    }
+
+    public boolean isPartecipant(Long magicEventsTag, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        return event.getPartecipants().contains(magicEventsTag);
+    }
+
+    public boolean isAdmin(Long magicEventsTag, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        return event.getAdmins().contains(magicEventsTag) || event.getCreator().equals(magicEventsTag);
+    }
+
+    public boolean deleteEvent(Long eventId) {
+        try{
+            eventsRepository.deleteById(eventId);
+            rabbitTemplate.convertAndSend(eventId);
+            return true;
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return false;
+        }
     }
 }
