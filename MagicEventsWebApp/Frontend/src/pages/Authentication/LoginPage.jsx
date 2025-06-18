@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import GoogleButton from '../components/buttons/GoogleButton';
+import GoogleButton from '../../components/buttons/GoogleButton';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
-import ForgotPassword from '../components/buttons/ForgotPassword';
-import Button from '../components/buttons/Button';
+import { useAuth } from '../../auth/AuthContext';
+import ForgotPassword from '../../components/buttons/ForgotPassword';
+import Button from '../../components/buttons/Button';
 import clsx from 'clsx';
+import { login } from '../../api/authentication';
 
 function LoginPage() {
 	const navigate = useNavigate();
@@ -38,28 +39,12 @@ function LoginPage() {
 	const handleLogin = async (e) => {
 		e.preventDefault();
 
-		const params = new URLSearchParams();
-		for (const key in formData) {
-			params.append(key, formData[key]);
-		}
-
-		try {
-			const res = await fetch('https://localhost:8443/login/form', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: params.toString(),
-			});
-
-			if (!res.ok) throw new Error('Credential invalid');
-			const data = await res.json();
-			console.log('Success:', data);
-			setUser(data);
-			navigate('/userprofile');
-		} catch (err) {
-			console.error('Error:', err.message);
-		}
+		const res = await login(formData);
+		if (!res.ok) throw new Error('Credential invalid');
+		const data = await res.json();
+		console.log('Success:', data);
+		setUser(data);
+		navigate('/userprofile');
 	};
 
 	return (

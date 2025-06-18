@@ -1,4 +1,4 @@
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 import { useState } from 'react';
 
 function UserEditPage() {
@@ -57,7 +57,7 @@ function UserEditPage() {
 						required
 					/>
 				</div>
-                <div>
+				<div>
 					<label className="block text-sm font-medium mb-1">Name</label>
 					<input
 						type="text"

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from './Button';
+import { forgotPasswordRequest } from '../../api/authentication';
 
 function ForgotPassword() {
 	const [email, setEmail] = useState('');
@@ -12,13 +13,7 @@ function ForgotPassword() {
 		setLoading(true);
 
 		try {
-			const res = await fetch('https://localhost:8443/login/generateresetpasswordlink', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: new URLSearchParams({
-					email: email,
-				}).toString(),
-			});
+			const res = await forgotPasswordRequest(email);
 			const message = await res.text();
 			if (!res.ok) throw new Error('email not found');
 			if (message === 'Error') throw new Error('internat error');

@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import UserProfilePage from './pages/UserProfilePage';
-import GoogleCallbackPage from './pages/GoogleCallbackPage';
-import ChangePasswordPage from './pages/ChangePasswordPage';
-import ModifyUserValuePage from './pages/ModifyUserValuePage';
+import LoginPage from './pages/Authentication/LoginPage';
+import RegisterPage from './pages/Authentication/RegisterPage';
+import UserProfilePage from './pages/UserProfile/UserProfilePage';
+import GoogleCallbackPage from './pages/Authentication/GoogleCallbackPage';
+import ChangePasswordPage from './pages/Authentication/ChangePasswordPage';
+import ModifyUserValuePage from './pages/UserProfile/ModifyUserValuePage';
 import HomePage from './pages/HomePage';
 import NavBar from './components/navigation/NavBar';
+import BoardPage from './pages/Event/Board/BoardPage';
 
 function App() {
 	useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
 					<Route path="/googlecallback" element={<GoogleCallbackPage />} />
 					<Route path="/changepassword" element={<ChangePasswordPage />} />
 					<Route path="/modifyuser" element={<ModifyUserValuePage />} />
+					<Route path="/:eventId/board" element={<BoardPage />} />
 				</Routes>
 			</div>
 		</Router>

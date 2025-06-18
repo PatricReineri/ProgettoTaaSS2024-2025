@@ -8,3 +8,9 @@ body {
 .backgroundLogin {
 	background-image: url('./img/background.jpg');
 }
+
+.backgroundHome {
+	background-image: url('./img/Hero.jpg');
+	background-size: cover;
+	background-position: center;
+}
