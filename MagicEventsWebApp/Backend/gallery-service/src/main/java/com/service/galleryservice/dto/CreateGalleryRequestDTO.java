@@ -10,5 +10,7 @@ public class CreateGalleryRequestDTO {
 
     @NonNull
     private String title;
-}
 
+    @NonNull
+    private Long userMagicEventsTag;
+}

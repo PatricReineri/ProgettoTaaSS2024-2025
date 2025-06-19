@@ -1,12 +1,11 @@
 package com.service.galleryservice.service;
 
-import com.service.galleryservice.dto.AddNewImageRequestDTO;
 import com.service.galleryservice.dto.CreateGalleryRequestDTO;
 import com.service.galleryservice.dto.GalleryDTO;
 import com.service.galleryservice.dto.ImageDTO;
 import com.service.galleryservice.dto.ImageUserLikeDTO;
+import com.service.galleryservice.exception.UnauthorizedException;
 import com.service.galleryservice.model.Gallery;
-import com.service.galleryservice.model.Image;
 import com.service.galleryservice.repository.GalleryRepository;
 import com.service.galleryservice.repository.ImageRepository;
 import com.service.galleryservice.repository.ImageUserLikeRepository;
@@ -14,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
@@ -24,14 +24,15 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final ImageRepository imageRepository;
     private final ImageUserLikeRepository imageUserLikeRepository;
+    private final WebClient eventManagementWebClient;
 
     public void createGallery(CreateGalleryRequestDTO request) {
+        if (!authorizeCreateGallery(request.getEventID(), request.getUserMagicEventsTag())) {
+            throw new UnauthorizedException("Not authorized to create gallery for event ID: " + request.getEventID());
+        }
         Gallery gallery = new Gallery();
-        log.error("1)-----Gallery object created----: {}", gallery);
         gallery.setEventID(request.getEventID());
-        log.error("2)-----Gallery set eventID----: {}", gallery.getEventID());
         gallery.setTitle(request.getTitle());
-        log.error("3)-----Gallery set title----: {}", gallery.getTitle());
         galleryRepository.save(gallery);
     }
 
@@ -68,6 +69,63 @@ public class GalleryService {
                 .title(gallery.getTitle())
                 .images(images)
                 .build();
+    }
+
+
+    public GalleryDTO getMostPopularImages(Long eventID, int pageNumber, int pageSize) {
+        log.info("Fetching most popular images for event ID: {}", eventID);
+        Gallery gallery = galleryRepository.findByEventID(eventID);
+        if (gallery == null) {
+            log.warn("Gallery not found for event ID: {}", eventID);
+            return null;
+        }
+
+        List<ImageDTO> images = imageRepository.findByGallery(gallery)
+                .stream()
+                .sorted((i1, i2) -> Integer.compare(
+                        imageUserLikeRepository.countByImage(i2),
+                        imageUserLikeRepository.countByImage(i1)))
+                .skip((long) pageNumber * pageSize)
+                .limit(pageSize)
+                .map(img -> ImageDTO.builder()
+                        .id(img.getId())
+                        .title(img.getTitle())
+                        .base64Image(img.getBase64Image())
+                        .dateTime(img.getDateTime())
+                        .uploadedBy(img.getUploadedBy())
+                        .imageUserLikes(
+                                imageUserLikeRepository.findByImage(img).stream()
+                                        .map(uil -> new ImageUserLikeDTO(uil.getUserMagicEventsTag()))
+                                        .toList()
+                        )
+                        .build()
+                )
+                .toList();
+
+        return GalleryDTO.builder()
+                .eventID(gallery.getEventID())
+                .title(gallery.getTitle())
+                .images(images)
+                .build();
+    }
+
+    private boolean authorizeCreateGallery(Long eventID, Long userMagicEventsTag) {
+        log.info("Authorizing gallery creation for event ID: {} by user: {}", eventID, userMagicEventsTag);
+        try {
+            Boolean isAdmin = eventManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/isAdmin")
+                            .queryParam("partecipantId", userMagicEventsTag)
+                            .queryParam("eventId", eventID)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            return Boolean.TRUE.equals(isAdmin);
+        } catch (Exception e) {
+            log.error("Error authorizing gallery creation for event ID {} by user {}: {}", eventID, userMagicEventsTag, e.getMessage());
+            return false;
+        }
     }
 
     public Boolean isGalleryExists(Long eventID) {
