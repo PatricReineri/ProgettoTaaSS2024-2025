@@ -272,9 +272,11 @@ public class EventGestorService {
 
     public ArrayList<Long> getPartecipantsId(List<String> partecipants) {
         // TODO: add request for user-management
+        return null;
     }
 
     public ArrayList<Long> getAdminsId(List<String> partecipants) {
         // TODO: add request for user-management
+        return null;
     }
 }

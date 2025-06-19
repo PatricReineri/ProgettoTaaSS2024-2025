@@ -12,6 +12,7 @@ public class Partecipant {
     @Column(name = "magic_events_tag")
     private Long magicEventTag;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     @ManyToMany(mappedBy = "partecipants")
