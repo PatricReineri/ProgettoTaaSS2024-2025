@@ -12,6 +12,8 @@ public class Partecipant {
     @Column(name = "magic_events_tag")
     private Long magicEventTag;
 
+    private String email;
+
     @ManyToMany(mappedBy = "partecipants")
     private List<Event> events = new ArrayList<>();
 
@@ -39,5 +41,13 @@ public class Partecipant {
 
     public void setEvents(List<Event> events) {
         this.events = events;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

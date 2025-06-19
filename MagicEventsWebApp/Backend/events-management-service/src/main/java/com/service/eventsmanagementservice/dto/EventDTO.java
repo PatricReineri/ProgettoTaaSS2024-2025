@@ -18,9 +18,9 @@ public class EventDTO {
     /** User magic_events_tag */
     private Long creator;
 
-    private ArrayList<Long> partecipants;
+    private ArrayList<String> partecipants;
 
-    private ArrayList<Long> admins;
+    private ArrayList<String> admins;
 
     public EventDTO() {}
 
@@ -31,8 +31,8 @@ public class EventDTO {
             LocalDateTime end,
             String location,
             Long creator,
-            ArrayList<Long> partecipants,
-            ArrayList<Long> admins
+            ArrayList<String> partecipants,
+            ArrayList<String> admins
     ) {
         this.title = title;
         this.description = description;
@@ -68,11 +68,11 @@ public class EventDTO {
         return this.creator;
     }
 
-    public List<Long> getPartecipants() {
+    public List<String> getPartecipants() {
         return this.partecipants;
     }
 
-    public ArrayList<Long> getAdmins() {
+    public List<String> getAdmins() {
         return this.admins;
     }
 
@@ -100,11 +100,11 @@ public class EventDTO {
         this.creator = creator;
     }
 
-    public void setAdmins(ArrayList<Long> admins) {
+    public void setAdmins(ArrayList<String> admins) {
         this.admins = admins;
     }
 
-    public void setPartecipants(ArrayList<Long> partecipants) {
+    public void setPartecipants(ArrayList<String> partecipants) {
         this.partecipants = partecipants;
     }
 }

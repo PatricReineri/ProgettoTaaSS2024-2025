@@ -28,7 +28,7 @@ public class EventGestorService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public String updateEventAdmins(ArrayList<Long> admins, Long eventId, Long creatorId) {
+    public String updateEventAdmins(ArrayList<String> admins, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         if(event.getCreator().equals(creatorId)) {
@@ -38,7 +38,7 @@ public class EventGestorService {
             return "Error";
         }
     }
-    public String updateEventPartecipants(ArrayList<Long> partecipants, Long eventId, Long creatorId) {
+    public String updateEventPartecipants(ArrayList<String> partecipants, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         if(event.getCreator().equals(creatorId)) {
@@ -52,13 +52,13 @@ public class EventGestorService {
     public EventDTO getEventInfo(Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        ArrayList<Long> admins = new ArrayList<>();
+        ArrayList<String> admins = new ArrayList<>();
         for (Admin admin : event.getAdmins()) {
-            admins.add(admin.getAdminId());
+            admins.add(admin.getUser().getEmail());
         }
-        ArrayList<Long> partecipants = new ArrayList<>();
+        ArrayList<String> partecipants = new ArrayList<>();
         for (Partecipant partecipant : event.getPartecipants()) {
-            partecipants.add(partecipant.getMagicEventTag());
+            partecipants.add(partecipant.getEmail());
         }
         return new EventDTO(
                 event.getTitle(),
@@ -74,7 +74,7 @@ public class EventGestorService {
 
     @Transactional
     public Long create(EventDTO eventDTO) {
-        // Ensure creator exists as a Partecipant
+        // Ensure creator exists as a partecipant
         Long creatorId = eventDTO.getCreator();
         partecipantsRepository.findById(creatorId)
             .orElseGet(() -> {
@@ -96,8 +96,14 @@ public class EventGestorService {
     }
 
     @Transactional
-    public List<Admin> addAdmins(List<Long> admins, Long eventId){
-        List<Partecipant> partecipantList = addPartecipants(new ArrayList<>(admins), eventId);
+    public List<Admin> addAdmins(List<String> admins, Long eventId){
+        ArrayList<Long> adminIds = getAdminsId(admins);
+        return addAdminsWithId(adminIds, eventId);
+    }
+
+    @Transactional
+    public List<Admin> addAdminsWithId(List<Long> admins, Long eventId){
+        List<Partecipant> partecipantList = addPartecipantsWithId(new ArrayList<>(admins), eventId);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         ArrayList<Admin> newAdmins = new ArrayList<>();
@@ -120,7 +126,13 @@ public class EventGestorService {
     }
 
     @Transactional
-    public List<Partecipant> addPartecipants(List<Long> partecipantIds, Long eventId) {
+    public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
+        ArrayList<Long> partecipantIds = getPartecipantsId(partecipants);
+        return addPartecipantsWithId(partecipantIds, eventId);
+    }
+
+    @Transactional
+    public List<Partecipant> addPartecipantsWithId(List<Long> partecipantIds, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         List<Partecipant> added = new ArrayList<>();
@@ -156,25 +168,113 @@ public class EventGestorService {
         }
     }
 
-    public boolean isPartecipant(Long magicEventsTag, Long eventId) {
+    public boolean isPartecipant(String email, Long eventId) {
+        ArrayList<Long> partecipantsId = getPartecipantsId(List.of(email));
+        Long partecipantId = partecipantsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getPartecipants().contains(magicEventsTag);
+        return event.getPartecipants().contains(partecipantId);
     }
 
-    public boolean isAdmin(Long magicEventsTag, Long eventId) {
+    public boolean isAdmin(String email, Long eventId) {
+        ArrayList<Long> adminsId = getAdminsId(List.of(email));
+        Long adminId = adminsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getAdmins().contains(magicEventsTag) || event.getCreator().equals(magicEventsTag);
+        return event.getAdmins().contains(adminId) || event.getCreator().equals(adminId);
     }
 
-    public boolean deleteEvent(Long eventId) {
+    public boolean deleteEvent(Long eventId, Long creatorId) {
         try{
-            eventsRepository.deleteById(eventId);
-            rabbitTemplate.convertAndSend(eventId);
-            return true;
+            Event event = eventsRepository.findById(eventId)
+                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+            if(event.getCreator().equals(creatorId)) {
+                eventsRepository.deleteById(eventId);
+                rabbitTemplate.convertAndSend(eventId);
+                return true;
+            }else{
+                return false;
+            }
         }catch (Exception e){
             return false;
         }
+    }
+
+    public boolean isCreator(Long creatorId, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        return event.getCreator().equals(creatorId);
+    }
+
+    public List<EventDTO> getEventsCreated(Long creatorId) {
+        List<Event> myEvents = eventsRepository.findAll();
+        List<EventDTO> eventDTOs = new ArrayList<>();
+        for (Event event : myEvents) {
+            if(event.getCreator().equals(creatorId)) {
+                EventDTO eventDTO = new EventDTO();
+                eventDTO.setTitle(event.getTitle());
+                eventDTO.setDescription(event.getDescription());
+                eventDTO.setStarting(event.getStarting());
+                eventDTO.setEnding(event.getEnding());
+                eventDTO.setLocation(event.getLocation());
+                eventDTOs.add(eventDTO);
+            }
+        }
+        return eventDTOs;
+    }
+
+    public List<String> getAdminsForEvent(Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            return event.getAdmins().stream().map( admin ->
+                admin.getUser().getEmail()
+            ).toList();
+        }else{
+            return null;
+        }
+    }
+
+    public List<String> getPartecipantsForEvent(Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        return event.getPartecipants().stream().map( partecipant ->
+                partecipant.getEmail()
+        ).toList();
+    }
+
+    public List<Long> getEventId(Long creatorId, String title) {
+       List<Event> events = eventsRepository.findAll();
+       List<Long> eventIds = new ArrayList<>();
+       for (Event event : events) {
+           if(event.getCreator().equals(creatorId) && event.getTitle().equals(title)) {
+               eventIds.add(event.getEventId());
+           }
+       }
+       return eventIds;
+    }
+
+    public List<EventDTO> getEventPartecipated(Long partecipantId) {
+        Partecipant partecipant = partecipantsRepository.findById(partecipantId)
+                .orElseThrow(() -> new IllegalArgumentException("Partecipant not found: " + partecipantId));
+        List<EventDTO> eventDTOs = new ArrayList<>();
+        for (Event event : partecipant.getEvents()) {
+            EventDTO eventDTO = new EventDTO();
+            eventDTO.setTitle(event.getTitle());
+            eventDTO.setDescription(event.getDescription());
+            eventDTO.setStarting(event.getStarting());
+            eventDTO.setEnding(event.getEnding());
+            eventDTO.setLocation(event.getLocation());
+            eventDTOs.add(eventDTO);
+        }
+        return eventDTOs;
+    }
+
+    public ArrayList<Long> getPartecipantsId(List<String> partecipants) {
+        // TODO: add request for user-management
+    }
+
+    public ArrayList<Long> getAdminsId(List<String> partecipants) {
+        // TODO: add request for user-management
     }
 }

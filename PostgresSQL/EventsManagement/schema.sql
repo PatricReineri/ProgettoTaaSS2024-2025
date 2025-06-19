@@ -1,12 +1,13 @@
 -- Tabella utenti
 CREATE TABLE partecipants (
-    magic_events_tag SERIAL PRIMARY KEY
+    magic_events_tag SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE
 );
 
 -- Tabella admin (associati agli utenti)
 CREATE TABLE admins (
     admin_id BIGINT PRIMARY KEY,
-    magic_events_tag BIGINT UNIQUE,
+    magic_events_tag BIGINT,
     FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );
 

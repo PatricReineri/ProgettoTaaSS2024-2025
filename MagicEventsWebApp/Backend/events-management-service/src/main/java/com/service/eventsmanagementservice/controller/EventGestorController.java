@@ -1,6 +1,7 @@
 package com.service.eventsmanagementservice.controller;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
+import com.service.eventsmanagementservice.model.Admin;
 import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/gestion")
@@ -22,7 +24,8 @@ public class EventGestorController {
 
     @PostMapping("/create")
     public ResponseEntity<Long> createEvent(@RequestBody EventDTO eventDTO) {
-        for(Long partecipantId : eventDTO.getPartecipants()){
+        ArrayList<Long> partecipantIds = eventGestorService.getPartecipantsId(eventDTO.getPartecipants());
+        for(Long partecipantId : partecipantIds){
             if(eventDTO.getAdmins().contains(partecipantId)){
                 eventDTO.getPartecipants().remove(partecipantId);
             }
@@ -38,7 +41,7 @@ public class EventGestorController {
 
     @GetMapping("/updateadmins")
     public String addNewAdmins(
-            @RequestParam("admins") ArrayList<Long> admins,
+            @RequestParam("admins") ArrayList<String> admins,
             @RequestParam("eventId") Long eventId,
             @RequestParam("creatorId") Long creatorId
     ) {
@@ -47,7 +50,7 @@ public class EventGestorController {
 
     @GetMapping("/addpartecipants")
     public String addNewPartecipants(
-            @RequestParam("partecipants") ArrayList<Long> partecipants,
+            @RequestParam("partecipants") ArrayList<String> partecipants,
             @RequestParam("eventId") Long eventId,
             @RequestParam("creatorId") Long creatorId
             ) {
@@ -68,18 +71,48 @@ public class EventGestorController {
         return eventGestorService.modifyEvent(eventDTO, creatorId, eventId);
     }
 
-    @GetMapping("/isPartecipant")
-    public boolean isPartecipant(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId) {
-        return eventGestorService.isPartecipant(magicEventsTag, eventId);
+    @GetMapping("/ispartecipant")
+    public boolean isPartecipant(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId) {
+        return eventGestorService.isPartecipant(partecipant, eventId);
     }
 
-    @GetMapping("/isAdmin")
-    public boolean isAdmin(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId){
-        return eventGestorService.isAdmin(magicEventsTag, eventId);
+    @GetMapping("/isadmin")
+    public boolean isAdmin(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId){
+        return eventGestorService.isAdmin(partecipant, eventId);
+    }
+
+    @GetMapping("/iscreator")
+    public boolean isCreator(@RequestParam("creatorId") Long creatorId, @RequestParam("eventId") Long eventId){
+        return eventGestorService.isCreator(creatorId, eventId);
+    }
+
+    @PostMapping("/geteventslistc")
+    public List<EventDTO> getEventsCreated(@RequestParam("creatorId") Long creatorId){
+        return eventGestorService.getEventsCreated(creatorId);
+    }
+
+    @PostMapping("/geteventslistp")
+    public List<EventDTO> getEventPartecipated(@RequestParam("partecipantId") Long partecipantId){
+        return eventGestorService.getEventPartecipated(partecipantId);
+    }
+
+    @PostMapping("/geteventid")
+    public List<Long> getEventId(@RequestParam("creatorId") Long creatorId, @RequestParam("title") String title){
+        return eventGestorService.getEventId(creatorId, title);
+    }
+
+    @PostMapping("/getadminsforevent")
+    public List<String> getAdmins(@RequestParam("eventId") Long eventId, @RequestParam("creatorId") Long creatorId){
+        return eventGestorService.getAdminsForEvent(eventId, creatorId);
+    }
+
+    @PostMapping("/getpartecipantsforevent")
+    public List<String> getPartecipants(@RequestParam("eventId") Long eventId){
+        return eventGestorService.getPartecipantsForEvent(eventId);
     }
 
     @GetMapping("/delete")
-    public boolean deleteEvent(@RequestParam("eventId") Long eventId){
-        return eventGestorService.deleteEvent(eventId);
+    public boolean deleteEvent(@RequestParam("eventId") Long eventId, @RequestParam("creatorId") Long creatorId){
+        return eventGestorService.deleteEvent(eventId, creatorId);
     }
 }
