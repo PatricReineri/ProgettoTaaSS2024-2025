@@ -59,7 +59,7 @@ public class EventGestorController {
         return eventGestorService.getEventInfo(eventId);
     }
 
-    @GetMapping("/modify")
+    @PostMapping("/modify")
     public String modifyEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("creatorId") Long creatorId,

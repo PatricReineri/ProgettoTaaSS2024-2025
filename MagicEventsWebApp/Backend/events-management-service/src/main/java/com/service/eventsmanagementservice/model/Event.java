@@ -20,7 +20,7 @@ public class Event {
     private LocalDateTime starting;
     @Column(nullable = false)
     private LocalDateTime ending;
-    @Column(nullable = false)
+    @Column(name = "magic_events_tag", nullable = false)
     private Long creatorMagicEventsTag;
 
     private String location;
