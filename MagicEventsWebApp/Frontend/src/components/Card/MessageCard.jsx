@@ -4,7 +4,7 @@ const MessageCard = ({ message, isSendbyMe }) => {
 	return (
 		<div
 			className={clsx({
-				'  w-fit max-w-[32rem] p-4 rounded-4xl shadow-2xs  hover:shadow-2xl shadow-[#505458] ': true,
+				'my-2 w-fit max-w-[32rem] p-4 rounded-4xl shadow-2xs  hover:shadow-2xl shadow-[#505458] ': true,
 				'bg-[#EE0E51] text-white self-end rounded-br-none': isSendbyMe,
 				'bg-[#E4DCEF] text-[#363540] rounded-bl-none    ': !isSendbyMe,
 			})}
