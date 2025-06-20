@@ -4,13 +4,15 @@ public class CreateBoardRequestDTO {
     private Long eventID;
     private String title;
     private String description;
+    private Long userMagicEventsTag;
 
     public CreateBoardRequestDTO() {}
 
-    public CreateBoardRequestDTO(Long eventID, String title, String description) {
+    public CreateBoardRequestDTO(Long eventID, String title, String description, Long userMagicEventsTag) {
         this.eventID = eventID;
         this.title = title;
         this.description = description;
+        this.userMagicEventsTag = userMagicEventsTag;
     }
 
     public Long getEventID() { return eventID; }
@@ -21,4 +23,7 @@ public class CreateBoardRequestDTO {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public Long getUserMagicEventsTag() { return userMagicEventsTag; }
+    public void setUserMagicEventsTag(Long userMagicEventsTag) { this.userMagicEventsTag = userMagicEventsTag; }
 }

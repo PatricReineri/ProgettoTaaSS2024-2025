@@ -3,23 +3,30 @@ package com.service.boardservice.service;
 import com.service.boardservice.dto.BoardDTO;
 import com.service.boardservice.dto.BoardMessageDTO;
 import com.service.boardservice.dto.CreateBoardRequestDTO;
+import com.service.boardservice.exception.UnauthorizedException;
 import com.service.boardservice.model.Board;
 import com.service.boardservice.repository.BoardRepository;
 import com.service.boardservice.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
     private final MessageRepository messageRepository;
+    private final WebClient eventManagementWebClient;
 
-    public BoardService(BoardRepository boardRepository, MessageRepository messageRepository) {
+    public BoardService(BoardRepository boardRepository, MessageRepository messageRepository, WebClient eventManagementWebClient) {
         this.boardRepository = boardRepository;
         this.messageRepository = messageRepository;
+        this.eventManagementWebClient = eventManagementWebClient;
     }
 
     public void createBoard(CreateBoardRequestDTO request) {
+        if (!authorizeCreateBoard(request.getEventID(), request.getUserMagicEventsTag())) {
+            throw new UnauthorizedException("Not authorized to create board for event ID: " + request.getEventID());
+        }
         if (request.getEventID() == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
         }
@@ -36,7 +43,11 @@ public class BoardService {
      * fetch message filtered by page number and size, es. if page number is 1,
      * fetch messages from 0 to 20 (the last 20 messages written on the board
      */
-    public BoardDTO getBoard(Long eventID, int pageNumber, int pageSize) {
+    public BoardDTO getBoard(Long eventID, Long userMagicEventsTag, int pageNumber, int pageSize) {
+        if (!authorizeViewBoard(eventID, userMagicEventsTag)) {
+            throw new UnauthorizedException("Not authorized to view board for event ID: " + eventID);
+        }
+
         Board board = boardRepository.findByEventID(eventID);
         if (board == null) {
             return null;
@@ -75,5 +86,41 @@ public class BoardService {
         if (board != null) {
             boardRepository.delete(board); // Delete the board itself
         }
+    }
+
+    private boolean authorizeCreateBoard(Long eventID, Long userMagicEventsTag) {
+        try {
+            Boolean isAdmin = eventManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/isAdmin")
+                            .queryParam("partecipantId", userMagicEventsTag)
+                            .queryParam("eventId", eventID)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            //return Boolean.TRUE.equals(isAdmin);
+        } catch (Exception e) {
+            //return false;
+        }
+        return true; // Default to true for testing purposes
+    }
+
+    private boolean authorizeViewBoard(Long eventID, Long userMagicEventsTag) {
+        try {
+            Boolean isParticipant = eventManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/isParticipant")
+                            .queryParam("partecipantId", userMagicEventsTag)
+                            .queryParam("eventId", eventID)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            //return Boolean.TRUE.equals(isParticipant);
+        } catch (Exception e) {
+            //return false;
+        }
+        return true;
     }
 }

@@ -7,14 +7,16 @@ public class AddNewMessageRequestDTO {
     private String content;
     private String username;
     private LocalDateTime dateTime;
+    private Long userMagicEventsTag;
 
     public AddNewMessageRequestDTO() {}
 
-    public AddNewMessageRequestDTO(Long eventID, String content, String username, LocalDateTime dateTime) {
+    public AddNewMessageRequestDTO(Long eventID, String content, String username, LocalDateTime dateTime, Long userMagicEventsTag) {
         this.eventID = eventID;
         this.content = content;
         this.username = username;
         this.dateTime = dateTime;
+        this.userMagicEventsTag = userMagicEventsTag;
     }
 
     public Long getEventID() { return eventID; }
@@ -28,4 +30,7 @@ public class AddNewMessageRequestDTO {
 
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+
+    public Long getUserMagicEventsTag() { return userMagicEventsTag; }
+    public void setUserMagicEventsTag(Long userMagicEventsTag) { this.userMagicEventsTag = userMagicEventsTag; }
 }
