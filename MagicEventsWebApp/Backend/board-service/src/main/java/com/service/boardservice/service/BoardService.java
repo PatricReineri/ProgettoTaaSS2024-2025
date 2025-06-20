@@ -1,38 +1,32 @@
 package com.service.boardservice.service;
 
-import com.service.boardservice.dto.AddNewMessageRequestDTO;
 import com.service.boardservice.dto.BoardDTO;
 import com.service.boardservice.dto.BoardMessageDTO;
 import com.service.boardservice.dto.CreateBoardRequestDTO;
 import com.service.boardservice.model.Board;
-import com.service.boardservice.model.Message;
 import com.service.boardservice.repository.BoardRepository;
 import com.service.boardservice.repository.MessageRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class BoardService {
     private final BoardRepository boardRepository;
     private final MessageRepository messageRepository;
+
+    public BoardService(BoardRepository boardRepository, MessageRepository messageRepository) {
+        this.boardRepository = boardRepository;
+        this.messageRepository = messageRepository;
+    }
 
     public void createBoard(CreateBoardRequestDTO request) {
         if (request.getEventID() == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
         }
         Board board = new Board();
-        log.error("1)-----Board object created----: {}", board);
         board.setEventID(request.getEventID());
-        log.error("2)-----Board object created----: {}", board.toString());
         board.setTitle(request.getTitle());
-        log.error("3)-----Board object created----: {}", board.toString());
         board.setDescription(request.getDescription());
-        // log board object
-        log.error("4)-----Board object created----: {}", board.toString());
         boardRepository.save(board);
     }
 
@@ -43,10 +37,8 @@ public class BoardService {
      * fetch messages from 0 to 20 (the last 20 messages written on the board
      */
     public BoardDTO getBoard(Long eventID, int pageNumber, int pageSize) {
-        log.info("Fetching board for event ID: {}", eventID);
         Board board = boardRepository.findByEventID(eventID);
         if (board == null) {
-            log.warn("Board not found for event ID: {}", eventID);
             return null;
         }
 
@@ -65,29 +57,23 @@ public class BoardService {
                 )
                 .toList();
 
-        return BoardDTO.builder()
-                .eventID(board.getEventID())
-                .title(board.getTitle())
-                .description(board.getDescription())
-                .messages(messages)
-                .build();
+        return new BoardDTO(
+                board.getEventID(),
+                board.getTitle(),
+                board.getDescription(),
+                messages
+        );
     }
 
     public Boolean isBoardExists(Long eventID) {
-        log.info("Checking if board exists for event ID: {}", eventID);
         return boardRepository.findByEventID(eventID) != null;
     }
 
     @Transactional
     public void deleteBoard(Long eventID) {
-        log.info("Deleting board for event ID: {}", eventID);
         Board board = boardRepository.findByEventID(eventID);
         if (board != null) {
             boardRepository.delete(board); // Delete the board itself
-            log.info("Board and its messages deleted successfully for event ID: {}", eventID);
-        } else {
-            log.warn("No board found for event ID: {}", eventID);
         }
     }
-
 }

@@ -1,7 +1,5 @@
-# Usa un'immagine con Miniconda
 FROM continuumio/miniconda3
 
-# Crea una directory di lavoro
 WORKDIR /app
 
 # Copia i file nella directory di lavoro
