@@ -6,15 +6,7 @@ import MexssageList from '../../../components/Lists/List';
 
 const BoardPage = () => {
 	let board = document.getElementById('board');
-	const [messages, setMessages] = useState([
-		{
-			id: 1,
-			content:
-				'Ciao!! Bellissimo evento ci sarò sicuramente! Ma ci saranno tante persone? e quande di preciso? avrei altre domande mando sempre qui? perche ci sarebbe anhe mio fratello, per voi andrebbe bene se viene anche lui? lo invitiamo?',
-			username: 'Alix99',
-			time: '12:50 22/05/25',
-		},
-	]);
+	const [messages, setMessages] = useState([]);
 
 	return (
 		<div className="h-full bg-[#363540] relative bg-gradient-to-r  to-[#363540]  from-[#E4DCEF] flex flex-row ">
