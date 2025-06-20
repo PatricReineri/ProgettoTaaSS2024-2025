@@ -11,7 +11,7 @@ public class ImageDTO {
     private LocalDateTime dateTime;
     private int likes;
 
-    public ImageDTO() {}
+    public ImageDTO() { }
 
     public ImageDTO(Long id, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes) {
         this.id = id;

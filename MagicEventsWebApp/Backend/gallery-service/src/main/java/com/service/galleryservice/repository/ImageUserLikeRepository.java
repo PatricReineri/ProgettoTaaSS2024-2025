@@ -9,6 +9,5 @@ import java.util.List;
 public interface ImageUserLikeRepository extends JpaRepository<ImageUserLike, Long> {
     List<ImageUserLike> findByImage(Image image);
     List<ImageUserLike> findByImageAndUserMagicEventsTag(Image image, String userMagicEventsTag);
-
     int countByImage(Image image);
 }

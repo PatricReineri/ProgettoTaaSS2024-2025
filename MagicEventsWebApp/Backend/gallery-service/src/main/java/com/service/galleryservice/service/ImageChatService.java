@@ -109,7 +109,7 @@ public class ImageChatService {
         } catch (Exception e) {
             //return false;
         }
-        return true; // Default to true for testing purposes
+        return true;
     }
 
     private boolean authorizeParticipant(Long eventID, String userMagicEventsTag) {
@@ -127,6 +127,6 @@ public class ImageChatService {
         } catch (Exception e) {
             //return false;
         }
-        return true; // Default to true for testing purposes
+        return true;
     }
 }

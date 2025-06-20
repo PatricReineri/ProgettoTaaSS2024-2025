@@ -147,7 +147,7 @@ public class GalleryService {
         } catch (Exception e) {
             //return false;
         }
-        return true; // Default to true for testing purposes
+        return true;
     }
 
     public Boolean isGalleryExists(Long eventID) {

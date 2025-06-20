@@ -16,8 +16,7 @@ public class ImageUserLike {
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
-    public ImageUserLike() {
-    }
+    public ImageUserLike() { }
 
     public ImageUserLike(String userMagicEventsTag, Image image) {
         this.userMagicEventsTag = userMagicEventsTag;

@@ -5,7 +5,7 @@ import java.util.Objects;
 public class ImageUserLikeDTO {
     private String userMagicEventsTag;
 
-    public ImageUserLikeDTO() {}
+    public ImageUserLikeDTO() { }
 
     public ImageUserLikeDTO(String userMagicEventsTag) {
         this.userMagicEventsTag = userMagicEventsTag;

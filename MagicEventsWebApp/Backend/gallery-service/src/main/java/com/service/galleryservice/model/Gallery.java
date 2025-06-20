@@ -16,9 +16,7 @@ public class Gallery {
     @OneToMany(mappedBy = "gallery", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Image> images;
 
-    // explicit constructors
-    public Gallery() {
-    }
+    public Gallery() { }
 
     public Gallery(long eventID, String title, List<Image> images) {
         this.eventID = eventID;

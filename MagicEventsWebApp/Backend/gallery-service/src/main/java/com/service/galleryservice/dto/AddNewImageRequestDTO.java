@@ -11,9 +11,16 @@ public class AddNewImageRequestDTO {
     private LocalDateTime dateTime;
     private String magiceventstag;
 
-    public AddNewImageRequestDTO() {}
+    public AddNewImageRequestDTO() { }
 
-    public AddNewImageRequestDTO(Long eventID, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, String magiceventstag) {
+    public AddNewImageRequestDTO(
+            Long eventID,
+            String title,
+            String base64Image,
+            String uploadedBy,
+            LocalDateTime dateTime,
+            String magiceventstag
+    ) {
         if (eventID == null) {
             throw new IllegalArgumentException("eventID cannot be null");
         }

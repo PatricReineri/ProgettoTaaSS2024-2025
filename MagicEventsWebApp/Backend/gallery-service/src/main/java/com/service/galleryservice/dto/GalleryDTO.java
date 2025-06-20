@@ -8,7 +8,7 @@ public class GalleryDTO {
     private String title;
     private List<ImageDTO> images;
 
-    public GalleryDTO() {}
+    public GalleryDTO() { }
 
     public GalleryDTO(Long eventID, String title, List<ImageDTO> images) {
         this.eventID = eventID;

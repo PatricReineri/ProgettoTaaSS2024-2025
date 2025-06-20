@@ -8,8 +8,7 @@ public class ImageLikeRequestDTO {
 
     private int likedCount = 0;
 
-    public ImageLikeRequestDTO() {
-    }
+    public ImageLikeRequestDTO() { }
 
     public ImageLikeRequestDTO(String userMagicEventsTag, boolean like, Long imageID, Long eventID, int likedCount) {
         this.userMagicEventsTag = userMagicEventsTag;

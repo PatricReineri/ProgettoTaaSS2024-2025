@@ -8,7 +8,7 @@ public class DeleteImageRequestDTO {
     private String deletedBy;
     private String magiceventstag;
 
-    public DeleteImageRequestDTO() {}
+    public DeleteImageRequestDTO() { }
 
     public DeleteImageRequestDTO(Long eventID, Long imageID, String deletedBy, String magiceventstag) {
         if (eventID == null) {
