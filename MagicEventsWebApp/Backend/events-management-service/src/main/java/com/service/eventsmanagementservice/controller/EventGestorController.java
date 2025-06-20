@@ -1,11 +1,9 @@
 package com.service.eventsmanagementservice.controller;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
-import com.service.eventsmanagementservice.model.Admin;
-import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import org.springframework.http.HttpStatus;
-import com.service.eventsmanagementservice.exception;
+import com.service.eventsmanagementservice.exception.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +23,7 @@ public class EventGestorController {
 
     @PostMapping("/create")
     public ResponseEntity<Long> createEvent(@RequestBody EventDTO eventDTO) {
-        ArrayList<Long> partecipantIds = eventGestorService.getPartecipantsId(eventDTO.getPartecipants());
+        List<Long> partecipantIds = eventGestorService.getListIds(eventDTO.getPartecipants());
         for(Long partecipantId : partecipantIds){
             if(eventDTO.getAdmins().contains(partecipantId)){
                 eventDTO.getPartecipants().remove(partecipantId);
@@ -36,7 +34,7 @@ public class EventGestorController {
             return ResponseEntity.status(HttpStatus.CREATED).body(eventId);
         }else{
             /** Code for internal error: invalid event ending value */
-            return ResponseEntity.status(510).body(-1L);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
         }
     }
 

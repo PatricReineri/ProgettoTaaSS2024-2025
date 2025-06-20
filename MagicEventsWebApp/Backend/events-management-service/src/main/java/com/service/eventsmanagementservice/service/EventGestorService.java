@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,8 @@ public class EventGestorService {
     PartecipantsRepository partecipantsRepository;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private WebClient userManagementWebClient;
 
     public String updateEventAdmins(ArrayList<String> admins, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
@@ -95,9 +98,8 @@ public class EventGestorService {
         return event.getEventId();
     }
 
-    @Transactional
     public List<Admin> addAdmins(List<String> admins, Long eventId){
-        ArrayList<Long> adminIds = getListIds(admins);
+        List<Long> adminIds = getListIds(admins);
         return addAdminsWithId(adminIds, eventId);
     }
 
@@ -125,9 +127,8 @@ public class EventGestorService {
         return newAdmins;
     }
 
-    @Transactional
     public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
-        ArrayList<Long> partecipantIds = getListIds(partecipants);
+        List<Long> partecipantIds = getListIds(partecipants);
         return addPartecipantsWithId(partecipantIds, eventId);
     }
 
@@ -169,7 +170,7 @@ public class EventGestorService {
     }
 
     public boolean isPartecipant(String email, Long eventId) {
-        ArrayList<Long> partecipantsId = getListIds(List.of(email));
+        List<Long> partecipantsId = getListIds(List.of(email));
         Long partecipantId = partecipantsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
@@ -177,7 +178,7 @@ public class EventGestorService {
     }
 
     public boolean isAdmin(String email, Long eventId) {
-        ArrayList<Long> adminsId = getListIds(List.of(email));
+        List<Long> adminsId = getListIds(List.of(email));
         Long adminId = adminsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
@@ -270,8 +271,19 @@ public class EventGestorService {
         return eventDTOs;
     }
 
-    public ArrayList<Long> getListIds(List<String> emails) {
-        // TODO: add request for user-management
-        return null;
+    public List<Long> getListIds(List<String> emails) {
+        try {
+            List<Long> ids = userManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/info")
+                            .queryParam("email", emails)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(List.class)
+                    .block();
+            return ids;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
