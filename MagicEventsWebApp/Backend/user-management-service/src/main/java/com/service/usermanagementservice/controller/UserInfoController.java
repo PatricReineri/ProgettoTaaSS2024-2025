@@ -21,5 +21,10 @@ public class UserInfoController {
     public List<Long> getUserEmail(@RequestParam("email") List<String> email) throws Exception {
         return userService.getUserEmail(email);
     }
+
+    @PostMapping("/isauthenticated")
+    public Boolean isAuthenticated(@RequestParam("email") String email) throws Exception {
+        return userService.isAuthenticated(email);
+    }
 }
 
