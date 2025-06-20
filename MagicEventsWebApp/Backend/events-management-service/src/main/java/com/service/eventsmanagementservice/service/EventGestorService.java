@@ -97,7 +97,7 @@ public class EventGestorService {
 
     @Transactional
     public List<Admin> addAdmins(List<String> admins, Long eventId){
-        ArrayList<Long> adminIds = getAdminsId(admins);
+        ArrayList<Long> adminIds = getListIds(admins);
         return addAdminsWithId(adminIds, eventId);
     }
 
@@ -127,7 +127,7 @@ public class EventGestorService {
 
     @Transactional
     public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
-        ArrayList<Long> partecipantIds = getPartecipantsId(partecipants);
+        ArrayList<Long> partecipantIds = getListIds(partecipants);
         return addPartecipantsWithId(partecipantIds, eventId);
     }
 
@@ -169,7 +169,7 @@ public class EventGestorService {
     }
 
     public boolean isPartecipant(String email, Long eventId) {
-        ArrayList<Long> partecipantsId = getPartecipantsId(List.of(email));
+        ArrayList<Long> partecipantsId = getListIds(List.of(email));
         Long partecipantId = partecipantsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
@@ -177,7 +177,7 @@ public class EventGestorService {
     }
 
     public boolean isAdmin(String email, Long eventId) {
-        ArrayList<Long> adminsId = getAdminsId(List.of(email));
+        ArrayList<Long> adminsId = getListIds(List.of(email));
         Long adminId = adminsId.get(0);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
@@ -270,12 +270,7 @@ public class EventGestorService {
         return eventDTOs;
     }
 
-    public ArrayList<Long> getPartecipantsId(List<String> partecipants) {
-        // TODO: add request for user-management
-        return null;
-    }
-
-    public ArrayList<Long> getAdminsId(List<String> partecipants) {
+    public ArrayList<Long> getListIds(List<String> emails) {
         // TODO: add request for user-management
         return null;
     }
