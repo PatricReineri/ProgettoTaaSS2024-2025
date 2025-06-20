@@ -5,6 +5,7 @@ import com.service.eventsmanagementservice.model.Admin;
 import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import org.springframework.http.HttpStatus;
+import com.service.eventsmanagementservice.exception;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
