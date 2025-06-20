@@ -33,7 +33,8 @@ public class SecurityConfig {
             "login/generateresetpasswordlink",
             "login/deleteuser",
             "login/modifyuser",
-            "login/helloserver"
+            "login/helloserver",
+            "/info"
     };
 
     @Bean

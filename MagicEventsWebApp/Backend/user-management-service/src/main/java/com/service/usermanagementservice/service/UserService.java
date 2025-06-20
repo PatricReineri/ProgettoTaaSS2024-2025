@@ -1,13 +1,10 @@
 package com.service.usermanagementservice.service;
 
-import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.model.User;
 import com.service.usermanagementservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
