@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import LoginPage from './pages/Authentication/LoginPage';
 import RegisterPage from './pages/Authentication/RegisterPage';
 import UserProfilePage from './pages/UserProfile/UserProfilePage';
@@ -9,6 +9,8 @@ import ModifyUserValuePage from './pages/UserProfile/ModifyUserValuePage';
 import HomePage from './pages/HomePage';
 import NavBar from './components/navigation/NavBar';
 import BoardPage from './pages/Event/Board/BoardPage';
+import Button from './components/buttons/Button';
+import MagicEventHomePage from './pages/MagicEventHomePage';
 
 function App() {
 	useEffect(() => {
@@ -26,12 +28,29 @@ function App() {
 
 	return (
 		<Router>
-			<NavBar />
+			<NavBar
+				logo={
+					<NavLink to="/">
+						<h1 className="text-[#EE0E51] font-extrabold hover:scale-110">MagicEvent</h1>
+					</NavLink>
+				}
+				actions={
+					<div className="flex gap-2 ">
+						<NavLink to="/login">
+							<Button text="Login"></Button>
+						</NavLink>
+						<NavLink to="/register">
+							<Button secondary text="Register"></Button>
+						</NavLink>
+					</div>
+				}
+			/>
 			<div className=" h-[calc(100vh-3.5rem)]">
 				<Routes>
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
+					<Route path="/home" element={<MagicEventHomePage />} />
 					<Route path="/userprofile" element={<UserProfilePage />} />
 					<Route path="/googlecallback" element={<GoogleCallbackPage />} />
 					<Route path="/changepassword" element={<ChangePasswordPage />} />

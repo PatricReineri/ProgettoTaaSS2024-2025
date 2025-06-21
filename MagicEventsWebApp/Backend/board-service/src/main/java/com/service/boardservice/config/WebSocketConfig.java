@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint for clients to connect
         registry.addEndpoint("/chat")
-                .setAllowedOriginPatterns("http://localhost:8081")
+                .setAllowedOriginPatterns("http://localhost:*")
                 .withSockJS(); // Enable SockJS fallback
     }
 

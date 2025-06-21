@@ -12,6 +12,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
+                .requestMatchers("/chat/**").permitAll() // consenti /chat
                 .anyRequest().permitAll();
         return http.build();
     }

@@ -19,6 +19,9 @@
     "react-hook-form": "^7.56.4",
     "react-router-dom": "^7.6.2",
     "react-scripts": "5.0.1",
+    "react-stomp": "^5.1.0",
+    "sockjs": "^0.3.24",
+    "sockjs-client": "^1.6.1",
     "tailwindcss": "^4.1.10",
     "web-vitals": "^2.1.4"
   },
