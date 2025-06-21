@@ -1,12 +1,23 @@
 package com.service.usermanagementservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class UserDTO {
+    @NotNull(message = "Magic Events Tag is required")
+    @Positive(message = "Magic Events Tag must be positive")
     private Long magicEventTag;
+    @NotNull(message = "Username is required")
     private String username;
+    @NotNull(message = "Email is required")
     private String email;
+    @NotNull(message = "Profile image is required")
     private String profileImageUrl;
+    @NotNull(message = "Name is required")
     private String name;
+    @NotNull(message = "Surname is required")
     private String surname;
+    @NotNull(message = "Role is required")
     private String role;
 
     public UserDTO(

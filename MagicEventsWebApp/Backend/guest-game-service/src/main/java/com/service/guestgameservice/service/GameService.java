@@ -4,13 +4,13 @@ import com.service.guestgameservice.dto.DecisionTreeDTO;
 import com.service.guestgameservice.dto.GameRequestDTO;
 import com.service.guestgameservice.dto.GuestInfoRequestDTO;
 import com.service.guestgameservice.dto.TreeNodeDTO;
+import com.service.guestgameservice.exception.UnauthorizedException;
 import com.service.guestgameservice.model.Game;
 import com.service.guestgameservice.model.GuestInfo;
 import com.service.guestgameservice.repository.GameRepository;
 import com.service.guestgameservice.repository.GuestGameRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -22,34 +22,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class GameService {
     private final GuestGameRepository guestGameRepository;
     private final GameRepository gameRepository;
+    private final WebClient eventManagementWebClient;
+
+    public GameService(GuestGameRepository guestGameRepository,
+                       GameRepository gameRepository,
+                       WebClient eventManagementWebClient) {
+        this.guestGameRepository = guestGameRepository;
+        this.gameRepository = gameRepository;
+        this.eventManagementWebClient = eventManagementWebClient;
+    }
 
     public void createGame(GameRequestDTO gameRequestDTO) {
+        if (!authorizeAdmin(gameRequestDTO.getEventId(), gameRequestDTO.getUserMagicEventsTag())) {
+            throw new UnauthorizedException("Not authorized to create game for event ID: " + gameRequestDTO.getEventId());
+        }
+
         Game game = new Game();
         game.setEventId(gameRequestDTO.getEventId());
         game.setDescription(gameRequestDTO.getDescription());
         gameRepository.save(game);
     }
 
-    public void deleteGame(Long eventId) {
+    public void deleteGame(Long eventId, Long userMagicEventsTag) {
+        if (!authorizeAdmin(eventId, userMagicEventsTag)) {
+            throw new UnauthorizedException("Not authorized to delete game for event ID: " + eventId);
+        }
+
         Game game = gameRepository.findByEventId(eventId);
         if (game != null) {
             gameRepository.delete(game);
-        } else {
-            log.warn("Game with event ID {} not found", eventId);
         }
     }
-
 
     public boolean gameExists(Long eventId) {
         return gameRepository.findByEventId(eventId) != null;
     }
 
     public void insertGuestInfo(GuestInfoRequestDTO guestInfoRequestDTO) {
+        Long userTagAsLong = Long.valueOf(guestInfoRequestDTO.getUserMagicEventsTag());
+        if (!authorizeParticipant(guestInfoRequestDTO.getGameId(), userTagAsLong)) {
+            throw new UnauthorizedException("Not authorized to insert guest info for game ID: " + guestInfoRequestDTO.getGameId());
+        }
+
         GuestInfo guestInfo = new GuestInfo();
         guestInfo.setIsMen(guestInfoRequestDTO.getIsMen());
         guestInfo.setAge(guestInfoRequestDTO.getAge());
@@ -68,16 +85,23 @@ public class GameService {
         guestGameRepository.save(guestInfo);
     }
 
-    public DecisionTreeDTO createDecisionTree() {
+    public DecisionTreeDTO createDecisionTree(Long eventId, Long userMagicEventsTag) {
+        if (!authorizeParticipant(eventId, userMagicEventsTag)) {
+            throw new UnauthorizedException("Not authorized to access decision tree for event ID: " + eventId);
+        }
+
         try {
-            // Fetch guest info data
-            List<GuestInfo> guestInfoList = guestGameRepository.findAll();
+            Game game = gameRepository.findByEventId(eventId);
+            if (game == null) {
+                throw new RuntimeException("Game not found for event ID: " + eventId);
+            }
+
+            List<GuestInfo> guestInfoList = guestGameRepository.findByGame(game);
 
             if (guestInfoList.isEmpty()) {
                 throw new RuntimeException("No guest data available to build decision tree");
             }
 
-            // Define attributes for the decision tree (features)
             ArrayList<Attribute> attributes = new ArrayList<>();
             attributes.add(new Attribute("isMen"));
             attributes.add(new Attribute("age"));
@@ -88,7 +112,6 @@ public class GameService {
             attributes.add(new Attribute("haveGlasses"));
             attributes.add(new Attribute("haveDarkHair"));
 
-            // Define nominal class attribute using unique user_magic_events_tag values
             ArrayList<String> classValues = new ArrayList<>();
             for (GuestInfo guestInfo : guestInfoList) {
                 String tag = guestInfo.getUserMagicEventsTag();
@@ -103,24 +126,55 @@ public class GameService {
             J48 tree = getDecisionTree(dataset, classValues);
 
             double accuracy = getAccuracy(dataset, tree);
-            log.info("Training accuracy: {}%", accuracy);
 
-            // Parse tree structure from toString() method
             String treeString = tree.toString();
             TreeNodeDTO rootNode = parseTreeFromString(treeString);
 
             return new DecisionTreeDTO(rootNode, accuracy, dataset.size());
         } catch (Exception e) {
-            log.error("Error creating decision tree", e);
             throw new RuntimeException("Error creating decision tree: " + e.getMessage(), e);
         }
     }
 
+    private boolean authorizeAdmin(Long eventId, Long userMagicEventsTag) {
+        try {
+            Boolean isAdmin = eventManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/isAdmin")
+                            .queryParam("partecipantId", userMagicEventsTag)
+                            .queryParam("eventId", eventId)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            //return Boolean.TRUE.equals(isAdmin);
+        } catch (Exception e) {
+            //return false;
+        }
+        return true; // Default to true for testing purposes
+    }
+
+    private boolean authorizeParticipant(Long eventId, Long userMagicEventsTag) {
+        try {
+            Boolean isParticipant = eventManagementWebClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/isParticipant")
+                            .queryParam("partecipantId", userMagicEventsTag)
+                            .queryParam("eventId", eventId)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+            //return Boolean.TRUE.equals(isParticipant);
+        } catch (Exception e) {
+            //return false;
+        }
+        return true; // Default to true for testing purposes
+    }
+
     private TreeNodeDTO parseTreeFromString(String treeString) {
-        log.debug("Tree string:\n{}", treeString);
         String[] lines = treeString.split("\n");
-        
-        // Skip header lines (J48 unpruned tree, ---, empty lines)
+
         int startLine = 0;
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
@@ -129,7 +183,7 @@ public class GameService {
                 break;
             }
         }
-        
+
         return parseTreeNode(lines, startLine, new int[]{startLine});
     }
 
@@ -140,21 +194,18 @@ public class GameService {
 
         String line = lines[currentLine[0]];
         String trimmedLine = line.trim();
-        
-        // Skip empty lines
+
         if (trimmedLine.isEmpty()) {
             currentLine[0]++;
             return parseTreeNode(lines, startLine, currentLine);
         }
 
         currentLine[0]++;
-        
-        // Check if it's a leaf node (contains colon followed by class name)
+
         if (trimmedLine.contains(":") && !trimmedLine.endsWith(":")) {
             String[] parts = trimmedLine.split(":");
             if (parts.length >= 2) {
                 String className = parts[1].trim();
-                // Remove count information if present
                 if (className.contains("(")) {
                     className = className.substring(0, className.indexOf("(")).trim();
                 }
@@ -162,35 +213,29 @@ public class GameService {
             }
         }
 
-        // It's an internal node - extract the condition and format as question
         String condition = extractCondition(trimmedLine);
         String question = formatQuestion(condition);
-        
-        // Parse left child (YES branch - condition is true)
+
         TreeNodeDTO leftChild = parseTreeNode(lines, startLine, currentLine);
-        
-        // Parse right child (NO branch - condition is false)  
+
         TreeNodeDTO rightChild = parseTreeNode(lines, startLine, currentLine);
 
         return new TreeNodeDTO(question, leftChild, rightChild);
     }
 
     private String extractCondition(String line) {
-        // Remove leading pipe symbols and whitespace
         String condition = line.replaceAll("^[|\\s]+", "").trim();
-        
-        // If the line ends with a colon (like "age <= 24:"), remove it
+
         if (condition.endsWith(":")) {
             condition = condition.substring(0, condition.length() - 1).trim();
         }
-        
+
         return condition;
     }
 
     private String formatQuestion(String condition) {
-        // Remove any leading symbols like |, spaces, etc.
         condition = condition.replaceAll("^[|\\s]+", "").trim();
-        
+
         if (condition.contains("<=")) {
             String[] parts = condition.split("<=");
             if (parts.length == 2) {
@@ -206,54 +251,48 @@ public class GameService {
                 return formatAttributeQuestion(attribute, ">", value);
             }
         }
-        
+
         return condition;
     }
 
     private String formatAttributeQuestion(String attribute, String operator, String value) {
         switch (attribute) {
             case "isMen":
-                return operator.equals("<=") ? "Guest is female?" : "Guest is male?";
+                return "L'ospite è uomo?";
             case "age":
                 if (operator.equals("<=")) {
-                    return "Guest is less than " + (Integer.parseInt(value.split("\\.")[0]) + 1) + " years old?";
+                    return "L'ospite ha meno di " + (Integer.parseInt(value.split("\\.")[0]) + 1) + " anni?";
                 } else {
-                    return "Guest is more than " + value.split("\\.")[0] + " years old?";
+                    return "L'ospite ha più di " + value.split("\\.")[0] + " anni?";
                 }
             case "isHostFamilyMember":
-                return operator.equals("<=") ? "Guest is not host family member?" : "Guest is host family member?";
+                return "L'ospite è un membro della famiglia ospitante?";
             case "isHostAssociate":
-                return operator.equals("<=") ? "Guest is not host associate?" : "Guest is host associate?";
+                return "L'ospite è un associato dell'ospitante?";
             case "haveBeard":
-                return operator.equals("<=") ? "Guest doesn't have beard?" : "Guest has beard?";
+                return "L'ospite ha la barba?";
             case "isBald":
-                return operator.equals("<=") ? "Guest is not bald?" : "Guest is bald?";
+                return "L'ospite NON ha i capelli?";
             case "haveGlasses":
-                return operator.equals("<=") ? "Guest doesn't have glasses?" : "Guest has glasses?";
+                return "L'ospite porta gli occhiali?";
             case "haveDarkHair":
-                return operator.equals("<=") ? "Guest doesn't have dark hair?" : "Guest has dark hair?";
+                return "L'ospite ha i capelli scuri?";
             default:
                 return attribute + " " + operator + " " + value + "?";
         }
     }
 
     private static J48 getDecisionTree(Instances dataset, ArrayList<String> classValues) throws Exception {
-        // Build decision tree
         J48 tree = new J48();
         tree.setUnpruned(true);
-        tree.setMinNumObj(1); // Allow single instances as leaves
+        tree.setMinNumObj(1);
         tree.setConfidenceFactor(0.60f);
         tree.buildClassifier(dataset);
 
-        // Log tree structure
-        log.info("Decision tree built with {} instances and {} unique classes",
-                dataset.size(), classValues.size());
-        log.info("Tree structure:\n{}", tree.toString());
         return tree;
     }
 
     private static double getAccuracy(Instances dataset, J48 tree) throws Exception {
-        // Test classification on training data
         int correct = 0;
         for (int i = 0; i < dataset.size(); i++) {
             Instance instance = dataset.instance(i);
@@ -264,7 +303,6 @@ public class GameService {
             if (predictedClass.equals(actualClass)) {
                 correct++;
             }
-            log.debug("Instance {}: Predicted={}, Actual={}", i, predictedClass, actualClass);
         }
 
         double accuracy = (double) correct / dataset.size() * 100;
@@ -272,11 +310,9 @@ public class GameService {
     }
 
     private static Instances getDatasetInstances(ArrayList<Attribute> attributes, List<GuestInfo> guestInfoList) {
-        // Create dataset
         Instances dataset = new Instances("GuestInfo", attributes, guestInfoList.size());
-        dataset.setClassIndex(attributes.size() - 1); // Last attribute is the class
+        dataset.setClassIndex(attributes.size() - 1);
 
-        // Add instances to dataset
         for (GuestInfo guestInfo : guestInfoList) {
             DenseInstance instance = new DenseInstance(attributes.size());
             instance.setValue(attributes.get(0), guestInfo.getIsMen() ? 1.0 : 0.0);
@@ -288,7 +324,6 @@ public class GameService {
             instance.setValue(attributes.get(6), guestInfo.getHaveGlasses() ? 1.0 : 0.0);
             instance.setValue(attributes.get(7), guestInfo.getHaveDarkHair() ? 1.0 : 0.0);
 
-            // Set class value (target) - this is what we want to classify
             instance.setValue(attributes.get(8), guestInfo.getUserMagicEventsTag());
 
             instance.setDataset(dataset);
