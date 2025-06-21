@@ -33,7 +33,7 @@ public class GalleryService {
     }
 
     public void createGallery(CreateGalleryRequestDTO request) {
-        if (!authorizeCreateGallery(request.getEventID(), request.getUserMagicEventsTag())) {
+        if (!authorizeCreateDeleteGallery(request.getEventID(), request.getUserMagicEventsTag())) {
             throw new UnauthorizedException("Not authorized to create gallery for event ID: " + request.getEventID());
         }
         Gallery gallery = new Gallery();
@@ -114,7 +114,7 @@ public class GalleryService {
                 .build();
     }
 
-    private boolean authorizeCreateGallery(Long eventID, Long userMagicEventsTag) {
+    private boolean authorizeCreateDeleteGallery(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -155,7 +155,10 @@ public class GalleryService {
     }
 
     @Transactional
-    public void deleteGallery(Long eventID) {
+    public void deleteGallery(Long eventID, Long userMagicEventsTag) {
+        if (!authorizeCreateDeleteGallery(eventID, userMagicEventsTag)) {
+            throw new UnauthorizedException("Not authorized to delete gallery for event ID: " + eventID);
+        }
         Gallery gallery = galleryRepository.findByEventID(eventID);
         if (gallery != null) {
             galleryRepository.delete(gallery);
