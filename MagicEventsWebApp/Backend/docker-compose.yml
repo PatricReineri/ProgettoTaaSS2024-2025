@@ -1,55 +1,227 @@
 version: '3.8'
 
 services:
-  cart-db:
+  # ==============================
+  # DATABASE SERVICES
+  # ==============================
+  
+  # User Management Database
+  user-management-db:
     image: postgres:15
-    container_name: spring_db_postgres_db
-    restart: always
+    container_name: user-management-db
     environment:
-      POSTGRES_DB: cart_db
-      POSTGRES_USER: cart_user
-      POSTGRES_PASSWORD: cart_password
-    volumes:
-      - cart_db_data:/var/lib/postgresql/data
-    networks:
-      - cart_net
-
-  app:
-    build: .
-    container_name: spring_db_postgres_app
-    restart: always
-    depends_on:
-      - cart-db
+      POSTGRES_DB: UserManagementMEADB
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     ports:
-      - "8090:8090"
-    environment:
-      DB_USER: cart_user
-      DB_PASSWORD: cart_password
-      SPRING_PROFILES_ACTIVE: docker
-    networks:
-      - cart_net
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: spring_db_pgadmin
-    restart: always
-    depends_on:
-      - cart-db
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "5050:80"
+      - "5432:5432"
     volumes:
-      - pgadmin_data:/var/lib/pgadmin
-      - ./pgadmin-config/servers.json:/pgadmin4/servers.json:ro
-      - ./pgadmin-config/.pgpass:/pgpass:ro
+      - user_management_data:/var/lib/postgresql/data
+      - ./PostgresSQL/UserManagement:/docker-entrypoint-initdb.d
     networks:
-      - cart_net
+      - magicevents-network
 
+  # Events Management Database
+  events-management-db:
+    image: postgres:15
+    container_name: events-management-db
+    environment:
+      POSTGRES_DB: EventsManagementMEADB
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5431:5432"
+    volumes:
+      - events_management_data:/var/lib/postgresql/data
+      - ./PostgresSQL/EventsManagement:/docker-entrypoint-initdb.d
+    networks:
+      - magicevents-network
+
+  # Board Service Database
+  board-service-db:
+    image: postgres:15
+    container_name: board-service-db
+    environment:
+      POSTGRES_DB: Board
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - board_service_data:/var/lib/postgresql/data
+      - ./PostgresSQL/BoardService:/docker-entrypoint-initdb.d
+    networks:
+      - magicevents-network
+
+  # Guest Game Database
+  #guest-game-db:
+    #image: postgres:15
+    #container_name: guest-game-db
+    #environment:
+      #POSTGRES_DB: GuestGame
+      #POSTGRES_USER: postgres
+      #POSTGRES_PASSWORD: password
+    #ports:
+      #- "5434:5432"
+    #volumes:
+      #- guest_game_data:/var/lib/postgresql/data
+      #- ./PostgresSQL/GuestGameService:/docker-entrypoint-initdb.d
+    #networks:
+      #- magicevents-network
+
+  # Gallery Database
+  gallery-db:
+    image: postgres:15
+    container_name: gallery-db
+    environment:
+      POSTGRES_DB: Gallery
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5435:5432"
+    volumes:
+      - gallery_data:/var/lib/postgresql/data
+      - ./PostgresSQL/GalleryService:/docker-entrypoint-initdb.d
+    networks:
+      - magicevents-network
+
+  # ==============================
+  # MESSAGE BROKER
+  # ==============================
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - magicevents-network
+
+  # ==============================
+  # APPLICATION SERVICES
+  # ==============================
+
+  # User Management Service
+  user-management-service:
+    build:
+      context: ./user-management-service
+      dockerfile: Dockerfile
+    container_name: user-management-service
+    ports:
+      - "8443:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-management-db:5432/UserManagementMEADB
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - user-management-db
+    networks:
+      - magicevents-network
+
+  # Events Management Service
+  events-management-service:
+    build:
+      context: ./events-management-service
+      dockerfile: Dockerfile
+    container_name: events-management-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5432/EventsManagementMEADB
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SERVICES_USERMANAGEMENT_URL: https://user-management-service:8443
+    depends_on:
+      - events-management-db
+      - rabbitmq
+      - user-management-service
+    networks:
+      - magicevents-network
+
+  # Board Service
+  board-service:
+    build:
+      context: ./board-service
+      dockerfile: Dockerfile
+    container_name: board-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://board-service-db:5432/Board
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+    depends_on:
+      - board-service-db
+      - rabbitmq
+      - events-management-service
+    networks:
+      - magicevents-network
+
+  # Guest Game Service
+  #guest-game-service:
+    #build:
+      #context: ./guest-game-service
+      #dockerfile: Dockerfile
+    #container_name: guest-game-service
+    #ports:
+      #- "8083:8083"
+    #environment:
+      #SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5432/GuestGame
+      #SPRING_DATASOURCE_USERNAME: postgres
+      #SPRING_DATASOURCE_PASSWORD: password
+      #SPRING_RABBITMQ_HOST: rabbitmq
+      #SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+    #depends_on:
+      #- guest-game-db
+      #- rabbitmq
+      #- events-management-service
+    #networks:
+      #- magicevents-network
+
+  # Gallery Service
+  gallery-service:
+    build:
+      context: ./gallery-service
+      dockerfile: Dockerfile
+    container_name: gallery-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5432/Gallery
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+    depends_on:
+      - gallery-db
+      - rabbitmq
+      - events-management-service
+    networks:
+      - magicevents-network
+
+# ==============================
+# VOLUMES
+# ==============================
 volumes:
-  cart_db_data:
-  pgadmin_data:
+  user_management_data: 
+  events_management_data:
+  board_service_data:
+  #guest_game_data:
+  gallery_data:
+  rabbitmq_data:
 
+# ==============================
+# NETWORKS
+# ==============================
 networks:
-  cart_net:
+  magicevents-network:
+    driver: bridge

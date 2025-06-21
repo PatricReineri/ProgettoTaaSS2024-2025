@@ -1,3 +1,2 @@
-#### TODO list:
-
-#### Actual bugs:
+# How to run user-management-service:
+Before running the service make sure you generate a certificate, you can find a simple certificate generator in `MagicEventsWebApp/Backend/user-management-service/src/main/resources/KeysGenerator.bat`.

@@ -11,8 +11,8 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/guestgame-service-0.0.1-SNAPSHOT.jar guest-game-service.jar
+COPY --from=build /app/target/board-service-0.0.1-SNAPSHOT.jar board-service.jar
 
-EXPOSE 8083
+EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "guest-game-service.jar"]
+ENTRYPOINT ["java", "-jar", "board-service.jar"]
