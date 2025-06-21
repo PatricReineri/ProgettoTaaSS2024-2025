@@ -1,25 +1,30 @@
 package com.service.eventsmanagementservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EventDTO {
+    @NotNull(message = "Title is required")
     private String title;
-
+    @NotNull(message = "Description is required")
     private String description;
-
+    @NotNull(message = "Starting is required")
     private LocalDateTime starting;
-
+    @NotNull(message = "Ending is required")
     private LocalDateTime ending;
-
+    @NotNull(message = "Location is required")
     private String location;
 
-    /** User magic_events_tag */
+    @NotNull(message = "Creator Magic Events Tag is required")
     private Long creator;
 
+    @NotNull(message = "Partecipants is required")
     private ArrayList<String> partecipants;
 
+    @NotNull(message = "Admins is required")
     private ArrayList<String> admins;
 
     public EventDTO() {}

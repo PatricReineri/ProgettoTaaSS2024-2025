@@ -6,6 +6,7 @@ import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +45,7 @@ public class LoginController {
     }
 
     @PostMapping("/modifyuser")
-    public UserDTO modifyUser(@RequestBody UserDTO userDTO) {
+    public UserDTO modifyUser(@Valid @RequestBody UserDTO userDTO) {
         return authService.modify(userDTO);
     }
 
