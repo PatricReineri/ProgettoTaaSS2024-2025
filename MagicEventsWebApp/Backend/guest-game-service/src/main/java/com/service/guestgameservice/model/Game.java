@@ -1,13 +1,11 @@
 package com.service.guestgameservice.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.util.List;
 
 @Entity
 @Table(name = "game")
-@Data
 public class Game {
     @Id
     @Column(name = "event_id")
@@ -18,4 +16,15 @@ public class Game {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GuestInfo> guests;
+
+    public Game() {}
+
+    public Long getEventId() { return eventId; }
+    public void setEventId(Long eventId) { this.eventId = eventId; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public List<GuestInfo> getGuests() { return guests; }
+    public void setGuests(List<GuestInfo> guests) { this.guests = guests; }
 }
