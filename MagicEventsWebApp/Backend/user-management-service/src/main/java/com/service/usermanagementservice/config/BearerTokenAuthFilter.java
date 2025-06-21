@@ -38,7 +38,6 @@ public class BearerTokenAuthFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }
