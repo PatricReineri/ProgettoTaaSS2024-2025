@@ -1,15 +1,38 @@
 package com.service.guestgameservice.dto;
 
+import jakarta.validation.constraints.*;
 public class GuestInfoRequestDTO {
+    @NotNull(message = "Gender information is required")
     private Boolean isMen;
+    
+    @NotNull(message = "Age is required")
+    @Min(value = 0, message = "Age must be at least 0")
+    @Max(value = 130, message = "Age must be at most 130")
     private Integer age;
+    
+    @NotNull(message = "Host family member status is required")
     private Boolean isHostFamilyMember;
+    
+    @NotNull(message = "Host associate status is required")
     private Boolean isHostAssociate;
+    
+    @NotNull(message = "Beard information is required")
     private Boolean haveBeard;
+    
+    @NotNull(message = "Baldness information is required")
     private Boolean isBald;
+    
+    @NotNull(message = "Glasses information is required")
     private Boolean haveGlasses;
+    
+    @NotNull(message = "Hair color information is required")
     private Boolean haveDarkHair;
+    
+    @NotBlank(message = "User Magic Events Tag is required")
     private String userMagicEventsTag;
+    
+    @NotNull(message = "Game ID is required")
+    @Positive(message = "Game ID must be positive")
     private Long gameId;
 
     public GuestInfoRequestDTO() {}

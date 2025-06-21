@@ -4,13 +4,18 @@ import com.service.guestgameservice.dto.GameRequestDTO;
 import com.service.guestgameservice.dto.GuestInfoRequestDTO;
 import com.service.guestgameservice.dto.DecisionTreeDTO;
 import com.service.guestgameservice.service.GameService;
+
+import jakarta.validation.Valid;
+
 import com.service.guestgameservice.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/guest-game")
+@Validated
 public class GameController {
     private final GameService gameService;
 
@@ -41,7 +46,7 @@ public class GameController {
     }
 
     @PostMapping("/insertGuestInfo")
-    public ResponseEntity<Void> insertGuestInfo(@RequestBody GuestInfoRequestDTO guestInfoRequestDTO) {
+    public ResponseEntity<Void> insertGuestInfo(@Valid @RequestBody GuestInfoRequestDTO guestInfoRequestDTO) {
         try {
             gameService.insertGuestInfo(guestInfoRequestDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -53,7 +58,7 @@ public class GameController {
     }
 
     @PostMapping("/createGame")
-    public ResponseEntity<Void> createGame(@RequestBody GameRequestDTO gameRequestDTO) {
+    public ResponseEntity<Void> createGame(@Valid @RequestBody GameRequestDTO gameRequestDTO) {
         try {
             gameService.createGame(gameRequestDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
