@@ -24,7 +24,7 @@ public class BoardService {
     }
 
     public void createBoard(CreateBoardRequestDTO request) {
-        if (!authorizeCreateBoard(request.getEventID(), request.getUserMagicEventsTag())) {
+        if (!authorizeCreateDeleteBoard(request.getEventID(), request.getUserMagicEventsTag())) {
             throw new UnauthorizedException("Not authorized to create board for event ID: " + request.getEventID());
         }
         if (request.getEventID() == null) {
@@ -81,14 +81,18 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long eventID) {
+    public void deleteBoard(Long eventID, Long userMagicEventsTag) {
+        if (!authorizeCreateDeleteBoard(eventID, userMagicEventsTag)) {
+            throw new UnauthorizedException("Not authorized to delete board for event ID: " + eventID);
+        }
+        
         Board board = boardRepository.findByEventID(eventID);
         if (board != null) {
             boardRepository.delete(board); // Delete the board itself
         }
     }
 
-    private boolean authorizeCreateBoard(Long eventID, Long userMagicEventsTag) {
+    private boolean authorizeCreateDeleteBoard(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder

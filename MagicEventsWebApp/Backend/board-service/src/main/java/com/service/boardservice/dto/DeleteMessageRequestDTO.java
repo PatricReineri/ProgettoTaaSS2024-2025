@@ -1,11 +1,24 @@
 package com.service.boardservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import java.util.Objects;
 
 public class DeleteMessageRequestDTO {
+    @NotNull(message = "Event ID cannot be null")
+    @Positive(message = "Event ID must be positive")
     private Long eventID;
+    
+    @NotNull(message = "Message ID cannot be null")
+    @Positive(message = "Message ID must be positive")
     private Long messageID;
+    
+    @NotBlank(message = "Deleted by cannot be blank")
     private String deletedBy;
+    
+    @NotNull(message = "User Magic Events tag cannot be null")
+    @Positive(message = "User Magic Events tag must be positive")
     private Long userMagicEventsTag;
 
     public DeleteMessageRequestDTO() { }

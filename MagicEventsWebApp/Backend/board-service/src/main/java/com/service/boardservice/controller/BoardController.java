@@ -3,12 +3,15 @@ package com.service.boardservice.controller;
 import com.service.boardservice.dto.BoardDTO;
 import com.service.boardservice.dto.CreateBoardRequestDTO;
 import com.service.boardservice.exception.UnauthorizedException;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/board")
+@Validated
 public class BoardController {
     private final com.service.boardservice.service.BoardService boardService;
 
@@ -17,7 +20,7 @@ public class BoardController {
     }
 
     @PostMapping("/createBoard")
-    public ResponseEntity<Boolean> createBoard(@RequestBody CreateBoardRequestDTO request) {
+    public ResponseEntity<Boolean> createBoard(@Valid @RequestBody CreateBoardRequestDTO request) {
         try {
             boardService.createBoard(request);
             return ResponseEntity.ok(true);
@@ -52,12 +55,15 @@ public class BoardController {
     }
 
     @DeleteMapping("/deleteBoard/{eventID}")
-    public ResponseEntity<Boolean> deleteBoard(@PathVariable Long eventID) {
+    public ResponseEntity<Boolean> deleteBoard(@PathVariable Long eventID,
+                                             @RequestParam Long userMagicEventsTag) {
         try {
-            boardService.deleteBoard(eventID);
+            boardService.deleteBoard(eventID, userMagicEventsTag);
             return ResponseEntity.ok(true);
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 }

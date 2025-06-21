@@ -1,12 +1,28 @@
 package com.service.boardservice.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 public class AddNewMessageRequestDTO {
+    @NotNull(message = "Event ID cannot be null")
+    @Positive(message = "Event ID must be positive")
     private Long eventID;
+    
+    @NotBlank(message = "Content cannot be blank")
+    @Size(min = 1, max = 1000, message = "Content must be between 1 and 1000 characters")
     private String content;
+    
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 2, max = 50, message = "Username must be between 2 and 50 characters")
     private String username;
+    
     private LocalDateTime dateTime;
+    
+    @NotNull(message = "User Magic Events tag cannot be null")
+    @Positive(message = "User Magic Events tag must be positive")
     private Long userMagicEventsTag;
 
     public AddNewMessageRequestDTO() {}
