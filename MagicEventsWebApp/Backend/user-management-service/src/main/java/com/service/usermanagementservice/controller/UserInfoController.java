@@ -18,9 +18,9 @@ public class UserInfoController {
 
     @PostMapping
     public ResponseEntity<HashMap<Long, String>> getUserEmail(
-            @RequestBody List<String> emails) throws Exception {
+            @RequestBody List<String> emails
+    ) throws Exception {
         HashMap<Long, String> result = userService.getUserEmail(emails);
-        System.out.println("User email info: " + result);
         return ResponseEntity.ok(result);
     }
 

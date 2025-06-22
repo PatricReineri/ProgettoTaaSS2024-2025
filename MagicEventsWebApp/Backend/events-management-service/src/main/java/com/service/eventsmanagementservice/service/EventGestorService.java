@@ -298,7 +298,6 @@ public class EventGestorService {
 
     public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            log.info("Calling user-management-service with emails: {}", emails);
             HashMap<Long, String> result = userManagementWebClient.post()
                     .uri("/info")
                     .bodyValue(emails)
@@ -311,10 +310,8 @@ public class EventGestorService {
                             .map(body -> new RuntimeException("Server error: " + body)))
                     .bodyToMono(new ParameterizedTypeReference<HashMap<Long, String>>() {})
                     .block();
-            log.info("Received response from user-management-service: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("Error fetching user IDs for emails: {}", emails, e);
             throw new RuntimeException("Failed to fetch user IDs: " + e.getMessage(), e);
         }
     }

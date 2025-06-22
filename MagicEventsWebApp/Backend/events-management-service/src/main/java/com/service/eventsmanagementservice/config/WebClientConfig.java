@@ -3,7 +3,6 @@ package com.service.eventsmanagementservice.config;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import reactor.netty.http.client.HttpClient;
-import reactor.netty.tcp.SslProvider;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,10 +14,8 @@ import reactor.core.publisher.Mono;
 
 import javax.net.ssl.SSLException;
 
-
 @Configuration
 public class WebClientConfig {
-
     @Value("${services.usermanagement.url}")
     private String userManagementUrl;
 
@@ -27,10 +24,10 @@ public class WebClientConfig {
         HttpClient httpClient = HttpClient.create()
                 .secure(spec -> {
                     try {
-                        spec.sslContext(
-                                SslContextBuilder.forClient()
-                                        .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                                        .build()
+                        spec.sslContext(SslContextBuilder
+                                .forClient()
+                                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                                .build()
                         );
                     } catch (SSLException e) {
                         throw new RuntimeException(e);
