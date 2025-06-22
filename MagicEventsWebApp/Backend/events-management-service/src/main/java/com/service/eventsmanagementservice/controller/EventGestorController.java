@@ -23,15 +23,18 @@ public class EventGestorController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventDTO eventDTO) {
-        List<Long> partecipantIds = eventGestorService.getListIds(eventDTO.getPartecipants());
-        for(Long partecipantId : partecipantIds){
+    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventDTO eventDTO,
+                                            @RequestParam("creatorEmail") String creatorEmail) {
+        List<String> partecipantIds = eventDTO.getPartecipants();
+
+        for(String partecipantId : partecipantIds){
             if(eventDTO.getAdmins().contains(partecipantId)){
                 eventDTO.getPartecipants().remove(partecipantId);
             }
         }
+
         if(eventDTO.getEnding().isAfter(eventDTO.getStarting())) {
-            Long eventId = eventGestorService.create(eventDTO);
+            Long eventId = eventGestorService.create(eventDTO, creatorEmail);
             return ResponseEntity.status(HttpStatus.CREATED).body(eventId);
         }else{
             /// Invalid event ending value

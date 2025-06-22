@@ -76,13 +76,13 @@ public class EventGestorService {
     }
 
     @Transactional
-    public Long create(EventDTO eventDTO) {
-        // Ensure creator exists as a partecipant
+    public Long create(EventDTO eventDTO, String creatorEmail) {
         Long creatorId = eventDTO.getCreator();
         partecipantsRepository.findById(creatorId)
             .orElseGet(() -> {
                 Partecipant newP = new Partecipant();
                 newP.setMagicEventTag(creatorId);
+                newP.setEmail(creatorEmail);
                 return partecipantsRepository.saveAndFlush(newP);
             });
         Event event = new Event(
