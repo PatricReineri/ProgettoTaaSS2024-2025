@@ -25,6 +25,8 @@ public class Event {
 
     private String location;
     private String status;
+
+    @Column(columnDefinition = "TEXT")
     private String image;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

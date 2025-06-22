@@ -1,10 +1,8 @@
 package com.service.usermanagementservice.controller;
 
 import com.service.usermanagementservice.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +17,11 @@ public class UserInfoController {
     }
 
     @PostMapping
-    public HashMap<Long, String> getUserEmail(@RequestParam("email") List<String> email) throws Exception {
-        return userService.getUserEmail(email);
+    public ResponseEntity<HashMap<Long, String>> getUserEmail(
+            @RequestBody List<String> emails) throws Exception {
+        HashMap<Long, String> result = userService.getUserEmail(emails);
+        System.out.println("User email info: " + result);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/isauthenticated")

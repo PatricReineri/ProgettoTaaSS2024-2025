@@ -15,7 +15,7 @@ public class Admin {
     @JoinColumn(name = "magic_events_tag")
     private Partecipant user;
 
-    @ManyToMany(mappedBy = "admins")
+    @ManyToMany(mappedBy = "admins", cascade = CascadeType.ALL)
     private List<Event> events = new ArrayList<>(); ;
 
     public Admin() {}

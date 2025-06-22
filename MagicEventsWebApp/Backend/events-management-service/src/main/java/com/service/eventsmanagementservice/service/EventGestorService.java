@@ -9,6 +9,7 @@ import com.service.eventsmanagementservice.repository.EventsRepository;
 import com.service.eventsmanagementservice.repository.PartecipantsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -297,17 +298,24 @@ public class EventGestorService {
 
     public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            return userManagementWebClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/info")
-                            .queryParam("email", emails)
-                            .build()
-                    )
+            log.info("Calling user-management-service with emails: {}", emails);
+            HashMap<Long, String> result = userManagementWebClient.post()
+                    .uri("/info")
+                    .bodyValue(emails)
                     .retrieve()
-                    .bodyToMono(HashMap.class)
+                    .onStatus(status -> status.is4xxClientError(), 
+                        response -> response.bodyToMono(String.class)
+                            .map(body -> new RuntimeException("Client error: " + body)))
+                    .onStatus(status -> status.is5xxServerError(), 
+                        response -> response.bodyToMono(String.class)
+                            .map(body -> new RuntimeException("Server error: " + body)))
+                    .bodyToMono(new ParameterizedTypeReference<HashMap<Long, String>>() {})
                     .block();
+            log.info("Received response from user-management-service: {}", result);
+            return result;
         } catch (Exception e) {
-            return null;
+            log.error("Error fetching user IDs for emails: {}", emails, e);
+            throw new RuntimeException("Failed to fetch user IDs: " + e.getMessage(), e);
         }
     }
 
