@@ -1,10 +1,17 @@
 package com.service.galleryservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class CreateGalleryRequestDTO {
+    @NotNull(message = "Event ID cannot be null")
     private Long eventID;
+    
+    @NotBlank(message = "Title cannot be blank")
     private String title;
+    
+    @NotNull(message = "User Magic Events Tag cannot be null")
     private Long userMagicEventsTag;
 
     public CreateGalleryRequestDTO() {}

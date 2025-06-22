@@ -1,11 +1,22 @@
 package com.service.galleryservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 public class ImageLikeRequestDTO {
+    @NotBlank(message = "User Magic Events Tag cannot be blank")
     private String userMagicEventsTag;
+
     private boolean like;
+
+    @NotNull(message = "Image ID cannot be null")
     private Long imageID;
+
+    @NotNull(message = "Event ID cannot be null")
     private Long eventID;
 
+    @PositiveOrZero(message = "Liked count must be positive or zero")
     private int likedCount = 0;
 
     public ImageLikeRequestDTO() { }

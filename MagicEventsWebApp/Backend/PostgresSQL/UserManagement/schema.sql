@@ -5,7 +5,8 @@ CREATE TABLE user_info (
     profile_image_url VARCHAR(512),
     name VARCHAR(100),
     surname VARCHAR(100),
-    role VARCHAR(100)
+    role VARCHAR(100),
+    password VARCHAR(500)
 );
 
 CREATE TABLE token (
@@ -14,7 +15,16 @@ CREATE TABLE token (
     magic_events_tag BIGINT,
     CONSTRAINT fk_user
         FOREIGN KEY (magic_events_tag)
-        REFERENCES users(magic_events_tag)
+        REFERENCES user_info(magic_events_tag)
         ON DELETE CASCADE
 );
 
+CREATE TABLE reset_pwd (
+    token VARCHAR(255) PRIMARY KEY,
+    expirationTime VARCHAR(255),
+    magic_events_tag BIGINT,
+    CONSTRAINT fk_user
+        FOREIGN KEY (magic_events_tag)
+        REFERENCES user_info(magic_events_tag)
+        ON DELETE CASCADE
+);

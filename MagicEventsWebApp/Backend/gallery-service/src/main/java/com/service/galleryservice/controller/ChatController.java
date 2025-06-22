@@ -5,6 +5,7 @@ import com.service.galleryservice.dto.DeleteImageRequestDTO;
 import com.service.galleryservice.dto.ImageLikeRequestDTO;
 import com.service.galleryservice.exception.UnauthorizedException;
 import com.service.galleryservice.service.ImageChatService;
+import jakarta.validation.Valid;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -22,7 +23,7 @@ public class ChatController {
 
     @MessageMapping("gallery/sendImage/{eventID}")
     @SendTo("/topic/gallery/{eventID}")
-    public AddNewImageRequestDTO receiveImage(@Payload AddNewImageRequestDTO message) {
+    public AddNewImageRequestDTO receiveImage(@Valid @Payload AddNewImageRequestDTO message) {
         try {
             AddNewImageRequestDTO response = imageChatService.addNewImage(message);
             return response;
@@ -35,7 +36,7 @@ public class ChatController {
 
     @MessageMapping("gallery/deleteImage/{eventID}")
     @SendTo("/topic/gallery/deleteImage/{eventID}")
-    public DeleteImageRequestDTO deleteImage(@Payload DeleteImageRequestDTO msg) {
+    public DeleteImageRequestDTO deleteImage(@Valid @Payload DeleteImageRequestDTO msg) {
         try {
             return imageChatService.deleteImage(msg);
         } catch (UnauthorizedException e) {
@@ -47,7 +48,7 @@ public class ChatController {
 
     @MessageMapping("gallery/imageLike/{eventID}")
     @SendTo("/topic/gallery/imageLike/{eventID}")
-    public ImageLikeRequestDTO handleImageLike(@Payload ImageLikeRequestDTO request) {
+    public ImageLikeRequestDTO handleImageLike(@Valid @Payload ImageLikeRequestDTO request) {
         try {
             return imageChatService.handleImageLike(request);
         } catch (UnauthorizedException e) {

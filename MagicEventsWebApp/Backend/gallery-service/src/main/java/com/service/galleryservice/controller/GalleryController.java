@@ -4,6 +4,7 @@ import com.service.galleryservice.dto.GalleryDTO;
 import com.service.galleryservice.dto.CreateGalleryRequestDTO;
 import com.service.galleryservice.service.GalleryService;
 import com.service.galleryservice.exception.UnauthorizedException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class GalleryController {
     }
 
     @PostMapping("/createGallery")
-    public ResponseEntity<Boolean> createGallery(@RequestBody CreateGalleryRequestDTO request) {
+    public ResponseEntity<Boolean> createGallery(@Valid @RequestBody CreateGalleryRequestDTO request) {
         try {
             galleryService.createGallery(request);
             return ResponseEntity.ok(true);
@@ -70,12 +71,15 @@ public class GalleryController {
     }
 
     @DeleteMapping("/deleteGallery/{eventID}")
-    public ResponseEntity<Boolean> deleteGallery(@PathVariable Long eventID) {
+    public ResponseEntity<Boolean> deleteGallery(@PathVariable Long eventID,
+                                                 @RequestParam Long userMagicEventsTag) {
         try {
-            galleryService.deleteGallery(eventID);
+            galleryService.deleteGallery(eventID, userMagicEventsTag);
             return ResponseEntity.ok(true);
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 }

@@ -23,20 +23,31 @@ public class EventGestorController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Long> createEvent(@Valid @RequestBody EventDTO eventDTO) {
-        List<Long> partecipantIds = eventGestorService.getListIds(eventDTO.getPartecipants());
-        for(Long partecipantId : partecipantIds){
+    public ResponseEntity<Long> createEvent(
+            @Valid @RequestBody EventDTO eventDTO,
+            @RequestParam("creatorEmail") String creatorEmail
+    ) {
+        for(String partecipantId : eventDTO.getPartecipants()){
             if(eventDTO.getAdmins().contains(partecipantId)){
                 eventDTO.getPartecipants().remove(partecipantId);
             }
         }
         if(eventDTO.getEnding().isAfter(eventDTO.getStarting())) {
-            Long eventId = eventGestorService.create(eventDTO);
+            Long eventId = eventGestorService.create(eventDTO, creatorEmail);
             return ResponseEntity.status(HttpStatus.CREATED).body(eventId);
         }else{
             /// Invalid event ending value
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
         }
+    }
+
+    @GetMapping("/annullevent")
+    public ResponseEntity<String> annullEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        String response = eventGestorService.annullEvent(eventId, creatorId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     @GetMapping("/updateadmins")
@@ -53,7 +64,7 @@ public class EventGestorController {
             @RequestParam("partecipants") ArrayList<String> partecipants,
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId
-            ) {
+    ) {
         return eventGestorService.updateEventPartecipants(partecipants, eventId, creatorId);
     }
 

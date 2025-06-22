@@ -15,7 +15,7 @@ public class Partecipant {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @ManyToMany(mappedBy = "partecipants")
+    @ManyToMany(mappedBy = "partecipants", cascade = CascadeType.ALL)
     private List<Event> events = new ArrayList<>();
 
     public Partecipant() {}

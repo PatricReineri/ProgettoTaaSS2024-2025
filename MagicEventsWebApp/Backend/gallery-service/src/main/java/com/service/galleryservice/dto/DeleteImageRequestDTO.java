@@ -1,11 +1,20 @@
 package com.service.galleryservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class DeleteImageRequestDTO {
+    @NotNull(message = "Event ID cannot be null")
     private Long eventID;
+    
+    @NotNull(message = "Image ID cannot be null")
     private Long imageID;
+    
+    @NotBlank(message = "Deleted by cannot be blank")
     private String deletedBy;
+    
+    @NotBlank(message = "Magic Events tag cannot be blank")
     private String magiceventstag;
 
     public DeleteImageRequestDTO() { }

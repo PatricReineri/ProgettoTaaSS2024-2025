@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AdminsRepository extends JpaRepository<Admin, Long> {
-    @Query("SELECT admin FROM Admin admin WHERE admin.user.magicEventTag = :userId")
-    Admin findByUserId(@Param("userId") Long userId);
+
 }

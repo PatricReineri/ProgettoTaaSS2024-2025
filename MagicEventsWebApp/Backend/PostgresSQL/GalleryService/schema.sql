@@ -25,7 +25,9 @@ CREATE TABLE image_user_like (
     CONSTRAINT fk_image
         FOREIGN KEY (image_id)
             REFERENCES image(id)
-            ON DELETE CASCADE
+            ON DELETE CASCADE,
+	CONSTRAINT uq_image_user_like
+        UNIQUE (user_magic_events_tag, image_id)
 );
 
 COMMIT;

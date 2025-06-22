@@ -19,6 +19,8 @@ CREATE TABLE event_info (
     starting TIMESTAMP NOT NULL,
     ending TIMESTAMP NOT NULL,
     location VARCHAR(255),
+    status VARCHAR(255), 
+    image TEXT,
     magic_events_tag BIGINT,
     FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE
 );

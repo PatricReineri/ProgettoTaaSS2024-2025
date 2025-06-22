@@ -1,13 +1,23 @@
 package com.service.galleryservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class AddNewImageRequestDTO {
+    @NotNull(message = "Event ID cannot be null")
     private Long eventID;
+    
+    @NotBlank(message = "Title cannot be blank")
     private String title;
+    
+    @NotBlank(message = "Base64 image cannot be blank")
     private String base64Image;
+    
+    @NotBlank(message = "Uploaded by cannot be blank")
     private String uploadedBy;
+    
     private LocalDateTime dateTime;
     private String magiceventstag;
 

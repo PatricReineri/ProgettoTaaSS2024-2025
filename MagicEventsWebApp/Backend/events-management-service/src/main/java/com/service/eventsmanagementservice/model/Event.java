@@ -24,6 +24,10 @@ public class Event {
     private Long creatorMagicEventsTag;
 
     private String location;
+    private String status;
+
+    @Column(columnDefinition = "TEXT")
+    private String image;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -51,7 +55,8 @@ public class Event {
             String location,
             Long creator,
             List<Partecipant> partecipants,
-            List<Admin> admins
+            List<Admin> admins,
+            String image
     ) {
       this.title = title;
       this.description = description;
@@ -61,6 +66,7 @@ public class Event {
       this.creatorMagicEventsTag = creator;
       this.partecipants = partecipants;
       this.admins = admins;
+      this.image = image;
     }
 
     public Event(
@@ -69,7 +75,8 @@ public class Event {
             LocalDateTime start,
             LocalDateTime end,
             String location,
-            Long creator
+            Long creator,
+            String image
     ) {
         this.title = title;
         this.description = description;
@@ -77,6 +84,7 @@ public class Event {
         this.ending = end;
         this.location = location;
         this.creatorMagicEventsTag = creator;
+        this.image = image;
     }
 
     public Long getEventId() {
@@ -115,6 +123,14 @@ public class Event {
         return this.partecipants;
     }
 
+    public String getStatus() {
+        return this.status;
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+
     public void setEventId(Long event_id) {
         this.event_id = event_id;
     }
@@ -149,5 +165,13 @@ public class Event {
 
     public void setPartecipants(List<Partecipant> partecipants) {
         this.partecipants = partecipants;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

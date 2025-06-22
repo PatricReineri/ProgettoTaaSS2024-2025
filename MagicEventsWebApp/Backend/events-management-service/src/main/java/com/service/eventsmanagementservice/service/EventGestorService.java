@@ -9,13 +9,16 @@ import com.service.eventsmanagementservice.repository.EventsRepository;
 import com.service.eventsmanagementservice.repository.PartecipantsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -71,18 +74,19 @@ public class EventGestorService {
                 event.getLocation(),
                 event.getCreator(),
                 admins,
-                partecipants
+                partecipants,
+                event.getImage()
         );
     }
 
     @Transactional
-    public Long create(EventDTO eventDTO) {
-        // Ensure creator exists as a partecipant
+    public Long create(EventDTO eventDTO, String creatorEmail) {
         Long creatorId = eventDTO.getCreator();
         partecipantsRepository.findById(creatorId)
             .orElseGet(() -> {
                 Partecipant newP = new Partecipant();
                 newP.setMagicEventTag(creatorId);
+                newP.setEmail(creatorEmail);
                 return partecipantsRepository.saveAndFlush(newP);
             });
         Event event = new Event(
@@ -91,7 +95,8 @@ public class EventGestorService {
                 eventDTO.getStarting(),
                 eventDTO.getEnding(),
                 eventDTO.getLocation(),
-                creatorId
+                creatorId,
+                eventDTO.getImage()
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
@@ -99,13 +104,13 @@ public class EventGestorService {
     }
 
     public List<Admin> addAdmins(List<String> admins, Long eventId){
-        List<Long> adminIds = getListIds(admins);
-        return addAdminsWithId(adminIds, eventId);
+        HashMap<Long, String> adminsWithId = geIdForEmails(admins);
+        return addAdminsWithId(adminsWithId, eventId);
     }
 
     @Transactional
-    public List<Admin> addAdminsWithId(List<Long> admins, Long eventId){
-        List<Partecipant> partecipantList = addPartecipantsWithId(new ArrayList<>(admins), eventId);
+    public List<Admin> addAdminsWithId(HashMap<Long, String> admins, Long eventId){
+        List<Partecipant> partecipantList = addPartecipantsWithId(admins, eventId);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         ArrayList<Admin> newAdmins = new ArrayList<>();
@@ -128,20 +133,21 @@ public class EventGestorService {
     }
 
     public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
-        List<Long> partecipantIds = getListIds(partecipants);
-        return addPartecipantsWithId(partecipantIds, eventId);
+        HashMap<Long, String> partecipantsWithId = geIdForEmails(partecipants);
+        return addPartecipantsWithId(partecipantsWithId, eventId);
     }
 
     @Transactional
-    public List<Partecipant> addPartecipantsWithId(List<Long> partecipantIds, Long eventId) {
+    public List<Partecipant> addPartecipantsWithId(HashMap<Long, String> partecipantIds, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         List<Partecipant> added = new ArrayList<>();
-        for (Long id : partecipantIds) {
-            Partecipant partecipant = partecipantsRepository.findById(id)
+        for (Map.Entry<Long, String> partecipantEntry : partecipantIds.entrySet()) {
+            Partecipant partecipant = partecipantsRepository.findById(partecipantEntry.getKey())
                     .orElseGet(() -> {
                         Partecipant newP = new Partecipant();
-                        newP.setMagicEventTag(id);
+                        newP.setMagicEventTag(partecipantEntry.getKey());
+                        newP.setEmail(partecipantEntry.getValue());
                         return partecipantsRepository.saveAndFlush(newP);
                     });
             if (!event.getPartecipants().contains(partecipant)) {
@@ -162,6 +168,7 @@ public class EventGestorService {
             event.setStarting(eventDTO.getStarting());
             event.setEnding(eventDTO.getEnding());
             event.setLocation(eventDTO.getLocation());
+            event.setImage(eventDTO.getImage());
             eventsRepository.save(event);
             return "Success";
         }else {
@@ -170,16 +177,24 @@ public class EventGestorService {
     }
 
     public boolean isPartecipant(String email, Long eventId) {
-        List<Long> partecipantsId = getListIds(List.of(email));
-        Long partecipantId = partecipantsId.get(0);
+        HashMap<Long, String> partecipantsId = geIdForEmails(List.of(email));
+        Map<String, Long> emailToId = new HashMap<>();
+        for (Map.Entry<Long, String> entry : partecipantsId.entrySet()) {
+            emailToId.put(entry.getValue(), entry.getKey());
+        }
+        Long partecipantId = emailToId.get(email);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         return event.getPartecipants().contains(partecipantId);
     }
 
     public boolean isAdmin(String email, Long eventId) {
-        List<Long> adminsId = getListIds(List.of(email));
-        Long adminId = adminsId.get(0);
+        HashMap<Long, String> adminsId = geIdForEmails(List.of(email));
+        Map<String, Long> emailToId = new HashMap<>();
+        for (Map.Entry<Long, String> entry : adminsId.entrySet()) {
+            emailToId.put(entry.getValue(), entry.getKey());
+        }
+        Long adminId = emailToId.get(email);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         return event.getAdmins().contains(adminId) || event.getCreator().equals(adminId);
@@ -190,6 +205,16 @@ public class EventGestorService {
             Event event = eventsRepository.findById(eventId)
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
             if(event.getCreator().equals(creatorId)) {
+                List<Partecipant> partecipants = event.getPartecipants();
+                for(Partecipant partecipant : partecipants) {
+                    partecipant.getEvents().remove(event);
+                }
+                partecipantsRepository.saveAll(partecipants);
+                List<Admin> admins = event.getAdmins();
+                for(Admin admin : admins) {
+                    admin.getEvents().remove(event);
+                }
+                adminsRepository.saveAll(admins);
                 eventsRepository.deleteById(eventId);
                 rabbitTemplate.convertAndSend(eventId);
                 return true;
@@ -271,19 +296,35 @@ public class EventGestorService {
         return eventDTOs;
     }
 
-    public List<Long> getListIds(List<String> emails) {
+    public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            List<Long> ids = userManagementWebClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/info")
-                            .queryParam("email", emails)
-                            .build())
+            HashMap<Long, String> result = userManagementWebClient.post()
+                    .uri("/info")
+                    .bodyValue(emails)
                     .retrieve()
-                    .bodyToMono(List.class)
+                    .onStatus(status -> status.is4xxClientError(), 
+                        response -> response.bodyToMono(String.class)
+                            .map(body -> new RuntimeException("Client error: " + body)))
+                    .onStatus(status -> status.is5xxServerError(), 
+                        response -> response.bodyToMono(String.class)
+                            .map(body -> new RuntimeException("Server error: " + body)))
+                    .bodyToMono(new ParameterizedTypeReference<HashMap<Long, String>>() {})
                     .block();
-            return ids;
+            return result;
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to fetch user IDs: " + e.getMessage(), e);
+        }
+    }
+
+    public String annullEvent(Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            event.setStatus("ANNULLED");
+            eventsRepository.save(event);
+            return "Success";
+        }else{
+            return "Error";
         }
     }
 }

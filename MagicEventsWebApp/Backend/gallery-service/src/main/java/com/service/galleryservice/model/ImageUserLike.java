@@ -1,9 +1,10 @@
 package com.service.galleryservice.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "image_user_like")
+@Table(name = "image_user_like", uniqueConstraints = @UniqueConstraint(columnNames = {"user_magic_events_tag", "image_id"}))
 public class ImageUserLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
