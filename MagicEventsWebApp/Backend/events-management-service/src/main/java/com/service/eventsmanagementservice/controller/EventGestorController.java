@@ -41,6 +41,15 @@ public class EventGestorController {
         }
     }
 
+    @GetMapping("/annullevent")
+    public ResponseEntity<String> annullEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        String response = eventGestorService.annullEvent(eventId, creatorId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
     @GetMapping("/updateadmins")
     public String addNewAdmins(
             @RequestParam("admins") ArrayList<String> admins,

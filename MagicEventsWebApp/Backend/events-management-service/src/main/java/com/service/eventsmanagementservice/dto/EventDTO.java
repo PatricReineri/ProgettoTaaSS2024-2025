@@ -27,6 +27,8 @@ public class EventDTO {
     @NotNull(message = "Admins is required")
     private ArrayList<String> admins;
 
+    private String image;
+
     public EventDTO() {}
 
     public EventDTO(
@@ -37,7 +39,8 @@ public class EventDTO {
             String location,
             Long creator,
             ArrayList<String> partecipants,
-            ArrayList<String> admins
+            ArrayList<String> admins,
+            String image
     ) {
         this.title = title;
         this.description = description;
@@ -47,6 +50,7 @@ public class EventDTO {
         this.creator = creator;
         this.partecipants = partecipants;
         this.admins = admins;
+        this.image = image;
     }
 
     public String getDescription() {
@@ -81,6 +85,10 @@ public class EventDTO {
         return this.admins;
     }
 
+    public String getImage() {
+        return this.image;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -111,6 +119,10 @@ public class EventDTO {
 
     public void setPartecipants(ArrayList<String> partecipants) {
         this.partecipants = partecipants;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 

@@ -73,7 +73,8 @@ public class EventGestorService {
                 event.getLocation(),
                 event.getCreator(),
                 admins,
-                partecipants
+                partecipants,
+                event.getImage()
         );
     }
 
@@ -93,7 +94,8 @@ public class EventGestorService {
                 eventDTO.getStarting(),
                 eventDTO.getEnding(),
                 eventDTO.getLocation(),
-                creatorId
+                creatorId,
+                eventDTO.getImage()
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
@@ -165,6 +167,7 @@ public class EventGestorService {
             event.setStarting(eventDTO.getStarting());
             event.setEnding(eventDTO.getEnding());
             event.setLocation(eventDTO.getLocation());
+            event.setImage(eventDTO.getImage());
             eventsRepository.save(event);
             return "Success";
         }else {
@@ -201,6 +204,16 @@ public class EventGestorService {
             Event event = eventsRepository.findById(eventId)
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
             if(event.getCreator().equals(creatorId)) {
+                List<Partecipant> partecipants = event.getPartecipants();
+                for(Partecipant partecipant : partecipants) {
+                    partecipant.getEvents().remove(event);
+                }
+                partecipantsRepository.saveAll(partecipants);
+                List<Admin> admins = event.getAdmins();
+                for(Admin admin : admins) {
+                    admin.getEvents().remove(event);
+                }
+                adminsRepository.saveAll(admins);
                 eventsRepository.deleteById(eventId);
                 rabbitTemplate.convertAndSend(eventId);
                 return true;
@@ -295,6 +308,18 @@ public class EventGestorService {
                     .block();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public String annullEvent(Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            event.setStatus("ANNULLED");
+            eventsRepository.save(event);
+            return "Success";
+        }else{
+            return "Error";
         }
     }
 }
