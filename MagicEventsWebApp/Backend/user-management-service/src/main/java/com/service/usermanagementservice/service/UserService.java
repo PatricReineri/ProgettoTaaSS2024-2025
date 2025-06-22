@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -20,17 +21,17 @@ public class UserService {
     @Autowired
     OauthTokenRepository tokenRepository;
 
-    public List<Long> getUserEmail(List<String> email) throws Exception {
-        ArrayList<Long> usersEmail = new ArrayList<>();
+    public HashMap<Long, String> getUserEmail(List<String> email) throws Exception {
+        HashMap<Long, String> usersValues = new HashMap<>();
         for (String s : email) {
             User user = userRepository.findByEmail(s);
             if (user != null) {
-                usersEmail.add(user.getMagicEventTag());
+                usersValues.put(user.getMagicEventTag(), user.getEmail());
             }else{
                 throw new Exception("User not exist");
             }
         }
-        return usersEmail;
+        return usersValues;
     }
 
     public Boolean isAuthenticated(String email) throws Exception {

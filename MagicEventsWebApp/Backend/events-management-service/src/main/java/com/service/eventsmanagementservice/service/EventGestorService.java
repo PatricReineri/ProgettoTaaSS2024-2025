@@ -15,7 +15,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -99,13 +101,13 @@ public class EventGestorService {
     }
 
     public List<Admin> addAdmins(List<String> admins, Long eventId){
-        List<Long> adminIds = getListIds(admins);
-        return addAdminsWithId(adminIds, eventId);
+        HashMap<Long, String> adminsWithId = geIdForEmails(admins);
+        return addAdminsWithId(adminsWithId, eventId);
     }
 
     @Transactional
-    public List<Admin> addAdminsWithId(List<Long> admins, Long eventId){
-        List<Partecipant> partecipantList = addPartecipantsWithId(new ArrayList<>(admins), eventId);
+    public List<Admin> addAdminsWithId(HashMap<Long, String> admins, Long eventId){
+        List<Partecipant> partecipantList = addPartecipantsWithId(admins, eventId);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         ArrayList<Admin> newAdmins = new ArrayList<>();
@@ -128,20 +130,21 @@ public class EventGestorService {
     }
 
     public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
-        List<Long> partecipantIds = getListIds(partecipants);
-        return addPartecipantsWithId(partecipantIds, eventId);
+        HashMap<Long, String> partecipantsWithId = geIdForEmails(partecipants);
+        return addPartecipantsWithId(partecipantsWithId, eventId);
     }
 
     @Transactional
-    public List<Partecipant> addPartecipantsWithId(List<Long> partecipantIds, Long eventId) {
+    public List<Partecipant> addPartecipantsWithId(HashMap<Long, String> partecipantIds, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         List<Partecipant> added = new ArrayList<>();
-        for (Long id : partecipantIds) {
-            Partecipant partecipant = partecipantsRepository.findById(id)
+        for (Map.Entry<Long, String> partecipantEntry : partecipantIds.entrySet()) {
+            Partecipant partecipant = partecipantsRepository.findById(partecipantEntry.getKey())
                     .orElseGet(() -> {
                         Partecipant newP = new Partecipant();
-                        newP.setMagicEventTag(id);
+                        newP.setMagicEventTag(partecipantEntry.getKey());
+                        newP.setEmail(partecipantEntry.getValue());
                         return partecipantsRepository.saveAndFlush(newP);
                     });
             if (!event.getPartecipants().contains(partecipant)) {
@@ -170,16 +173,24 @@ public class EventGestorService {
     }
 
     public boolean isPartecipant(String email, Long eventId) {
-        List<Long> partecipantsId = getListIds(List.of(email));
-        Long partecipantId = partecipantsId.get(0);
+        HashMap<Long, String> partecipantsId = geIdForEmails(List.of(email));
+        Map<String, Long> emailToId = new HashMap<>();
+        for (Map.Entry<Long, String> entry : partecipantsId.entrySet()) {
+            emailToId.put(entry.getValue(), entry.getKey());
+        }
+        Long partecipantId = emailToId.get(email);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         return event.getPartecipants().contains(partecipantId);
     }
 
     public boolean isAdmin(String email, Long eventId) {
-        List<Long> adminsId = getListIds(List.of(email));
-        Long adminId = adminsId.get(0);
+        HashMap<Long, String> adminsId = geIdForEmails(List.of(email));
+        Map<String, Long> emailToId = new HashMap<>();
+        for (Map.Entry<Long, String> entry : adminsId.entrySet()) {
+            emailToId.put(entry.getValue(), entry.getKey());
+        }
+        Long adminId = emailToId.get(email);
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         return event.getAdmins().contains(adminId) || event.getCreator().equals(adminId);
@@ -271,17 +282,17 @@ public class EventGestorService {
         return eventDTOs;
     }
 
-    public List<Long> getListIds(List<String> emails) {
+    public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            List<Long> ids = userManagementWebClient.get()
+            return userManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/info")
                             .queryParam("email", emails)
-                            .build())
+                            .build()
+                    )
                     .retrieve()
-                    .bodyToMono(List.class)
+                    .bodyToMono(HashMap.class)
                     .block();
-            return ids;
         } catch (Exception e) {
             return null;
         }
