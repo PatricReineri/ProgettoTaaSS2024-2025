@@ -116,38 +116,38 @@ public class GalleryService {
 
     private boolean authorizeCreateDeleteGallery(Long eventID, Long userMagicEventsTag) {
         try {
-            Boolean isAdmin = eventManagementWebClient.get()
+            Boolean isCreator = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isAdmin")
-                            .queryParam("partecipantId", userMagicEventsTag)
+                            .path("/gestion/iscreator")
+                            .queryParam("creatorId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isAdmin);
+            return Boolean.TRUE.equals(isCreator);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during creator authorization check: " + e.getMessage());
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 
     private boolean authorizeViewGallery(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isParticipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isParticipant")
+                            .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isParticipant);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during participant authorization check: " + e.getMessage());
+            return false;
         }
-        return true;
     }
 
     public Boolean isGalleryExists(Long eventID) {
