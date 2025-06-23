@@ -22,7 +22,7 @@ public class ImageChatService {
     private final ImageUserLikeRepository imageUserLikeRepository;
     private final WebClient eventManagementWebClient;
 
-    public ImageChatService(GalleryRepository galleryRepository, ImageRepository imageRepository, 
+    public ImageChatService(GalleryRepository galleryRepository, ImageRepository imageRepository,
                            ImageUserLikeRepository imageUserLikeRepository, WebClient eventManagementWebClient) {
         this.galleryRepository = galleryRepository;
         this.imageRepository = imageRepository;
@@ -31,7 +31,7 @@ public class ImageChatService {
     }
 
     public AddNewImageRequestDTO addNewImage(AddNewImageRequestDTO request) {
-        if (!authorizeParticipant(request.getEventID(), request.getMagiceventstag())) {
+        if (!authorizePartecipant(request.getEventID(), Long.parseLong(request.getMagiceventstag()))) {
             throw new UnauthorizedException("Not authorized to add image for event ID: " + request.getEventID());
         }
 
@@ -53,7 +53,7 @@ public class ImageChatService {
     }
 
     public DeleteImageRequestDTO deleteImage(DeleteImageRequestDTO request) {
-        if (!authorizeAdmin(request.getEventID(), request.getMagiceventstag())) {
+        if (!authorizeAdmin(request.getEventID(), Long.parseLong(request.getMagiceventstag()))) {
             throw new UnauthorizedException("Not authorized to delete image for event ID: " + request.getEventID());
         }
 
@@ -69,7 +69,7 @@ public class ImageChatService {
     }
 
     public ImageLikeRequestDTO handleImageLike(ImageLikeRequestDTO request) {
-        if (!authorizeParticipant(request.getEventID(), request.getUserMagicEventsTag())) {
+        if (!authorizePartecipant(request.getEventID(), Long.parseLong(request.getUserMagicEventsTag()))) {
             throw new UnauthorizedException("Not authorized to like image for event ID: " + request.getEventID());
         }
 
@@ -94,7 +94,7 @@ public class ImageChatService {
         return request;
     }
 
-    private boolean authorizeAdmin(Long eventID, String userMagicEventsTag) {
+    private boolean authorizeAdmin(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
@@ -112,9 +112,9 @@ public class ImageChatService {
         }
     }
 
-    private boolean authorizeParticipant(Long eventID, String userMagicEventsTag) {
+    private boolean authorizePartecipant(Long eventID, Long userMagicEventsTag) {
         try {
-            Boolean isParticipant = eventManagementWebClient.get()
+            Boolean isPartecipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
@@ -123,7 +123,7 @@ public class ImageChatService {
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isPartecipant);
         } catch (Exception e) {
             System.err.println("-----> Error during participant authorization check: " + e.getMessage());
             return false;

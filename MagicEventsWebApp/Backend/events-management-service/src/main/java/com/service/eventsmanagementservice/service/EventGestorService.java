@@ -203,7 +203,7 @@ public class EventGestorService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         System.out.println("Checking admin with tag: " + magicEventsTag + " in event: " + eventId);
         return event.getAdmins().stream()
-                .anyMatch(admin -> admin.getAdminId().equals(magicEventsTag));
+                .anyMatch(admin -> admin.getUser().getMagicEventTag().equals(magicEventsTag));
     }
 
     public boolean deleteEvent(Long eventId, Long creatorId) {
