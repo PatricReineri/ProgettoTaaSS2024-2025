@@ -3,9 +3,7 @@ package com.service.guestgameservice.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "guest_info", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "user_magic_events_tag")
-})
+@Table(name = "guest_info")
 public class GuestInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,7 +15,7 @@ CREATE TABLE guest_info (
     is_bald BOOLEAN NOT NULL,
     have_glasses BOOLEAN NOT NULL,
     have_dark_hair BOOLEAN NOT NULL,
-    user_magic_events_tag VARCHAR(255) UNIQUE NOT NULL,
+    user_magic_events_tag VARCHAR(255) NOT NULL,
     game_id BIGINT NOT NULL,
     CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES game (event_id) ON DELETE CASCADE
 );
