@@ -1,6 +1,7 @@
 package com.service.eventsmanagementservice.controller;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
+import com.service.eventsmanagementservice.dto.ServicesDTO;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,25 @@ public class EventGestorController {
             @RequestParam("magicEventsTag") Long creatorId
     ) {
         String response = eventGestorService.annullEvent(eventId, creatorId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+    @GetMapping("/activeservices")
+    public ResponseEntity<String> activeServicesEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId,
+            @Valid @RequestBody ServicesDTO servicesDTO
+    ) {
+        String response = eventGestorService.activeServicesEvent(eventId, creatorId, servicesDTO);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+    @GetMapping("/de-annullevent")
+    public ResponseEntity<String> activeEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        String response = eventGestorService.activeEvent(eventId, creatorId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
