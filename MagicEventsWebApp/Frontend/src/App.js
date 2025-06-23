@@ -31,7 +31,7 @@ function App() {
 			<NavBar
 				logo={
 					<NavLink to="/">
-						<h1 className="text-[#EE0E51] font-extrabold hover:scale-110">MagicEvent</h1>
+						<h1 className="text-[#EE0E51] font-extrabold  hover:scale-110">MagicEvent</h1>
 					</NavLink>
 				}
 				actions={
@@ -44,7 +44,11 @@ function App() {
 						</NavLink>
 					</div>
 				}
-			/>
+			>
+				<NavLink className="w-fit" to="/login">
+					<Button text="My events" link custom="  !w-20 text-md !undeline "></Button>
+				</NavLink>
+			</NavBar>
 			<div className=" h-[calc(100vh-3.5rem)]">
 				<Routes>
 					<Route path="/" element={<HomePage />} />
@@ -55,7 +59,7 @@ function App() {
 					<Route path="/googlecallback" element={<GoogleCallbackPage />} />
 					<Route path="/changepassword" element={<ChangePasswordPage />} />
 					<Route path="/modifyuser" element={<ModifyUserValuePage />} />
-					<Route path="/:eventId/board" element={<BoardPage />} />
+					<Route path="/:eventId/board" element={<BoardPage eventID={1} />} />
 				</Routes>
 			</div>
 		</Router>

@@ -20,6 +20,7 @@ public class ChatController {
     @MessageMapping("chat/sendMessage/{eventID}")
     @SendTo("/topic/chat/{eventID}")
     public AddNewMessageRequestDTO receiveMessage(@Payload AddNewMessageRequestDTO message) {
+        System.out.println("Ricevuto messaggio: " + message.getContent());
         chatService.addNewMessage(message);
         return message;
     }

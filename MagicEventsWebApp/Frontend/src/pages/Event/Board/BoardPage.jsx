@@ -1,3 +1,83 @@
+// import { useEffect, useState } from 'react';
+// import Button from '../../../components/buttons/Button';
+// import Stomp from 'stompjs';
+// import SockJS from 'sockjs-client';
+
+// import MexssageList from '../../../components/Lists/List';
+
+// const BoardPage = ({ eventID }) => {
+// 	let board = document.getElementById('board');
+// 	const [messages, setMessages] = useState([]);
+// 	const [message, setMessage] = useState('');
+// 	const [stompClient, setStompClient] = useState(null);
+
+// 	// useEffect(() => {
+// 	// 	if (!eventID) return;
+
+// 	// 	const socket = new SockJS('http://localhost:8081/chat');
+// 	// 	const client = Stomp.over(socket);
+
+// 	// 	console.log('Connecting...');
+
+// 	// 	client.connect(
+// 	// 		{},
+// 	// 		(frame) => {
+// 	// 			console.log('Subscibing...', frame);
+
+// 	// 			setStompClient(client);
+
+// 	// 			client.subscribe(`/topic/chat/${eventID}`, (message) => {
+// 	// 				const reciviedMessage = JSON.parse(message.body);
+// 	// 				setMessages((prev) => [...prev, reciviedMessage]);
+// 	// 			});
+// 	// 		},
+// 	// 		() => {
+// 	// 			console.log('Errore');
+// 	// 		}
+// 	// 	);
+
+// 	// 	return () => {
+// 	// 		client.disconnect();
+// 	// 	};
+// 	// }, [eventID]);
+
+// 	const connect = () => {
+// 		if (!eventID) return;
+
+// 		const socket = new SockJS('http://localhost:8081/chat');
+// 		const client = Stomp.over(socket);
+
+// 		console.log('Connecting...');
+
+// 		client.connect(
+// 			{},
+// 			(frame) => {
+// 				console.log('Subscibing...', frame);
+
+// 				setStompClient(client);
+
+// 				client.subscribe(`/topic/chat/${eventID}`, (message) => {
+// 					const reciviedMessage = JSON.parse(message.body);
+// 					setMessages((prev) => [...prev, reciviedMessage]);
+// 				});
+// 			},
+// 			() => {
+// 				console.log('Errore');
+// 			}
+// 		);
+// 	};
+
+// 	const sendMessage = () => {
+// 		const chatMessage = {
+// 			id: 1,
+// 			content:
+// 				'Ciao!! Bellissimo evento ci sarò sicuramente! Ma ci saranno tante persone? e quande di preciso? avrei altre domande mando sempre qui? perche ci sarebbe anhe mio fratello, per voi andrebbe bene se viene anche lui? lo invitiamo?',
+// 			username: 'Alix99',
+// 			time: '12:50 22/05/25',
+// 		};
+
+// 		stompClient.send('/app/chat/sendmessage/1', {}, JSON.stringify(chatMessage));
+// 	};
 import { useEffect, useState } from 'react';
 import Button from '../../../components/buttons/Button';
 import Stomp from 'stompjs';
@@ -5,50 +85,98 @@ import SockJS from 'sockjs-client';
 
 import MexssageList from '../../../components/Lists/List';
 
-const BoardPage = () => {
-	let board = document.getElementById('board');
+const BoardPage = ({ eventID }) => {
 	const [messages, setMessages] = useState([]);
 	const [message, setMessage] = useState('');
 	const [stompClient, setStompClient] = useState(null);
+	const [connected, setConnected] = useState(false);
 
 	useEffect(() => {
+		if (!eventID) return;
+
+		connect();
+
+		// Cleanup on unmount
+		return () => {
+			if (stompClient) {
+				stompClient.disconnect();
+			}
+		};
+	});
+
+	const connect = () => {
+		if (!eventID || connected) return;
+		setConnected(true);
 		const socket = new SockJS('http://localhost:8081/chat');
 		const client = Stomp.over(socket);
+
+		// Disable debug output (optional)
+		client.debug = null;
 
 		console.log('Connecting...');
 
 		client.connect(
 			{},
-			() => {
-				console.log('Subscibing...');
+			(frame) => {
+				console.log('Connected:', frame);
+				setStompClient(client);
+				setConnected(true);
 
-				client.subscribe('/topic/chat/1', (message) => {
-					const reciviedMessage = JSON.parse(message.body);
-					setMessages((prev) => [...prev, reciviedMessage]);
+				// Subscribe to the topic with the correct path format
+				const subscription = client.subscribe(`/topic/chat/${eventID}`, (message) => {
+					console.log('Message received:', message);
+					try {
+						const receivedMessage = JSON.parse(message.body);
+						setMessages((prev) => [...prev, receivedMessage]);
+					} catch (error) {
+						console.error('Error parsing message:', error);
+					}
 				});
+
+				client.onclose = () => {
+					console.log('Client disconesso');
+				};
+
+				console.log('Subscribed to:', `/topic/chat/${eventID}`);
 			},
-			() => {
-				console.log('Errore');
+			(error) => {
+				console.error('Connection error:', error);
+				setConnected(false);
 			}
 		);
+	};
 
-		setStompClient(client);
+	const disconnect = () => {
+		if (stompClient && connected) {
+			stompClient.disconnect(() => {
+				console.log('Disconnected');
+				setStompClient(null);
+				setConnected(false);
+			});
+		}
+	};
 
-		return () => {
-			client.disconnect();
-		};
-	}, []);
+	const sendMessage = (content) => {
+		if (!stompClient || !connected || !stompClient.connected) {
+			console.log('Not connected to WebSocket');
+			return;
+		}
 
-	const sendMessage = () => {
 		const chatMessage = {
-			id: 1,
-			content:
-				'Ciao!! Bellissimo evento ci sarò sicuramente! Ma ci saranno tante persone? e quande di preciso? avrei altre domande mando sempre qui? perche ci sarebbe anhe mio fratello, per voi andrebbe bene se viene anche lui? lo invitiamo?',
+			content: content,
 			username: 'Alix99',
-			time: '12:50 22/05/25',
+			dateTime: new Date().toISOString(),
+			eventID: eventID,
 		};
 
-		stompClient.send('/app/chat/sendmessage/1', {}, JSON.stringify(chatMessage));
+		console.log('Sending message:', chatMessage);
+
+		try {
+			stompClient.send(`/app/chat/sendMessage/${eventID}`, {}, JSON.stringify(chatMessage));
+			setMessage(''); // Clear input after sending
+		} catch (error) {
+			console.log('Error sending message:', error);
+		}
 	};
 
 	return (
@@ -59,9 +187,10 @@ const BoardPage = () => {
 					Descizione della bacheca, piu o meno abbastanza lunga, forse anche più lunga, ma non riesco a scrivere di piu,
 					quindi concludo qua
 				</p>
-				<Button text="Aggiungi messaggio" onClick={() => sendMessage()}></Button>
+				<Button onClick={() => connect()} text="connect"></Button>
+				<Button onClick={() => disconnect()} text="disconnect"></Button>
 			</div>
-			<MexssageList messages={messages} />
+			<MexssageList onSend={(value) => sendMessage(value)} messages={messages} />
 		</div>
 	);
 };
