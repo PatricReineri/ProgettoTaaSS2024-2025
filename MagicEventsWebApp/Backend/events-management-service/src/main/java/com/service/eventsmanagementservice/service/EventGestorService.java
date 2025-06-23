@@ -176,28 +176,22 @@ public class EventGestorService {
         }
     }
 
-    public boolean isPartecipant(String email, Long eventId) {
-        HashMap<Long, String> partecipantsId = geIdForEmails(List.of(email));
-        Map<String, Long> emailToId = new HashMap<>();
-        for (Map.Entry<Long, String> entry : partecipantsId.entrySet()) {
-            emailToId.put(entry.getValue(), entry.getKey());
-        }
-        Long partecipantId = emailToId.get(email);
+    @Transactional(readOnly = true)
+    public boolean isPartecipant(Long magicEventsTag, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getPartecipants().contains(partecipantId);
+        System.out.println("Checking partecipant with tag: " + magicEventsTag + " in event: " + eventId);
+        return event.getPartecipants().stream()
+                .anyMatch(partecipant -> partecipant.getMagicEventTag().equals(magicEventsTag));
     }
 
-    public boolean isAdmin(String email, Long eventId) {
-        HashMap<Long, String> adminsId = geIdForEmails(List.of(email));
-        Map<String, Long> emailToId = new HashMap<>();
-        for (Map.Entry<Long, String> entry : adminsId.entrySet()) {
-            emailToId.put(entry.getValue(), entry.getKey());
-        }
-        Long adminId = emailToId.get(email);
+    @Transactional(readOnly = true)
+    public boolean isAdmin(Long magicEventsTag, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getAdmins().contains(adminId) || event.getCreator().equals(adminId);
+        System.out.println("Checking admin with tag: " + magicEventsTag + " in event: " + eventId);
+        return event.getAdmins().stream()
+                .anyMatch(admin -> admin.getAdminId().equals(magicEventsTag));
     }
 
     public boolean deleteEvent(Long eventId, Long creatorId) {
@@ -328,3 +322,4 @@ public class EventGestorService {
         }
     }
 }
+

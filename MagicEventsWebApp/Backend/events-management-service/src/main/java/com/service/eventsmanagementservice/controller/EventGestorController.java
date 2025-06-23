@@ -83,17 +83,17 @@ public class EventGestorController {
     }
 
     @GetMapping("/ispartecipant")
-    public boolean isPartecipant(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId) {
-        return eventGestorService.isPartecipant(partecipant, eventId);
+    public boolean isPartecipant(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId) {
+        return eventGestorService.isPartecipant(magicEventsTag, eventId);
     }
 
     @GetMapping("/isadmin")
-    public boolean isAdmin(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId){
-        return eventGestorService.isAdmin(partecipant, eventId);
+    public boolean isAdmin(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId){
+        return eventGestorService.isAdmin(magicEventsTag, eventId);
     }
 
     @GetMapping("/iscreator")
-    public boolean isCreator(@RequestParam("magicEventsTag") Long creatorId, @RequestParam("eventId") Long eventId){
+    public boolean isCreator(@RequestParam("creatorId") Long creatorId, @RequestParam("eventId") Long eventId){
         return eventGestorService.isCreator(creatorId, eventId);
     }
 
@@ -127,3 +127,6 @@ public class EventGestorController {
         return eventGestorService.deleteEvent(eventId, creatorId);
     }
 }
+
+
+

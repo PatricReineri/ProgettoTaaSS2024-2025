@@ -65,6 +65,7 @@ public class Event {
       this.location = location;
       this.creatorMagicEventsTag = creator;
       this.partecipants = partecipants;
+      this.status = "active";
       this.admins = admins;
       this.image = image;
     }
