@@ -44,6 +44,7 @@ function LoginPage() {
 		const data = await res.json();
 		console.log('Success:', data);
 		setUser(data);
+		sessionStorage.setItem('user', JSON.stringify(data));
 		navigate('/userprofile');
 	};
 

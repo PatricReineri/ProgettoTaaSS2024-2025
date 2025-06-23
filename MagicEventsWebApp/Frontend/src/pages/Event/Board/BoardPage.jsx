@@ -84,12 +84,14 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
 import MexssageList from '../../../components/Lists/List';
+import { useAuth } from '../../../auth/AuthContext';
 
 const BoardPage = ({ eventID }) => {
 	const [messages, setMessages] = useState([]);
 	const [message, setMessage] = useState('');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
+	const { user } = useAuth();
 
 	useEffect(() => {
 		if (!eventID) return;
@@ -102,7 +104,7 @@ const BoardPage = ({ eventID }) => {
 				stompClient.disconnect();
 			}
 		};
-	});
+	}, []);
 
 	const connect = () => {
 		if (!eventID || connected) return;
@@ -119,15 +121,19 @@ const BoardPage = ({ eventID }) => {
 			{},
 			(frame) => {
 				console.log('Connected:', frame);
+				console.log('Client pre: ', stompClient);
+
 				setStompClient(client);
+				console.log('Client post: ', stompClient);
 				setConnected(true);
 
 				// Subscribe to the topic with the correct path format
 				const subscription = client.subscribe(`/topic/chat/${eventID}`, (message) => {
 					console.log('Message received:', message);
 					try {
+						var hash = require('object-hash');
 						const receivedMessage = JSON.parse(message.body);
-						setMessages((prev) => [...prev, receivedMessage]);
+						setMessages((prev) => [...prev.filter((item) => !(hash(item) === hash(receivedMessage))), receivedMessage]);
 					} catch (error) {
 						console.error('Error parsing message:', error);
 					}
@@ -140,7 +146,7 @@ const BoardPage = ({ eventID }) => {
 				console.log('Subscribed to:', `/topic/chat/${eventID}`);
 			},
 			(error) => {
-				console.error('Connection error:', error);
+				console.log('Connection error:', error);
 				setConnected(false);
 			}
 		);
@@ -162,9 +168,13 @@ const BoardPage = ({ eventID }) => {
 			return;
 		}
 
+		let user = JSON.parse(sessionStorage.getItem('user'));
+
+		console.log(Object.getOwnPropertyNames(user));
+
 		const chatMessage = {
 			content: content,
-			username: 'Alix99',
+			username: user.username,
 			dateTime: new Date().toISOString(),
 			eventID: eventID,
 		};
@@ -187,8 +197,6 @@ const BoardPage = ({ eventID }) => {
 					Descizione della bacheca, piu o meno abbastanza lunga, forse anche più lunga, ma non riesco a scrivere di piu,
 					quindi concludo qua
 				</p>
-				<Button onClick={() => connect()} text="connect"></Button>
-				<Button onClick={() => disconnect()} text="disconnect"></Button>
 			</div>
 			<MexssageList onSend={(value) => sendMessage(value)} messages={messages} />
 		</div>

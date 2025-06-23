@@ -7,7 +7,13 @@ const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
 	const [value, setValue] = useState('');
 	const board = document.getElementById('board');
 	const items = messages;
-	const listItems = items.map((mex, index) => <MessageCard key={index} message={mex} />);
+	const listItems = items.map((mex, index) => (
+		<MessageCard
+			isSendbyMe={mex.username === JSON.parse(sessionStorage.getItem('user')).username}
+			key={index}
+			message={mex}
+		/>
+	));
 
 	if (messages === undefined || messages.length === 0) {
 		return (
@@ -35,7 +41,7 @@ const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
 	}
 
 	return (
-		<div id="board" className="flex p-6  flex-col    overflow-y-auto flex-auto pb-24  ">
+		<div id="board" className="flex p-6  flex-col     overflow-y-auto flex-auto pb-24  ">
 			<div className="absolute border-1 border-[#363540]  bottom-4 right-4 flex bg-[#505458]/50 backdrop-blur-2xl sm:w-[calc(100%-18rem)] w-[calc(100%-2rem)] rounded-full shadow-2xl  h-fit p-2">
 				<Input
 					name="message"
@@ -53,7 +59,7 @@ const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
 					text="Invia"
 				/>
 			</div>
-			<div>{listItems}</div>
+			<div className=" flex flex-col ">{listItems}</div>
 		</div>
 	);
 };
