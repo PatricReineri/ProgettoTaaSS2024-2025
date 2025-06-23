@@ -98,35 +98,35 @@ public class ImageChatService {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isAdmin")
+                            .path("/gestion/isadmin")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isAdmin);
+            return Boolean.TRUE.equals(isAdmin);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during admin authorization check: " + e.getMessage());
+            return false;
         }
-        return true;
     }
 
     private boolean authorizeParticipant(Long eventID, String userMagicEventsTag) {
         try {
             Boolean isParticipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isParticipant")
+                            .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isParticipant);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during participant authorization check: " + e.getMessage());
+            return false;
         }
-        return true;
     }
 }
