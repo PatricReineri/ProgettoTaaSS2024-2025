@@ -13,9 +13,9 @@ public class ServicesDTO {
 
     public ServicesDTO() {}
 
-    public ServicesDTO(Boolean board, Boolean galley, Boolean guestGame) {
+    public ServicesDTO(Boolean board, Boolean gallery, Boolean guestGame) {
         this.board = board;
-        this.gallery = galley;
+        this.gallery = gallery;
         this.guestGame = guestGame;
     }
 

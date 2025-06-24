@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class EventSetupService {
-
     private final WebClient eventManagementWebClient;
     private final WebClient galleryServiceWebClient;
     private final WebClient boardServiceWebClient;
