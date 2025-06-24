@@ -24,3 +24,15 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8443"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/UserManagementMEADB"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-user-management-DB-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-user-management-DB-secret
+                  key: POSTGRES_PASSWORD

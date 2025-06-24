@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: board-db
+  namespace: magicevents
+  labels:
+    app: board-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: board-db
+  template:
+    metadata:
+      labels:
+        app: board-db
+    spec:
+      containers:
+        - name: board-db
+          image: postgres:15
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5433
+          envFrom:
+            - secretRef:
+                name: postgres-board-DB-secret
+          volumeMounts:
+            - name: pgdata-board-DB-pvc
+              mountPath: /var/lib/postgresql/BoardMEADB/data
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - user
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - user
+            initialDelaySeconds: 45
+            periodSeconds: 20
+      volumes:
+        - name: pgdata-board-DB-pvc
+          persistentVolumeClaim:
+            claimName: pgdata-board-DB-pvc

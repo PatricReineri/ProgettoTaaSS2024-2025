@@ -11,8 +11,6 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/board-service-0.0.1-SNAPSHOT.jar board-service.jar
-
 EXPOSE 8081
 
 ENTRYPOINT ["java", "-jar", "board-service.jar"]

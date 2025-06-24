@@ -38,9 +38,9 @@ services:
       - magicevents-network
 
   # Board Service Database
-  board-service-db:
+  board-db:
     image: postgres:15
-    container_name: board-service-db
+    container_name: board-db
     environment:
       POSTGRES_DB: Board
       POSTGRES_USER: user
@@ -135,7 +135,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5432/EventsManagementMEADB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5431/EventsManagementMEADB
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -157,13 +157,13 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://board-service-db:5432/Board
+      SPRING_DATASOURCE_URL: jdbc:postgresql://board-db:5433/Board
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
       SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
-      - board-service-db
+      - board-db
       - rabbitmq
       - events-management-service
     networks:
@@ -179,7 +179,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5432/GuestGame
+      SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5434/GuestGame
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -201,7 +201,7 @@ services:
     ports:
       - "8085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5432/Gallery
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5435/Gallery
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
