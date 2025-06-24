@@ -51,7 +51,7 @@ public class EventGestorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
-    @GetMapping("/activeservices")
+    @PostMapping("/activeservices")
     public ResponseEntity<String> activeServicesEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId,
@@ -145,6 +145,25 @@ public class EventGestorController {
     @GetMapping("/delete")
     public boolean deleteEvent(@RequestParam("eventId") Long eventId, @RequestParam("magicEventsTag") Long creatorId){
         return eventGestorService.deleteEvent(eventId, creatorId);
+    }
+
+    @GetMapping("/getEventEnabledServices")
+    public ResponseEntity<ServicesDTO> getEventEnabledServices(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long magicEventsTag
+    ) {
+        try {
+            ServicesDTO services = eventGestorService.getEventEnabledServices(eventId, magicEventsTag);
+            if (services != null) {
+                return ResponseEntity.ok(services);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 
