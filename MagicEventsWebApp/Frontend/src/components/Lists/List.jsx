@@ -3,15 +3,22 @@ import Button from '../buttons/Button';
 import MessageCard from '../Card/MessageCard';
 import Input from '../inputs/Input';
 
-const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
+const MexssageList = ({
+	onDelete,
+	onLoadMore,
+	displayOnloadMore = true,
+	messages,
+	onSend = (value) => alert(value),
+}) => {
 	const [value, setValue] = useState('');
-	const board = document.getElementById('board');
+
 	const items = messages;
 	const listItems = items.map((mex, index) => (
 		<MessageCard
 			isSendbyMe={mex.username === JSON.parse(sessionStorage.getItem('user')).username}
 			key={index}
 			message={mex}
+			onDelete={onDelete}
 		/>
 	));
 
@@ -28,7 +35,6 @@ const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
 					/>
 					<Button
 						onClick={() => {
-							board.scrollTo({ left: 0, top: board.scrollHeight, behavior: 'smooth' });
 							onSend(value);
 						}}
 						custom="!rounded-full"
@@ -52,14 +58,28 @@ const MexssageList = ({ messages, onSend = (value) => alert(value) }) => {
 				/>
 				<Button
 					onClick={() => {
-						board.scrollTo({ left: 0, top: board.scrollHeight, behavior: 'smooth' });
+						//board.scrollTo({ left: 0, top: board.scrollHeight, behavior: 'smooth' });
 						onSend(value);
 					}}
 					custom="!rounded-full"
 					text="Invia"
 				/>
 			</div>
-			<div className=" flex flex-col ">{listItems}</div>
+			<div id="board2" className=" flex flex-col-reverse ">
+				{listItems}
+				{displayOnloadMore ? (
+					<div className="w-fit self-center h-20  grid">
+						<Button
+							onClick={onLoadMore}
+							custom=" !rounded-full !p-2 text-xs bg-[#363540]/30  h-fit"
+							secondary
+							text="Load More"
+						></Button>
+					</div>
+				) : (
+					''
+				)}
+			</div>
 		</div>
 	);
 };

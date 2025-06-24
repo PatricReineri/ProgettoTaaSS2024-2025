@@ -11,6 +11,7 @@ import NavBar from './components/navigation/NavBar';
 import BoardPage from './pages/Event/Board/BoardPage';
 import Button from './components/buttons/Button';
 import MagicEventHomePage from './pages/MagicEventHomePage';
+import LogoutButton from './components/buttons/LogoutButton';
 
 function App() {
 	useEffect(() => {
@@ -35,14 +36,25 @@ function App() {
 					</NavLink>
 				}
 				actions={
-					<div className="flex gap-2 ">
-						<NavLink to="/login">
-							<Button text="Login"></Button>
-						</NavLink>
-						<NavLink to="/register">
-							<Button secondary text="Register"></Button>
-						</NavLink>
-					</div>
+					!sessionStorage.getItem('user') ? (
+						<div className={'flex gap-2 '}>
+							<NavLink to="/login">
+								<Button text="Login"></Button>
+							</NavLink>
+							<NavLink to="/register">
+								<Button secondary text="Register"></Button>
+							</NavLink>
+						</div>
+					) : (
+						<div className={'flex gap-2 items-center'}>
+							<LogoutButton></LogoutButton>
+							<NavLink to="/userprofile">
+								<button className="bg-[#E4DCEF] text-[#363540] px-4  inner-shadow p-1 cursor-pointer hover:scale-105 rounded-full">
+									{JSON.parse(sessionStorage.getItem('user')).username}
+								</button>
+							</NavLink>
+						</div>
+					)
 				}
 			>
 				<NavLink className="w-fit" to="/login">
@@ -51,7 +63,7 @@ function App() {
 			</NavBar>
 			<div className=" h-[calc(100vh-3.5rem)]">
 				<Routes>
-					<Route path="/" element={<HomePage />} />
+					<Route path="/" element={sessionStorage.getItem('user') ? <MagicEventHomePage /> : <HomePage />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/home" element={<MagicEventHomePage />} />

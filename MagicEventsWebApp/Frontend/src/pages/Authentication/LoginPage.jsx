@@ -45,7 +45,7 @@ function LoginPage() {
 		console.log('Success:', data);
 		setUser(data);
 		sessionStorage.setItem('user', JSON.stringify(data));
-		navigate('/userprofile');
+		navigate('/home');
 	};
 
 	return (
