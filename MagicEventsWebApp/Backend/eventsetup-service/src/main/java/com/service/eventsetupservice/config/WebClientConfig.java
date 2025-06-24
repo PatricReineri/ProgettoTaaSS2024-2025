@@ -36,7 +36,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient guestGamesServiceWebClient(WebClient.Builder builder) {
+    public WebClient guestGameServiceWebClient(WebClient.Builder builder) {
         return builder.baseUrl(guestGameServiceUrl).build();
     }
 }
