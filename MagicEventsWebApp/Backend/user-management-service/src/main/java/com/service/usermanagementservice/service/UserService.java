@@ -1,12 +1,16 @@
 package com.service.usermanagementservice.service;
 
+import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.model.User;
+import com.service.usermanagementservice.repository.OauthTokenRepository;
 import com.service.usermanagementservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -14,17 +18,29 @@ import java.util.List;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    OauthTokenRepository tokenRepository;
 
-    public List<Long> getUserEmail(List<String> email) throws Exception {
-        ArrayList<Long> usersEmail = new ArrayList<>();
+    public HashMap<Long, String> getUserEmail(List<String> email) throws Exception {
+        HashMap<Long, String> usersValues = new HashMap<>();
         for (String s : email) {
             User user = userRepository.findByEmail(s);
             if (user != null) {
-                usersEmail.add(user.getMagicEventTag());
+                usersValues.put(user.getMagicEventTag(), user.getEmail());
             }else{
                 throw new Exception("User not exist");
             }
         }
-        return usersEmail;
+        return usersValues;
+    }
+
+    public Boolean isAuthenticated(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            OauthToken oauthToken = tokenRepository.findByUser(user);
+            return oauthToken != null && !oauthToken.getExpirationTime().isBefore(LocalDateTime.now());
+        }else{
+            throw new Exception("User not exist");
+        }
     }
 }

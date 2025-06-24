@@ -28,13 +28,14 @@ public class SecurityConfig {
             "/test/users",
             "/test/tokens",
             "/favicon.ico",
-            "login/userprofile",
-            "login/changepassword",
-            "login/generateresetpasswordlink",
-            "login/deleteuser",
-            "login/modifyuser",
-            "login/helloserver",
-            "/info"
+            "/login/userprofile",
+            "/login/changepassword",
+            "/login/generateresetpasswordlink",
+            "/login/deleteuser",
+            "/login/modifyuser",
+            "/login/helloserver",
+            "/info",
+            "/info/isauthenticated"
     };
 
     @Bean

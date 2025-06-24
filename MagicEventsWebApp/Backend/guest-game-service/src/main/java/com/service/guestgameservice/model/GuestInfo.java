@@ -1,13 +1,9 @@
 package com.service.guestgameservice.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
-@Table(name = "guest_info", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "user_magic_events_tag")
-})
-@Data
+@Table(name = "guest_info")
 public class GuestInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +39,39 @@ public class GuestInfo {
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
+
+    public GuestInfo() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Boolean getIsMen() { return isMen; }
+    public void setIsMen(Boolean isMen) { this.isMen = isMen; }
+
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
+
+    public Boolean getIsHostFamilyMember() { return isHostFamilyMember; }
+    public void setIsHostFamilyMember(Boolean isHostFamilyMember) { this.isHostFamilyMember = isHostFamilyMember; }
+
+    public Boolean getIsHostAssociate() { return isHostAssociate; }
+    public void setIsHostAssociate(Boolean isHostAssociate) { this.isHostAssociate = isHostAssociate; }
+
+    public Boolean getHaveBeard() { return haveBeard; }
+    public void setHaveBeard(Boolean haveBeard) { this.haveBeard = haveBeard; }
+
+    public Boolean getIsBald() { return isBald; }
+    public void setIsBald(Boolean isBald) { this.isBald = isBald; }
+
+    public Boolean getHaveGlasses() { return haveGlasses; }
+    public void setHaveGlasses(Boolean haveGlasses) { this.haveGlasses = haveGlasses; }
+
+    public Boolean getHaveDarkHair() { return haveDarkHair; }
+    public void setHaveDarkHair(Boolean haveDarkHair) { this.haveDarkHair = haveDarkHair; }
+
+    public String getUserMagicEventsTag() { return userMagicEventsTag; }
+    public void setUserMagicEventsTag(String userMagicEventsTag) { this.userMagicEventsTag = userMagicEventsTag; }
+
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
 }

@@ -22,13 +22,10 @@ public class BearerTokenAuthProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = isTokenValid(authentication.getName());
-
         if(user == null) {
             throw new UsernameNotFoundException("Invalid Token");
         }
-
         return new UsernamePasswordAuthenticationToken(user.getEmail(), null, user.getAuthorities());
-
     }
 
     private User isTokenValid(String token) {

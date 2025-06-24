@@ -1,26 +1,16 @@
-FROM continuumio/miniconda3
+FROM maven:3.8.5-openjdk-17 AS build
 
 WORKDIR /app
 
-# Copia i file nella directory di lavoro
-COPY tree.py .
-COPY requirements.txt .
+COPY pom.xml .
+COPY src ./src
 
-# Crea un ambiente conda e installa i pacchetti necessari
-RUN conda create -n myenv python=3.10 \
-    scikit-learn \
-    fastapi \
-    uvicorn \
-    pandas \
-    matplotlib \
-    numpy \
-    -y
+RUN mvn clean package -DskipTests
 
-# Imposta la shell per usare sempre l'ambiente conda
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
+FROM openjdk:17-jdk-slim
 
-# Esponi la porta per FastAPI
-EXPOSE 8000
+WORKDIR /app
 
-# Comando di avvio
-CMD ["conda", "run", "-n", "myenv", "uvicorn", "tree:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8083
+
+ENTRYPOINT ["java", "-jar", "guest-game-service.jar"]

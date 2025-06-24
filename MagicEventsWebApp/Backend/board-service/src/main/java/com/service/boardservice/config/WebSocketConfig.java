@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint for clients to connect
         registry.addEndpoint("/chat")
-                .setAllowedOriginPatterns("http://localhost:*")
+                .setAllowedOriginPatterns("http://localhost:8081", "http://localhost:3000") // Adjust as needed for your frontend
                 .withSockJS(); // Enable SockJS fallback
     }
 
@@ -43,8 +43,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 if (accessor != null && StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
                     String destination = accessor.getDestination();
                     
-                    // Validate subscription destination
-                    if (destination == null || !destination.matches("^/topic/chat/\\d+$")) {
+                    // Validate subscription destination - allow /topic/chat/{id} and /topic/chat/deleteMessage/{id}
+                    if (destination == null || !destination.matches("^/topic/chat(/deleteMessage)?/\\d+$")) {
                         throw new IllegalArgumentException("Unauthorized destination- " + destination);
                     }
                 }
