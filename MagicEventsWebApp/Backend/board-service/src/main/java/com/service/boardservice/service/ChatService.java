@@ -26,6 +26,7 @@ public class ChatService {
         if (!authorizeSendMessage(request.getEventID(), request.getUserMagicEventsTag())) {
             throw new UnauthorizedException("Not authorized to send message for event ID: " + request.getEventID());
         }
+        System.out.println("-------------------->Adding new message: " + request.getContent());
         
         Board board = boardRepository.findByEventID(request.getEventID());
         if (board == null) {
@@ -62,35 +63,35 @@ public class ChatService {
         try {
             Boolean isParticipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isParticipant")
+                            .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isParticipant);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-------------------->Error during authorization check: " + e.getMessage());
+            System.out.println(e);
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 
     private boolean authorizeAdmin(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isAdmin")
+                            .path("/gestion/isadmin")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isAdmin);
+            return Boolean.TRUE.equals(isAdmin);
         } catch (Exception e) {
-            //return false;
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 }

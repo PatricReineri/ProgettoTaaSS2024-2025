@@ -63,7 +63,7 @@ public class GameService {
 
     public void insertGuestInfo(GuestInfoRequestDTO guestInfoRequestDTO) {
         Long userTagAsLong = Long.valueOf(guestInfoRequestDTO.getUserMagicEventsTag());
-        if (!authorizeParticipant(guestInfoRequestDTO.getGameId(), userTagAsLong)) {
+        if (!authorizePartecipant(guestInfoRequestDTO.getGameId(), userTagAsLong)) {
             throw new UnauthorizedException("Not authorized to insert guest info for game ID: " + guestInfoRequestDTO.getGameId());
         }
 
@@ -86,7 +86,7 @@ public class GameService {
     }
 
     public DecisionTreeDTO createDecisionTree(Long eventId, Long userMagicEventsTag) {
-        if (!authorizeParticipant(eventId, userMagicEventsTag)) {
+        if (!authorizePartecipant(eventId, userMagicEventsTag)) {
             throw new UnauthorizedException("Not authorized to access decision tree for event ID: " + eventId);
         }
 
@@ -140,36 +140,36 @@ public class GameService {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isAdmin")
-                            .queryParam("partecipantId", userMagicEventsTag)
+                            .path("/gestion/iscreator")
+                            .queryParam("creatorId", userMagicEventsTag)
                             .queryParam("eventId", eventId)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isAdmin);
+            return Boolean.TRUE.equals(isAdmin);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during admin authorization check: " + e.getMessage());
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 
-    private boolean authorizeParticipant(Long eventId, Long userMagicEventsTag) {
+    private boolean authorizePartecipant(Long eventId, Long userMagicEventsTag) {
         try {
             Boolean isParticipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isParticipant")
+                            .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventId)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isParticipant);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during participant authorization check: " + e.getMessage());
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 
     private TreeNodeDTO parseTreeFromString(String treeString) {

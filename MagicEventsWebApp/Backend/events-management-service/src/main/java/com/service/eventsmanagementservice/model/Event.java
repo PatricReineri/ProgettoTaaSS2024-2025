@@ -24,10 +24,20 @@ public class Event {
     private Long creatorMagicEventsTag;
 
     private String location;
+    @Column(nullable = false)
     private String status;
 
     @Column(columnDefinition = "TEXT")
     private String image;
+
+    @Column(name = "board_enabled")
+    private Boolean boardEnabled;
+
+    @Column(name = "gallery_enabled")
+    private Boolean galleryEnabled;
+
+    @Column(name = "guest_game_enabled")
+    private Boolean guestGameEnabled;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -58,15 +68,16 @@ public class Event {
             List<Admin> admins,
             String image
     ) {
-      this.title = title;
-      this.description = description;
-      this.starting = start;
-      this.ending = end;
-      this.location = location;
-      this.creatorMagicEventsTag = creator;
-      this.partecipants = partecipants;
-      this.admins = admins;
-      this.image = image;
+          this.title = title;
+          this.description = description;
+          this.starting = start;
+          this.ending = end;
+          this.location = location;
+          this.creatorMagicEventsTag = creator;
+          this.partecipants = partecipants;
+          this.admins = admins;
+          this.image = image;
+          this.status = "ACTIVE";
     }
 
     public Event(
@@ -85,6 +96,7 @@ public class Event {
         this.location = location;
         this.creatorMagicEventsTag = creator;
         this.image = image;
+        this.status = "ACTIVE";
     }
 
     public Long getEventId() {
@@ -131,6 +143,18 @@ public class Event {
         return this.image;
     }
 
+    public Boolean getBoardEnabled() {
+        return this.boardEnabled;
+    }
+
+    public Boolean getGalleryEnabled() {
+        return this.galleryEnabled;
+    }
+
+    public Boolean getGuestGameEnabled() {
+        return this.guestGameEnabled;
+    }
+
     public void setEventId(Long event_id) {
         this.event_id = event_id;
     }
@@ -173,5 +197,17 @@ public class Event {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setBoardEnabled(Boolean boardEnabled) {
+        this.boardEnabled = boardEnabled;
+    }
+
+    public void setGalleryEnabled(Boolean galleryEnabled) {
+        this.galleryEnabled = galleryEnabled;
+    }
+
+    public void setGuestGameEnabled(Boolean guestGameEnabled) {
+        this.guestGameEnabled = guestGameEnabled;
     }
 }

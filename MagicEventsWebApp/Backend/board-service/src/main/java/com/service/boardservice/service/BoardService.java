@@ -25,6 +25,7 @@ public class BoardService {
 
     public void createBoard(CreateBoardRequestDTO request) {
         if (!authorizeCreateDeleteBoard(request.getEventID(), request.getUserMagicEventsTag())) {
+            System.err.println("Not authorized to create board for event ID: " + request.getEventID() + " and user tag: " + request.getUserMagicEventsTag());
             throw new UnauthorizedException("Not authorized to create board for event ID: " + request.getEventID());
         }
         if (request.getEventID() == null) {
@@ -45,6 +46,7 @@ public class BoardService {
      */
     public BoardDTO getBoard(Long eventID, Long userMagicEventsTag, int pageNumber, int pageSize) {
         if (!authorizeViewBoard(eventID, userMagicEventsTag)) {
+            System.err.println("Not authorized to view board for event ID: " + eventID + " and user tag: " + userMagicEventsTag);
             throw new UnauthorizedException("Not authorized to view board for event ID: " + eventID);
         }
 
@@ -83,6 +85,7 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long eventID, Long userMagicEventsTag) {
         if (!authorizeCreateDeleteBoard(eventID, userMagicEventsTag)) {
+            System.err.println("Not authorized to delete board for event ID: " + eventID);
             throw new UnauthorizedException("Not authorized to delete board for event ID: " + eventID);
         }
         
@@ -96,35 +99,35 @@ public class BoardService {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isAdmin")
-                            .queryParam("partecipantId", userMagicEventsTag)
+                            .path("/gestion/iscreator")
+                            .queryParam("creatorId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isAdmin);
+            return Boolean.TRUE.equals(isAdmin);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during authorization check: " + e.getMessage());
+            return false;
         }
-        return true; // Default to true for testing purposes
     }
 
     private boolean authorizeViewBoard(Long eventID, Long userMagicEventsTag) {
         try {
             Boolean isParticipant = eventManagementWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/isParticipant")
+                            .path("/gestion/ispartecipant")
                             .queryParam("partecipantId", userMagicEventsTag)
                             .queryParam("eventId", eventID)
                             .build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block();
-            //return Boolean.TRUE.equals(isParticipant);
+            return Boolean.TRUE.equals(isParticipant);
         } catch (Exception e) {
-            //return false;
+            System.err.println("-----> Error during authorization check: " + e.getMessage());
+            return false;
         }
-        return true;
     }
 }

@@ -1,12 +1,15 @@
 package com.service.eventsmanagementservice.service;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
+import com.service.eventsmanagementservice.dto.ServicesDTO;
 import com.service.eventsmanagementservice.model.Admin;
+import com.service.eventsmanagementservice.model.EmailDetails;
 import com.service.eventsmanagementservice.model.Event;
 import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.repository.AdminsRepository;
 import com.service.eventsmanagementservice.repository.EventsRepository;
 import com.service.eventsmanagementservice.repository.PartecipantsRepository;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,6 +36,8 @@ public class EventGestorService {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private WebClient userManagementWebClient;
+    @Autowired
+    EmailSender emailSender;
 
     public String updateEventAdmins(ArrayList<String> admins, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
@@ -80,7 +85,7 @@ public class EventGestorService {
     }
 
     @Transactional
-    public Long create(EventDTO eventDTO, String creatorEmail) {
+    public Long create(@Valid EventDTO eventDTO, String creatorEmail) {
         Long creatorId = eventDTO.getCreator();
         partecipantsRepository.findById(creatorId)
             .orElseGet(() -> {
@@ -159,7 +164,7 @@ public class EventGestorService {
         return added;
     }
 
-    public String modifyEvent(EventDTO eventDTO, Long creatorId, Long eventId) {
+    public String modifyEvent(@Valid EventDTO eventDTO, Long creatorId, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         if(event.getCreator().equals(creatorId)) {
@@ -170,34 +175,35 @@ public class EventGestorService {
             event.setLocation(eventDTO.getLocation());
             event.setImage(eventDTO.getImage());
             eventsRepository.save(event);
+            for(Partecipant partecipant: event.getPartecipants()) {
+                EmailDetails emailDetails = new EmailDetails();
+                emailDetails.setRecipient(partecipant.getEmail());
+                emailDetails.setSubject(event.getTitle() + " event has been modified!");
+                emailDetails.setBody("Go to the" + event.getTitle() + "event page to see details.");
+                emailSender.sendMail(emailDetails);
+            }
             return "Success";
         }else {
             return "Error";
         }
     }
 
-    public boolean isPartecipant(String email, Long eventId) {
-        HashMap<Long, String> partecipantsId = geIdForEmails(List.of(email));
-        Map<String, Long> emailToId = new HashMap<>();
-        for (Map.Entry<Long, String> entry : partecipantsId.entrySet()) {
-            emailToId.put(entry.getValue(), entry.getKey());
-        }
-        Long partecipantId = emailToId.get(email);
+    @Transactional(readOnly = true)
+    public boolean isPartecipant(Long magicEventsTag, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getPartecipants().contains(partecipantId);
+        System.out.println("Checking partecipant with tag: " + magicEventsTag + " in event: " + eventId);
+        return event.getPartecipants().stream()
+                .anyMatch(partecipant -> partecipant.getMagicEventTag().equals(magicEventsTag));
     }
 
-    public boolean isAdmin(String email, Long eventId) {
-        HashMap<Long, String> adminsId = geIdForEmails(List.of(email));
-        Map<String, Long> emailToId = new HashMap<>();
-        for (Map.Entry<Long, String> entry : adminsId.entrySet()) {
-            emailToId.put(entry.getValue(), entry.getKey());
-        }
-        Long adminId = emailToId.get(email);
+    @Transactional(readOnly = true)
+    public boolean isAdmin(Long magicEventsTag, Long eventId) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
-        return event.getAdmins().contains(adminId) || event.getCreator().equals(adminId);
+        System.out.println("Checking admin with tag: " + magicEventsTag + " in event: " + eventId);
+        return event.getAdmins().stream()
+                .anyMatch(admin -> admin.getUser().getMagicEventTag().equals(magicEventsTag));
     }
 
     public boolean deleteEvent(Long eventId, Long creatorId) {
@@ -322,9 +328,51 @@ public class EventGestorService {
         if(event.getCreator().equals(creatorId)) {
             event.setStatus("ANNULLED");
             eventsRepository.save(event);
+            for(Partecipant partecipant: event.getPartecipants()) {
+                EmailDetails emailDetails = new EmailDetails();
+                emailDetails.setRecipient(partecipant.getEmail());
+                emailDetails.setSubject(event.getTitle() + " event has been cancelled :(");
+                emailDetails.setBody("We regret to inform you that the creator of the event has decided to no longer do it.");
+                emailSender.sendMail(emailDetails);
+            }
             return "Success";
         }else{
             return "Error";
         }
     }
+
+    public String activeEvent(Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            event.setStatus("ACTIVE");
+            eventsRepository.save(event);
+            for(Partecipant partecipant: event.getPartecipants()) {
+                EmailDetails emailDetails = new EmailDetails();
+                emailDetails.setRecipient(partecipant.getEmail());
+                emailDetails.setSubject(event.getTitle() + " event will be held!");
+                emailDetails.setBody("We are happy to inform you that the event you wanted to attend will be held! Go to the" +
+                        event.getTitle() + "event page to see details.");
+                emailSender.sendMail(emailDetails);
+            }
+            return "Success";
+        }else{
+            return "Error";
+        }
+    }
+
+    public String activeServicesEvent(Long eventId, Long creatorId, @Valid ServicesDTO servicesDTO) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if(event.getCreator().equals(creatorId)) {
+            event.setBoardEnabled(servicesDTO.getBoard());
+            event.setGalleryEnabled(servicesDTO.getGalley());
+            event.setGuestGameEnabled(servicesDTO.getGuestGame());
+            eventsRepository.save(event);
+            return "Success";
+        }else {
+            return "Error";
+        }
+    }
 }
+

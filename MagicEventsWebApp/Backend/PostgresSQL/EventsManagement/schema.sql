@@ -19,7 +19,10 @@ CREATE TABLE event_info (
     starting TIMESTAMP NOT NULL,
     ending TIMESTAMP NOT NULL,
     location VARCHAR(255),
-    status VARCHAR(255), 
+    status VARCHAR(255) NOT NULL,
+    board_enabled BOOLEAN DEFAULT FALSE,
+    gallery_enabled BOOLEAN DEFAULT FALSE,
+    guest_game_enabled BOOLEAN DEFAULT FALSE,
     image TEXT,
     magic_events_tag BIGINT,
     FOREIGN KEY (magic_events_tag) REFERENCES partecipants(magic_events_tag) ON DELETE CASCADE

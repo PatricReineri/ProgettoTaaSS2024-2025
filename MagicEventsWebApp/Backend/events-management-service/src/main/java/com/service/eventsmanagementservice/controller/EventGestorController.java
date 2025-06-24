@@ -1,6 +1,7 @@
 package com.service.eventsmanagementservice.controller;
 
 import com.service.eventsmanagementservice.dto.EventDTO;
+import com.service.eventsmanagementservice.dto.ServicesDTO;
 import com.service.eventsmanagementservice.service.EventGestorService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,25 @@ public class EventGestorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
+    @GetMapping("/activeservices")
+    public ResponseEntity<String> activeServicesEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId,
+            @Valid @RequestBody ServicesDTO servicesDTO
+    ) {
+        String response = eventGestorService.activeServicesEvent(eventId, creatorId, servicesDTO);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+    @GetMapping("/de-annullevent")
+    public ResponseEntity<String> activeEvent(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        String response = eventGestorService.activeEvent(eventId, creatorId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
     @GetMapping("/updateadmins")
     public String addNewAdmins(
             @RequestParam("admins") ArrayList<String> admins,
@@ -83,17 +103,17 @@ public class EventGestorController {
     }
 
     @GetMapping("/ispartecipant")
-    public boolean isPartecipant(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId) {
-        return eventGestorService.isPartecipant(partecipant, eventId);
+    public boolean isPartecipant(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId) {
+        return eventGestorService.isPartecipant(magicEventsTag, eventId);
     }
 
     @GetMapping("/isadmin")
-    public boolean isAdmin(@RequestParam("partecipantId") String partecipant, @RequestParam("eventId") Long eventId){
-        return eventGestorService.isAdmin(partecipant, eventId);
+    public boolean isAdmin(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId){
+        return eventGestorService.isAdmin(magicEventsTag, eventId);
     }
 
     @GetMapping("/iscreator")
-    public boolean isCreator(@RequestParam("magicEventsTag") Long creatorId, @RequestParam("eventId") Long eventId){
+    public boolean isCreator(@RequestParam("creatorId") Long creatorId, @RequestParam("eventId") Long eventId){
         return eventGestorService.isCreator(creatorId, eventId);
     }
 
@@ -127,3 +147,6 @@ public class EventGestorController {
         return eventGestorService.deleteEvent(eventId, creatorId);
     }
 }
+
+
+
