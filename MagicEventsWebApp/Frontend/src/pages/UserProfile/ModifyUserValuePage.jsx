@@ -21,7 +21,7 @@ function UserEditPage({ setLogged }) {
 		setUser((prev) => ({ ...prev, ['profileImageUrl']: '' }));
 		try {
 			const res = await fetch('https://localhost:8443/login/modifyuser', {
-				method: 'POST',
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 				},

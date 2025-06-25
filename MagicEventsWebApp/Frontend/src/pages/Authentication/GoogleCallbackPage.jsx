@@ -16,7 +16,7 @@ function GoogleCallbackPage({ setLogged }) {
 			}
 			try {
 				const res = await fetch('https://localhost:8443/login/userprofile', {
-					method: 'POST',
+					method: 'GET',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},

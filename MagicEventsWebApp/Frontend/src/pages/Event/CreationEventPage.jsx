@@ -79,7 +79,7 @@ const CreationEventPage = () => {
 					<InputArea
 						onChange={handleChange}
 						value={eventDetail.boardDescription}
-						name="boardDescription"
+						name="Board Description"
 						label="Description"
 						customClass="flex-auto "
 						customClassContainer="flex-auto"
@@ -169,7 +169,7 @@ const CreationEventPage = () => {
 								onChange={(e) => setPartecipantInput(e.target.value)}
 								value={partecipantInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="email for partecipating"
+								name="Email for Partecipating"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
 								{eventDetail.partecipants.map((item) => (
@@ -200,7 +200,7 @@ const CreationEventPage = () => {
 								onChange={(e) => setAdminInput(e.target.value)}
 								value={adminInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="email for admin"
+								name="Email for Admin"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
 								{eventDetail.admins.map((item) => (
