@@ -142,7 +142,7 @@ public class EventGestorController {
         return eventGestorService.getPartecipantsForEvent(eventId);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public boolean deleteEvent(@RequestParam("eventId") Long eventId, @RequestParam("magicEventsTag") Long creatorId){
         return eventGestorService.deleteEvent(eventId, creatorId);
     }

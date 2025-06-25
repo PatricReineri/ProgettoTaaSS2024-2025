@@ -45,6 +45,8 @@ public class EventSetupService {
             status.setBoardCreated(boardCreated);
             
             if (!boardCreated) {
+                // delete the event if board creation fails
+                deleteEvent(eventId, request.getCreatorMagicEventsTag());
                 status.setErrorMessage("Event created but board creation failed");
                 return status;
             }
@@ -224,6 +226,25 @@ public class EventSetupService {
         }
     }
 
+    private boolean deleteEvent(Long eventId, Long userMagicEventsTag) {
+        try {
+            Boolean result = eventManagementWebClient
+                    .delete()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/gestion/delete")
+                            .queryParam("eventId", eventId)
+                            .queryParam("magicEventsTag", userMagicEventsTag)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+
+            return Boolean.TRUE.equals(result);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private boolean deleteGuestGame(Long eventId, Long userMagicEventsTag) {
         try {
             Boolean result = guestGameServiceWebClient
@@ -349,7 +370,6 @@ public class EventSetupService {
             servicesDTO.setBoard(status.isBoardCreated());
             servicesDTO.setGallery(status.isGalleryCreated());
             servicesDTO.setGuestGame(status.isGameCreated());
-
             String result = eventManagementWebClient
                     .post()
                     .uri(uriBuilder -> uriBuilder
