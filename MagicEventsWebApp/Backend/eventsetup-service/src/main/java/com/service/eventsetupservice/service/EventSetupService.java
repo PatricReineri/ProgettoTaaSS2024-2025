@@ -374,9 +374,10 @@ public class EventSetupService {
             String result = eventManagementWebClient
                     .put()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/activeservices/{eventId}")
+                            .path("/gestion/activeservices")
+                            .queryParam("eventId", eventId)
                             .queryParam("magicEventsTag", creatorMagicEventsTag)
-                            .build(eventId))
+                            .build())
                     .body(Mono.just(servicesDTO), ServicesDTO.class)
                     .retrieve()
                     .bodyToMono(String.class)
