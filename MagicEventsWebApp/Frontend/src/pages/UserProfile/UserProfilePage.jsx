@@ -1,12 +1,13 @@
 import React from 'react';
-import { useAuth } from '../../auth/AuthContext';
 import LogoutButton from '../../components/buttons/LogoutButton';
 import DeleteUserButton from '../../components/buttons/DeleteUserButton';
 import ModifierUserButton from '../../components/buttons/ModifierUserButton';
 
-function UserProfilePage() {
-	const { user } = useAuth();
-	if (!user) return <p style={{ textAlign: 'center' }}>User not found</p>;
+function UserProfilePage({ setLogged }) {
+	const user = JSON.parse(sessionStorage.getItem('user'));
+	if (!user) {
+		return <p style={{ textAlign: 'center' }}>User not found</p>;
+	}
 
 	return (
 		<div
@@ -40,11 +41,11 @@ function UserProfilePage() {
 			</div>
 
 			<div style={{ marginTop: '20px', textAlign: 'center' }}>
-				<LogoutButton></LogoutButton>
+				<LogoutButton setLogged={setLogged}></LogoutButton>
 			</div>
 
 			<div style={{ marginTop: '20px', textAlign: 'center' }}>
-				<DeleteUserButton></DeleteUserButton>
+				<DeleteUserButton user={user} setLogged={setLogged}></DeleteUserButton>
 			</div>
 
 			<div style={{ marginTop: '20px', textAlign: 'center' }}>

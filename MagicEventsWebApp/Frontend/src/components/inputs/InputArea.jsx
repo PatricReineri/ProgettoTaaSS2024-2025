@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-const Input = ({
+const InputArea = ({
 	customClassContainer = '',
 	customClass = '',
 	customClassLabel = '',
@@ -11,7 +11,6 @@ const Input = ({
 	minLength = 0,
 	required = false,
 	label,
-	onEnterPress,
 }) => {
 	return (
 		<div className={clsx({ 'flex flex-col space-y-1 ': true, [customClassContainer]: true })}>
@@ -20,12 +19,11 @@ const Input = ({
 			) : (
 				<></>
 			)}
-			<input
-				onKeyDown={(e) => (e.key === 'Enter' ? onEnterPress() : '')}
+			<textarea
 				minLength={minLength}
 				type={type}
 				className={customClass}
-				style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
+				style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc', resize: 'none' }}
 				name={name}
 				placeholder={'Insert ' + name + '...'}
 				value={value}
@@ -36,4 +34,4 @@ const Input = ({
 	);
 };
 
-export default Input;
+export default InputArea;

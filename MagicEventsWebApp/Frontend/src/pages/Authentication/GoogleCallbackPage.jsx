@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 
-function GoogleCallbackPage() {
+function GoogleCallbackPage({ setLogged }) {
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
 
@@ -27,7 +27,9 @@ function GoogleCallbackPage() {
 				const data = await res.json();
 				console.log('Success:', data);
 				setUser(data);
-				navigate('/userprofile');
+				sessionStorage.setItem('user', JSON.stringify(data));
+				setLogged(true);
+				navigate('/home');
 			} catch (err) {
 				console.error('Error:', err.message);
 			}

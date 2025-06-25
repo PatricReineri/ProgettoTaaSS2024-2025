@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 
-function LogoutButton() {
+function LogoutButton({ setLogged }) {
 	const navigate = useNavigate();
 	const { user, setUser } = useAuth();
 
@@ -17,13 +16,15 @@ function LogoutButton() {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
 				body: new URLSearchParams({
-					email: user.email,
+					email: JSON.parse(sessionStorage.getItem('user')).email,
 				}).toString(),
 			});
 
 			if (!res.ok) throw new Error('logout failed');
 			console.log('Success:', res);
 			setUser(null);
+			sessionStorage.removeItem('user');
+			setLogged(false);
 			navigate('/');
 		} catch (err) {
 			console.error('Error:', err.message);

@@ -8,7 +8,7 @@ const Homepage = () => {
 				<div className=" h-[calc(100vh-15rem)]  w-20"></div>
 			</div>
 
-			<div className="snap-start pt-20 relative w-full px-16 bg-black/30 backdrop-blur-lg p-8 rounded-t-4xl shadow-2xl flex flex-row overflow-x-auto gap-8 snap-x  ">
+			<div className="snap-start pt-20 relative w-full px-16 bg-black/30 backdrop-blur-lg p-8 rounded-t-4xl shadow-2xl flex flex-row overflow-x-auto gap-8 snap-x justify-evenly  ">
 				<p className="absolute top-0 text-[#E4DCEF] left-[45%] font-extrabold text-xl p-2">Scopri di più</p>
 				<div className="bg-[#363540] hover:shadow-xl hover:shadow-[#EE0E51] hover:scale-110 snap-center min-w-[12rem] text-[#E4DCEF] p-4 flex-auto max-w-[15rem] rounded-2xl border border-[#EE0E51] ">
 					<h1 className="text-xl font-extrabold mb-2">Crea</h1>
