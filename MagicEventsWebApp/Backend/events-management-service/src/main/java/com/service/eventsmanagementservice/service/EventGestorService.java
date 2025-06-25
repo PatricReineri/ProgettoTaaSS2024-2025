@@ -306,7 +306,7 @@ public class EventGestorService {
 
     public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            HashMap<Long, String> result = userManagementWebClient.post()
+            HashMap<Long, String> result = userManagementWebClient.get()
                     .uri("/info")
                     .bodyValue(emails)
                     .retrieve()
