@@ -23,7 +23,6 @@ public class EventSetupRequestDTO {
     private LocalDateTime ending;
     
     @NotNull(message = "Location is required")
-    @NotBlank(message = "Location cannot be blank")
     private String location;
     
     @NotNull(message = "Creator email is required")
@@ -39,6 +38,7 @@ public class EventSetupRequestDTO {
     @NotNull(message = "Admins list is required")
     private ArrayList<String> admins;
     
+    @NotNull(message = "Image is required")
     @NotBlank(message = "Base64 image cannot be blank")
     private String image;
     

@@ -370,13 +370,13 @@ public class EventSetupService {
             servicesDTO.setBoard(status.isBoardCreated());
             servicesDTO.setGallery(status.isGalleryCreated());
             servicesDTO.setGuestGame(status.isGameCreated());
+            
             String result = eventManagementWebClient
-                    .post()
+                    .put()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/activeservices")
-                            .queryParam("eventId", eventId)
+                            .path("/gestion/activeservices/{eventId}")
                             .queryParam("magicEventsTag", creatorMagicEventsTag)
-                            .build())
+                            .build(eventId))
                     .body(Mono.just(servicesDTO), ServicesDTO.class)
                     .retrieve()
                     .bodyToMono(String.class)
