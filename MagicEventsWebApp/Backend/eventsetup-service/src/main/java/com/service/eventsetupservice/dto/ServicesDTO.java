@@ -1,4 +1,4 @@
-package com.service.eventsmanagementservice.dto;
+package com.service.eventsetupservice.dto;
 
 import jakarta.validation.constraints.NotNull;
 

@@ -17,11 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import com.service.eventsmanagementservice.exception.UnauthorizedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Service
 @Slf4j
@@ -304,7 +306,7 @@ public class EventGestorService {
 
     public HashMap<Long, String> geIdForEmails(List<String> emails) {
         try {
-            HashMap<Long, String> result = userManagementWebClient.post()
+            HashMap<Long, String> result = userManagementWebClient.get()
                     .uri("/info")
                     .bodyValue(emails)
                     .retrieve()
@@ -366,13 +368,29 @@ public class EventGestorService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         if(event.getCreator().equals(creatorId)) {
             event.setBoardEnabled(servicesDTO.getBoard());
-            event.setGalleryEnabled(servicesDTO.getGalley());
+            event.setGalleryEnabled(servicesDTO.getGallery());
             event.setGuestGameEnabled(servicesDTO.getGuestGame());
             eventsRepository.save(event);
             return "Success";
         }else {
             return "Error";
         }
+    }
+
+    public ServicesDTO getEventEnabledServices(Long eventId, Long magicEventsTag) {
+        if (!isCreator(magicEventsTag, eventId)) {
+            throw new UnauthorizedException("User not authorized to access event services");
+        }
+
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+        ServicesDTO services = new ServicesDTO();
+        services.setBoard(event.getBoardEnabled() != null ? event.getBoardEnabled() : false);
+        services.setGallery(event.getGalleryEnabled() != null ? event.getGalleryEnabled() : false);
+        services.setGuestGame(event.getGuestGameEnabled() != null ? event.getGuestGameEnabled() : false);
+        
+        return services;
     }
 }
 

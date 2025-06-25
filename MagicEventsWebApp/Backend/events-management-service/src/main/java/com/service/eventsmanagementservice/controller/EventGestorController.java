@@ -42,7 +42,7 @@ public class EventGestorController {
         }
     }
 
-    @GetMapping("/annullevent")
+    @PutMapping("/annullevent")
     public ResponseEntity<String> annullEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId
@@ -51,7 +51,7 @@ public class EventGestorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
-    @GetMapping("/activeservices")
+    @PutMapping("/activeservices")
     public ResponseEntity<String> activeServicesEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId,
@@ -61,7 +61,7 @@ public class EventGestorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
-    @GetMapping("/de-annullevent")
+    @PutMapping("/de-annullevent")
     public ResponseEntity<String> activeEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId
@@ -70,7 +70,7 @@ public class EventGestorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
-    @GetMapping("/updateadmins")
+    @PutMapping("/updateadmins")
     public String addNewAdmins(
             @RequestParam("admins") ArrayList<String> admins,
             @RequestParam("eventId") Long eventId,
@@ -79,7 +79,7 @@ public class EventGestorController {
         return eventGestorService.updateEventAdmins(admins, eventId, creatorId);
     }
 
-    @GetMapping("/addpartecipants")
+    @PutMapping("/addpartecipants")
     public String addNewPartecipants(
             @RequestParam("partecipants") ArrayList<String> partecipants,
             @RequestParam("eventId") Long eventId,
@@ -88,12 +88,12 @@ public class EventGestorController {
         return eventGestorService.updateEventPartecipants(partecipants, eventId, creatorId);
     }
 
-    @PostMapping("/geteventinfo")
+    @GetMapping("/geteventinfo")
     public EventDTO getEventInfo(@RequestParam("eventId") Long eventId) {
         return eventGestorService.getEventInfo(eventId);
     }
 
-    @PostMapping("/modify")
+    @PutMapping("/modify")
     public String modifyEvent(
             @RequestParam("eventId") Long eventId,
             @RequestParam("magicEventsTag") Long creatorId,
@@ -117,34 +117,53 @@ public class EventGestorController {
         return eventGestorService.isCreator(creatorId, eventId);
     }
 
-    @PostMapping("/geteventslistc")
+    @GetMapping("/geteventslistc")
     public List<EventDTO> getEventsCreated(@RequestParam("creatorId") Long creatorId){
         return eventGestorService.getEventsCreated(creatorId);
     }
 
-    @PostMapping("/geteventslistp")
+    @GetMapping("/geteventslistp")
     public List<EventDTO> getEventPartecipated(@RequestParam("partecipantId") Long partecipantId){
         return eventGestorService.getEventPartecipated(partecipantId);
     }
 
-    @PostMapping("/geteventid")
+    @GetMapping("/geteventid")
     public List<Long> getEventId(@RequestParam("creatorId") Long creatorId, @RequestParam("title") String title){
         return eventGestorService.getEventId(creatorId, title);
     }
 
-    @PostMapping("/getadminsforevent")
+    @GetMapping("/getadminsforevent")
     public List<String> getAdmins(@RequestParam("eventId") Long eventId, @RequestParam("magicEventsTag") Long creatorId){
         return eventGestorService.getAdminsForEvent(eventId, creatorId);
     }
 
-    @PostMapping("/getpartecipantsforevent")
+    @GetMapping("/getpartecipantsforevent")
     public List<String> getPartecipants(@RequestParam("eventId") Long eventId){
         return eventGestorService.getPartecipantsForEvent(eventId);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public boolean deleteEvent(@RequestParam("eventId") Long eventId, @RequestParam("magicEventsTag") Long creatorId){
         return eventGestorService.deleteEvent(eventId, creatorId);
+    }
+
+    @GetMapping("/getEventEnabledServices")
+    public ResponseEntity<ServicesDTO> getEventEnabledServices(
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long magicEventsTag
+    ) {
+        try {
+            ServicesDTO services = eventGestorService.getEventEnabledServices(eventId, magicEventsTag);
+            if (services != null) {
+                return ResponseEntity.ok(services);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 

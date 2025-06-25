@@ -16,7 +16,7 @@ public class UserInfoController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @GetMapping
     public ResponseEntity<HashMap<Long, String>> getUserEmail(
             @RequestBody List<String> emails
     ) throws Exception {
@@ -24,7 +24,7 @@ public class UserInfoController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/isauthenticated")
+    @GetMapping("/isauthenticated")
     public Boolean isAuthenticated(@RequestParam("email") String email) throws Exception {
         return userService.isAuthenticated(email);
     }

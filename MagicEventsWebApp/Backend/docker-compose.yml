@@ -161,7 +161,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - board-db
       - rabbitmq
@@ -183,7 +183,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - guest-game-db
       - rabbitmq
@@ -205,7 +205,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - gallery-db
       - rabbitmq

@@ -39,12 +39,12 @@ public class LoginController {
         return authService.registerUser(name, surname, email, password, username);
     }
 
-    @PostMapping("/form")
+    @GetMapping("/form")
     public UserDTO login(@RequestParam("email") String email, @RequestParam("password") String password) {
         return authService.login(email, password);
     }
 
-    @PostMapping("/modifyuser")
+    @PutMapping("/modifyuser")
     public UserDTO modifyUser(@Valid @RequestBody UserDTO userDTO) {
         return authService.modify(userDTO);
     }
@@ -59,7 +59,7 @@ public class LoginController {
         return authService.changePasswordWithToken(token, newPassword);
     }
 
-    @PostMapping("/userprofile")
+    @GetMapping("/userprofile")
     public UserDTO getUserInfo(@RequestParam("accessToken") String accessToken) {
         return authService.getUserInfo(accessToken);
     }
@@ -81,12 +81,12 @@ public class LoginController {
         return authService.logout(email);
     }
 
-    @PutMapping("/deleteuser")
+    @DeleteMapping("/deleteuser")
     public String deleteUser(@RequestParam("email") String email) {
         return authService.deleteUser(email);
     }
 
-    @PostMapping("/refreshaccesstoken")
+    @PutMapping("/refreshaccesstoken")
     public LoginWithTokenDTO refreshAccessToken(@RequestParam("refresh_token") String refreshToken) {
         return authService.refreshAccessToken(refreshToken);
     }
