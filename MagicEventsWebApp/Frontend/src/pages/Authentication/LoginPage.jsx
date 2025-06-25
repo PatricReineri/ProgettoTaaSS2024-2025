@@ -8,7 +8,7 @@ import Button from '../../components/buttons/Button';
 import clsx from 'clsx';
 import { login } from '../../api/authentication';
 
-function LoginPage() {
+function LoginPage({ setLogged }) {
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
 
@@ -45,6 +45,7 @@ function LoginPage() {
 		console.log('Success:', data);
 		setUser(data);
 		sessionStorage.setItem('user', JSON.stringify(data));
+		setLogged(true);
 		navigate('/home');
 	};
 

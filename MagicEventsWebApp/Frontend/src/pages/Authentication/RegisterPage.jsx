@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Input from '../../components/inputs/Input';
 import Button from '../../components/buttons/Button';
-import { register } from '../../api/authentication';
+import { login, register } from '../../api/authentication';
+import { useNavigate } from 'react-router-dom';
 
-function RegisterPage() {
+function RegisterPage({ setLogged }) {
+	const navigate = useNavigate();
 	const [error, setError] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
 	const [formData, setFormData] = useState({
@@ -38,6 +40,15 @@ function RegisterPage() {
 			if (!res.ok) throw new Error('Registration invalid');
 			const data = await res;
 			console.log('Success:', data);
+			const loginRes = await login({
+				email: formData.email,
+				password: formData.password,
+			});
+			const dataLogin = await loginRes.json();
+			console.log('Success:', data);
+			sessionStorage.setItem('user', JSON.stringify(dataLogin));
+			setLogged(true);
+			navigate('/home');
 		} catch (err) {
 			console.error('Error:', err.message);
 			setError(err.message);

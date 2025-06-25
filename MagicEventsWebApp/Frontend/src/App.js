@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import LoginPage from './pages/Authentication/LoginPage';
 import RegisterPage from './pages/Authentication/RegisterPage';
@@ -12,8 +12,12 @@ import BoardPage from './pages/Event/Board/BoardPage';
 import Button from './components/buttons/Button';
 import MagicEventHomePage from './pages/MagicEventHomePage';
 import LogoutButton from './components/buttons/LogoutButton';
+import CreationEventPage from './pages/Event/CreationEventPage';
+import MyEventsPage from './pages/Event/MyEventsPage';
 
 function App() {
+	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
+
 	useEffect(() => {
 		const script = document.createElement('script');
 
@@ -36,7 +40,7 @@ function App() {
 					</NavLink>
 				}
 				actions={
-					!sessionStorage.getItem('user') ? (
+					!logged ? (
 						<div className={'flex gap-2 '}>
 							<NavLink to="/login">
 								<Button text="Login"></Button>
@@ -47,7 +51,7 @@ function App() {
 						</div>
 					) : (
 						<div className={'flex gap-2 items-center'}>
-							<LogoutButton></LogoutButton>
+							<LogoutButton setLogged={setLogged}></LogoutButton>
 							<NavLink to="/userprofile">
 								<button className="bg-[#E4DCEF] text-[#363540] px-4  inner-shadow p-1 cursor-pointer hover:scale-105 rounded-full">
 									{JSON.parse(sessionStorage.getItem('user')).username}
@@ -57,20 +61,25 @@ function App() {
 					)
 				}
 			>
-				<NavLink className="w-fit" to="/login">
-					<Button text="My events" link custom="  !w-20 text-md !undeline "></Button>
+				<NavLink className="w-fit" to="/myevents">
+					<Button text="My events" link custom="  !w-20 text-md  "></Button>
+				</NavLink>
+				<NavLink className="w-fit" to="/newevent">
+					<Button text="Create event" link custom="  !w-20  !text-md    "></Button>
 				</NavLink>
 			</NavBar>
 			<div className=" h-[calc(100vh-3.5rem)]">
 				<Routes>
-					<Route path="/" element={sessionStorage.getItem('user') ? <MagicEventHomePage /> : <HomePage />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/register" element={<RegisterPage />} />
+					<Route path="/" element={logged ? <MagicEventHomePage /> : <HomePage />} />
+					<Route path="/login" element={<LoginPage setLogged={setLogged} />} />
+					<Route path="/register" element={<RegisterPage setLogged={setLogged} />} />
 					<Route path="/home" element={<MagicEventHomePage />} />
-					<Route path="/userprofile" element={<UserProfilePage />} />
-					<Route path="/googlecallback" element={<GoogleCallbackPage />} />
+					<Route path="/userprofile" element={<UserProfilePage setLogged={setLogged} />} />
+					<Route path="/googlecallback" element={<GoogleCallbackPage setLogged={setLogged} />} />
 					<Route path="/changepassword" element={<ChangePasswordPage />} />
-					<Route path="/modifyuser" element={<ModifyUserValuePage />} />
+					<Route path="/modifyuser" element={<ModifyUserValuePage setLogged={setLogged} />} />
+					<Route path="/newevent" element={<CreationEventPage />} />
+					<Route path="/myevents" element={<MyEventsPage />} />
 					<Route path="/:eventId/board" element={<BoardPage eventID={1} />} />
 				</Routes>
 			</div>
