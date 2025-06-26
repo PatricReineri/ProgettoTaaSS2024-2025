@@ -107,6 +107,7 @@ public class EventGestorService {
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
+        addPartecipants(eventDTO.getPartecipants(), event.getEventId());
         return event.getEventId();
     }
 

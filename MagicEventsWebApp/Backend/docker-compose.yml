@@ -147,6 +147,27 @@ services:
     networks:
       - magicevents-network
 
+  # Event Setup Service
+  eventsetup-service:
+    image: magicevents/eventsetup-service:latest
+    build:
+      context: ./eventsetup-service
+      dockerfile: Dockerfile
+    container_name: eventsetup-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_BOARD_URL: http://board-service:8081
+      SERVICES_GALLERY_URL: http://gallery-service:8085
+      SERVICES_GUESTGAME_URL: http://guest-game-service:8083
+    depends_on:
+      - rabbitmq
+      - events-management-service
+    networks:
+      - magicevents-network
+
   # Board Service
   board-service:
     image: magicevents/board-service:latest
@@ -157,7 +178,8 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://board-db:5433/Board
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://board-db:5432/Board
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -179,7 +201,8 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5434/GuestGame
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5432/GuestGame
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -201,7 +224,8 @@ services:
     ports:
       - "8085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5435/Gallery
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5432/Gallery
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq

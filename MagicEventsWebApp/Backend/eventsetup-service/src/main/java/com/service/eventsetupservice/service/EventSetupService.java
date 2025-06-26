@@ -370,8 +370,9 @@ public class EventSetupService {
             servicesDTO.setBoard(status.isBoardCreated());
             servicesDTO.setGallery(status.isGalleryCreated());
             servicesDTO.setGuestGame(status.isGameCreated());
+            
             String result = eventManagementWebClient
-                    .post()
+                    .put()
                     .uri(uriBuilder -> uriBuilder
                             .path("/gestion/activeservices")
                             .queryParam("eventId", eventId)

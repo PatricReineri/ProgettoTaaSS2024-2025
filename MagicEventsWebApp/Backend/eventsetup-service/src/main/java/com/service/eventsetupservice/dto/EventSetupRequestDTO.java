@@ -23,7 +23,6 @@ public class EventSetupRequestDTO {
     private LocalDateTime ending;
     
     @NotNull(message = "Location is required")
-    @NotBlank(message = "Location cannot be blank")
     private String location;
     
     @NotNull(message = "Creator email is required")
@@ -39,6 +38,7 @@ public class EventSetupRequestDTO {
     @NotNull(message = "Admins list is required")
     private ArrayList<String> admins;
     
+    @NotNull(message = "Image is required")
     @NotBlank(message = "Base64 image cannot be blank")
     private String image;
     
@@ -53,14 +53,12 @@ public class EventSetupRequestDTO {
    
     private String galleryTitle;
     
-    
     private String boardTitle;
     private String boardDescription;
 
     private String gameDescription;
 
     public EventSetupRequestDTO() {}
-
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -111,6 +109,5 @@ public class EventSetupRequestDTO {
     public void setGameDescription(String gameDescription) { this.gameDescription = gameDescription; }
 
     public String getBoardDescription() { return boardDescription; }
-    public void setBoardDescription(String boardDescription) { this.boardDescription = boardDescription; } 
-
+    public void setBoardDescription(String boardDescription) { this.boardDescription = boardDescription; }
 }
