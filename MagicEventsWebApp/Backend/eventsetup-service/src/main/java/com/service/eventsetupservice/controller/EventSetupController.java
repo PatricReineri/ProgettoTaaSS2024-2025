@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/eventSetup")
 public class EventSetupController {
-
     private final EventSetupService eventSetupService;
 
     public EventSetupController(EventSetupService eventSetupService) {
@@ -30,7 +29,6 @@ public class EventSetupController {
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(status);
             }
-            
         } catch (Exception e) {
             EventServicesStatusDTO errorStatus = new EventServicesStatusDTO();
             errorStatus.setErrorMessage("Internal server error: " + e.getMessage());
@@ -49,7 +47,6 @@ public class EventSetupController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Failed to activate services");
             }
-            
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Internal server error: " + e.getMessage());

@@ -3,7 +3,6 @@ package com.service.eventsetupservice.dto;
 import jakarta.validation.constraints.NotNull;
 
 public class ServiceActivationRequestDTO {
-    
     @NotNull
     private Long eventId;
     
