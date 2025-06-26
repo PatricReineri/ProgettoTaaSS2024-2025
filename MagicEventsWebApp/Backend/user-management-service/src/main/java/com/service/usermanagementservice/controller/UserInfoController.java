@@ -16,7 +16,7 @@ public class UserInfoController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<HashMap<Long, String>> getUserEmail(
             @RequestBody List<String> emails
     ) throws Exception {
