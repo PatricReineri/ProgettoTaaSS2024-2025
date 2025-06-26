@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { useState } from 'react';
+import { modifyUser } from '../../api/authentication';
 
 function UserEditPage({ setLogged }) {
 	const navigate = useNavigate();
@@ -20,13 +21,7 @@ function UserEditPage({ setLogged }) {
 		setMessage(null);
 		setUser((prev) => ({ ...prev, ['profileImageUrl']: '' }));
 		try {
-			const res = await fetch('https://localhost:8443/login/modifyuser', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(user).replace('null', '""'),
-			});
+			const res = await modifyUser(JSON.stringify(user).replace('null', '""'));
 			if (!res.ok) throw new Error('error for user modify operation');
 			setMessage('Change successful');
 			sessionStorage.setItem('user', JSON.stringify(user));

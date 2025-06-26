@@ -5,12 +5,11 @@ export function login(formData) {
 	}
 
 	try {
-		return fetch('https://localhost:8443/login/form', {
-			method: 'POST',
+		return fetch(`https://localhost:8443/login/form?${params.toString()}`, {
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: params.toString(),
 		});
 	} catch (err) {
 		console.error('Error:', err.message);
@@ -39,5 +38,27 @@ export function register(formData) {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: params.toString(),
+	});
+}
+
+export function modifyUser(user) {
+	return fetch('https://localhost:8443/login/modifyuser', {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: user,
+	});
+}
+
+export function deleteUser(email) {
+	return fetch('https://localhost:8443/login/deleteuser', {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			email: email,
+		}).toString(),
 	});
 }

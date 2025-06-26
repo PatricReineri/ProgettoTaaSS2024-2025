@@ -1,3 +1,4 @@
+import { deleteUser } from '../../api/authentication';
 import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,15 +14,7 @@ function DeleteUserButton({ user, setLogged }) {
 				return;
 			}
 
-			const res = await fetch('https://localhost:8443/login/deleteuser', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({
-					email: JSON.parse(sessionStorage.getItem('user')).email,
-				}).toString(),
-			});
+			const res = await deleteUser(JSON.parse(sessionStorage.getItem('user')).email);
 
 			if (!res.ok) throw new Error('Delete user failed');
 			console.log('Success:', res);

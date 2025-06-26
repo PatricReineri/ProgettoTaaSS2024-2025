@@ -1,9 +1,19 @@
 export function getEventsp() {
-	return fetch(`http://localhost:8080/gestion/geteventslistp`, {
+	return fetch(
+		`http://localhost:8080/gestion/geteventslistp?partecipantId=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}`,
+		{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
+}
+
+export function createEvent(event) {
+	return fetch(`http://localhost:8082/eventSetup`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: new URLSearchParams({
-			partecipantId: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
-		}).toString(),
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(event),
 	});
 }
