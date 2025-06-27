@@ -135,7 +135,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5431/EventsManagementMEADB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5432/EventsManagementMEADB
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -155,13 +155,16 @@ services:
       dockerfile: Dockerfile
     container_name: eventsetup-service
     ports:
-      - "8082:8082"
+      - "8086:8086"
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
-      SERVICES_BOARD_URL: http://board-service:8081
-      SERVICES_GALLERY_URL: http://gallery-service:8085
-      SERVICES_GUESTGAME_URL: http://guest-game-service:8083
+      # Aggiungi queste righe per mappare correttamente le proprietà Spring Boot:
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_BOARDSERVICE_URL: http://board-service:8081
+      SERVICES_GALLERYSERVICE_URL: http://gallery-service:8085
+      SERVICES_GUESTGAMESERVICE_URL: http://guest-game-service:8083
+
+
     depends_on:
       - rabbitmq
       - events-management-service
@@ -183,7 +186,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - board-db
       - rabbitmq
@@ -206,7 +209,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - guest-game-db
       - rabbitmq
@@ -229,7 +232,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTSMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
     depends_on:
       - gallery-db
       - rabbitmq
@@ -241,7 +244,7 @@ services:
 # VOLUMES
 # ==============================
 volumes:
-  user_management_data: 
+  user_management_data:
   events_management_data:
   board_service_data:
   guest_game_data:

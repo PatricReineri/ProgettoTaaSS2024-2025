@@ -1,12 +1,13 @@
-import { faClose, faGamepad, faImagePortrait, faImages, faMapMarker } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faGamepad, faImages, faMapMarker } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/buttons/Button';
 import ServiceCard from '../../components/Card/ServiceCard';
 import Input from '../../components/inputs/Input';
 import InputArea from '../../components/inputs/InputArea';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { createEvent } from '../../api/eventAPI';
 
 const CreationEventPage = () => {
@@ -20,9 +21,10 @@ const CreationEventPage = () => {
 		starting: '',
 		ending: '',
 		location: '',
+		boardEnabled: true,
 		creatorEmail: JSON.parse(sessionStorage.getItem('user')).email,
 		creatorMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
-		partecipants: [],
+		participants: [],
 		admins: [],
 		image: '',
 		gameEnabled: false,
@@ -32,11 +34,66 @@ const CreationEventPage = () => {
 		gameDescription: '',
 	});
 
+	const geocodingAPILoaded = useMapsLibrary('geocoding');
+	const [geocodingService, setGeocodingService] = useState();
+	const [geocodingResult, setGeocodingResult] = useState();
+
+	useEffect(() => {
+		if (!geocodingAPILoaded) return;
+		console.log('APILoaded: ' + geocodingAPILoaded);
+
+		setGeocodingService(new window.google.maps.Geocoder());
+	}, [geocodingAPILoaded]);
+
+	const onLocationSet = async (address) => {
+		console.log('Service: ' + geocodingService);
+
+		if (!geocodingService || !address) return; // errore o impossibile fare la chiamata
+		console.log('Sto per chiamare geocodingService...');
+
+		await geocodingService.geocode({ address }, (results, status) => {
+			console.log('Sono dentro geocodingService.geocode');
+
+			if (results && status === 'OK') {
+				if (!results[0]) {
+					console.log('result non valid? ', results[0]);
+
+					return;
+				}
+				console.log('Result:' + results[0].formatted_address);
+				console.log('Lat:' + results[0].geometry.location.lat());
+				console.log('Lng:' + results[0].geometry.location.lng());
+				setEventDetail((prev) => ({
+					...prev,
+					location: (results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString(),
+				}));
+				setTimeout(() => {
+					createEventForm((results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString());
+				}, 1);
+			} else {
+				console.log('errore con geocoding');
+			}
+		});
+	};
+
 	const navigate = useNavigate();
 
 	function handleChange(e, name) {
 		const { value } = e.target;
-		setEventDetail((prev) => ({ ...prev, [name]: value }));
+
+		if (name === 'starting') {
+			setEventDetail((prev) => ({
+				...prev,
+				starting: value,
+			}));
+		} else if (name === 'ending') {
+			setEventDetail((prev) => ({
+				...prev,
+				ending: value,
+			}));
+		} else {
+			setEventDetail((prev) => ({ ...prev, [name]: value }));
+		}
 	}
 
 	const handleChangeService = (name) => {
@@ -70,8 +127,16 @@ const CreationEventPage = () => {
 	}
 
 	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
 	async function handleCreate() {
-		console.log(eventDetail);
+		if (eventDetail.location) {
+			onLocationSet(eventDetail.location);
+		} else {
+			createEventForm();
+		}
+	}
+
+	async function createEventForm(locationCoords = '') {
 		if (!eventDetail.title) {
 			setError('Inserisci il titolo del evento');
 			return;
@@ -85,15 +150,34 @@ const CreationEventPage = () => {
 			return;
 		}
 		setError('');
-		if (eventDetail.location) {
-			// eventDetail.location = googleAPI()
-		}
-		const res = await createEvent(eventDetail);
+
+		setLoading(true);
+		const res = createEvent({
+			...eventDetail,
+			starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
+			ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
+			location: mapEnabled ? locationCoords : '',
+		});
+		// const res = createEvent({ ...eventDetail, location: locationCoords })
+		// 	.then(async (value) => {
+		// 		setLoading(false);
+		// 		const jsno = await value.json();
+		// 		console.log(jsno);
+
+		// 		if (jsno.setupSuccessful) {
+		// 			navigate('/myevents');
+		// 		}
+		// 	})
+		// 	.catch((error) => {
+		// 		setLoading(false);
+		// 		setError(error);
+		// 		alert('Finished with error');
+		// 	});
 	}
 
 	return (
 		<div className="h-full bg-[#363540] flex flex-col ">
-			<div className="flex-auto flex flex-row p-4 gap-2 ">
+			<div className="flex-auto flex flex-row p-4 gap-2 overflow-x-auto ">
 				<div className=" border border-[#E8F2FC]/60 text-[#E8F2FC] rounded-md p-4 gap-2 flex flex-col ">
 					<h1 className="font-semibold mb-4">What event are you thinking about?</h1>
 					<Input
@@ -249,8 +333,8 @@ const CreationEventPage = () => {
 								name="Email del utenta da invitare"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
-								{eventDetail.partecipants.length === 0 ? <p className="text-center">Nessun utente invitato</p> : ''}
-								{eventDetail.partecipants.map((item) => (
+								{eventDetail.participants.length === 0 ? <p className="text-center">Nessun utente invitato</p> : ''}
+								{eventDetail.participants.map((item) => (
 									<div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
 										<p>{item}</p>
 
@@ -258,7 +342,7 @@ const CreationEventPage = () => {
 											onClick={() => {
 												setEventDetail((prev) => ({
 													...prev,
-													partecipants: prev.partecipants.filter((p) => p !== item),
+													partecipants: prev.participants.filter((p) => p !== item),
 												}));
 											}}
 											link
@@ -311,7 +395,7 @@ const CreationEventPage = () => {
 			<div className="flex flex-row gap-4 items-center p-4 justify-end px-8">
 				<p className="text-[#EE0E51]">{error}</p>
 				<Button onClick={() => navigate('/')} text="Annulla" secondary></Button>
-				<Button onClick={handleCreate} text="Crea Evento"></Button>
+				<Button disabled={loading} onClick={handleCreate} text="Crea Evento"></Button>
 			</div>
 		</div>
 	);

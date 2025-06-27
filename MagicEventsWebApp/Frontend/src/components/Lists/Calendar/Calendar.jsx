@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CalendarDay from './CalendarDay';
 
 const Calendar = ({ days }) => {

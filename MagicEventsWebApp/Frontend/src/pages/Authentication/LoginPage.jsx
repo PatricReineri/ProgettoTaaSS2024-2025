@@ -98,7 +98,7 @@ function LoginPage({ setLogged }) {
 				<div className=" h-full "></div>
 				{/*Registration*/}
 				<div className=" flex justify-center gap-4 pb-4   ">
-					<p>Are you not registered?</p>
+					<p>Già registrato?</p>
 					<Link to="/register">
 						<p className=" text-[#EE0E51] hover:underline ">Registrati ora</p>
 					</Link>

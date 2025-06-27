@@ -113,7 +113,7 @@ const MagicEventHomePage = () => {
 		<div className="h-full overflow-y-auto bg-[#505458] p-4">
 			<div className="flex gap-2 items-center">
 				<div className="h-4 w-4 bg-[#E4DCEF] rounded-full"></div>
-				<p className="text-[#E4DCEF] font-bold ">Scheduled</p>
+				<p className="text-[#E4DCEF] font-bold ">In programma</p>
 			</div>
 			<Calendar days={events}></Calendar>
 		</div>

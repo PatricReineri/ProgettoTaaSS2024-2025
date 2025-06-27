@@ -14,6 +14,9 @@ import MagicEventHomePage from './pages/MagicEventHomePage';
 import LogoutButton from './components/buttons/LogoutButton';
 import CreationEventPage from './pages/Event/CreationEventPage';
 import MyEventsPage from './pages/Event/MyEventsPage';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBoxArchive, faHome, faPen } from '@fortawesome/free-solid-svg-icons';
+import { APIProvider } from '@vis.gl/react-google-maps';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -36,7 +39,7 @@ function App() {
 			<NavBar
 				logo={
 					<NavLink to="/">
-						<h1 className="text-[#EE0E51] font-extrabold  hover:scale-110">MagicEvent</h1>
+						<FontAwesomeIcon className="text-2xl hover:scale-110" icon={faHome} color="#EE0E51" />
 					</NavLink>
 				}
 				actions={
@@ -62,10 +65,28 @@ function App() {
 				}
 			>
 				<NavLink className="w-fit" to="/myevents">
-					<Button text="My events" link custom="  !w-20 text-md  "></Button>
+					<Button
+						text={
+							<div className="flex max-sm:flex-col gap-2 justify-center items-center">
+								<FontAwesomeIcon className="text-lg" icon={faBoxArchive} />{' '}
+								<p className="max-sm:text-[0.6rem]">I miei eventi</p>
+							</div>
+						}
+						link
+						custom="  !w-max text-md  "
+					></Button>
 				</NavLink>
 				<NavLink className="w-fit" to="/newevent">
-					<Button text="Create event" link custom="  !w-20  !text-md    "></Button>
+					<Button
+						text={
+							<div className="flex max-sm:flex-col gap-2 justify-center items-center">
+								<FontAwesomeIcon className="text-lg" icon={faPen} />{' '}
+								<p className="max-sm:text-[0.6rem]">Crea il tuo evento</p>
+							</div>
+						}
+						link
+						custom="  !w-max  !text-md    "
+					></Button>
 				</NavLink>
 			</NavBar>
 			<div className=" h-[calc(100vh-3.5rem)]">
@@ -78,7 +99,14 @@ function App() {
 					<Route path="/googlecallback" element={<GoogleCallbackPage setLogged={setLogged} />} />
 					<Route path="/changepassword" element={<ChangePasswordPage />} />
 					<Route path="/modifyuser" element={<ModifyUserValuePage setLogged={setLogged} />} />
-					<Route path="/newevent" element={<CreationEventPage />} />
+					<Route
+						path="/newevent"
+						element={
+							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+								<CreationEventPage />
+							</APIProvider>
+						}
+					/>
 					<Route path="/myevents" element={<MyEventsPage />} />
 					<Route path="/:eventId/board" element={<BoardPage eventID={1} />} />
 				</Routes>
