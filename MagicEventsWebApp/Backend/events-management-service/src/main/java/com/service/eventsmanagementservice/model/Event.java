@@ -191,6 +191,8 @@ public class Event {
         this.partecipants = partecipants;
     }
 
+
+
     public void setStatus(String status) {
         this.status = status;
     }

@@ -72,6 +72,7 @@ const CreationEventPage = () => {
 				}, 1);
 			} else {
 				console.log('errore con geocoding');
+				setError('Nessuna location trovata, prova con un altro indirizzo');
 			}
 		});
 	};
@@ -81,19 +82,7 @@ const CreationEventPage = () => {
 	function handleChange(e, name) {
 		const { value } = e.target;
 
-		if (name === 'starting') {
-			setEventDetail((prev) => ({
-				...prev,
-				starting: value,
-			}));
-		} else if (name === 'ending') {
-			setEventDetail((prev) => ({
-				...prev,
-				ending: value,
-			}));
-		} else {
-			setEventDetail((prev) => ({ ...prev, [name]: value }));
-		}
+		setEventDetail((prev) => ({ ...prev, [name]: value }));
 	}
 
 	const handleChangeService = (name) => {
@@ -149,30 +138,41 @@ const CreationEventPage = () => {
 			setError('Inserisci la data di inizio e fine');
 			return;
 		}
+		if (eventDetail.description.length < 10 || eventDetail.description.length > 255) {
+			setError('La descrizione del evento deve essere almeno di 10 lettere con un massimo di 255');
+			return;
+		}
+		if (eventDetail.boardDescription.length < 10 || eventDetail.boardDescription.length > 255) {
+			setError('La descrizione della bacheca deve essere almeno di 10 lettere con un massimo di 255');
+			return;
+		}
+		if (eventDetail.image.length <= 0) {
+			setError("L'immagine del evento è obligatoria");
+			return;
+		}
 		setError('');
 
 		setLoading(true);
-		const res = createEvent({
+		createEvent({
 			...eventDetail,
 			starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
 			ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
 			location: mapEnabled ? locationCoords : '',
-		});
-		// const res = createEvent({ ...eventDetail, location: locationCoords })
-		// 	.then(async (value) => {
-		// 		setLoading(false);
-		// 		const jsno = await value.json();
-		// 		console.log(jsno);
+		})
+			.then(async (value) => {
+				setLoading(false);
+				const jsno = await value.json();
+				console.log(jsno);
 
-		// 		if (jsno.setupSuccessful) {
-		// 			navigate('/myevents');
-		// 		}
-		// 	})
-		// 	.catch((error) => {
-		// 		setLoading(false);
-		// 		setError(error);
-		// 		alert('Finished with error');
-		// 	});
+				if (jsno.setupSuccessful) {
+					navigate('/myevents');
+				}
+			})
+			.catch((error) => {
+				setLoading(false);
+				setError(error);
+				alert('Finished with error');
+			});
 	}
 
 	return (
@@ -206,6 +206,7 @@ const CreationEventPage = () => {
 						/>
 					</div>
 					<InputArea
+						minLength={10}
 						onChange={(e) => handleChange(e, 'description')}
 						value={eventDetail.description}
 						name="descrizione"
@@ -238,6 +239,7 @@ const CreationEventPage = () => {
 						name="titolo"
 					/>
 					<InputArea
+						minLength={10}
 						onChange={(e) => handleChange(e, 'boardDescription')}
 						value={eventDetail.boardDescription}
 						name="Descrizione Bacheca"
@@ -324,7 +326,7 @@ const CreationEventPage = () => {
 						<div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
 							<Input
 								onEnterPress={() => {
-									setEventDetail((prev) => ({ ...prev, partecipants: [...prev.partecipants, partecipantInput] }));
+									setEventDetail((prev) => ({ ...prev, participants: [...prev.participants, partecipantInput] }));
 									setPartecipantInput('');
 								}}
 								onChange={(e) => setPartecipantInput(e.target.value)}
@@ -342,7 +344,7 @@ const CreationEventPage = () => {
 											onClick={() => {
 												setEventDetail((prev) => ({
 													...prev,
-													partecipants: prev.participants.filter((p) => p !== item),
+													participants: prev.participants.filter((p) => p !== item),
 												}));
 											}}
 											link

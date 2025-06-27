@@ -11,11 +11,9 @@ export function getEventsp() {
 }
 
 export function createEvent(event) {
-	console.log(event);
-	return;
-	// return fetch(`http://localhost:8086/eventSetup`, {
-	// 	method: 'POST',
-	// 	headers: { 'Content-Type': 'application/json' },
-	// 	body: JSON.stringify(event),
-	// });
+	return fetch(`http://localhost:8086/eventSetup`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(event),
+	});
 }

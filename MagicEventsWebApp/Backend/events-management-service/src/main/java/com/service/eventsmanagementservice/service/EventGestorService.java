@@ -88,31 +88,29 @@ public class EventGestorService {
 
     @Transactional
     public Long create(@Valid EventDTO eventDTO, String creatorEmail) {
-        Long creatorId = eventDTO.getCreator();
-        partecipantsRepository.findById(creatorId)
-            .orElseGet(() -> {
-                Partecipant newP = new Partecipant();
-                newP.setMagicEventTag(creatorId);
-                newP.setEmail(creatorEmail);
-                return partecipantsRepository.saveAndFlush(newP);
-            });
         Event event = new Event(
                 eventDTO.getTitle(),
                 eventDTO.getDescription(),
                 eventDTO.getStarting(),
                 eventDTO.getEnding(),
                 eventDTO.getLocation(),
-                creatorId,
+                eventDTO.getCreator(),
                 eventDTO.getImage()
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
+        System.out.println("PRE: Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
+        if(!(eventDTO.getPartecipants().contains(creatorEmail))){
+            eventDTO.addPartecipant(creatorEmail);
+            System.out.println("Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
+        }
+        System.out.println("POST: Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         addPartecipants(eventDTO.getPartecipants(), event.getEventId());
         return event.getEventId();
     }
 
     public List<Admin> addAdmins(List<String> admins, Long eventId){
-        HashMap<Long, String> adminsWithId = geIdForEmails(admins);
+        HashMap<Long, String> adminsWithId = getIdForEmails(admins);
         return addAdminsWithId(adminsWithId, eventId);
     }
 
@@ -141,7 +139,7 @@ public class EventGestorService {
     }
 
     public List<Partecipant> addPartecipants(List<String> partecipants, Long eventId) {
-        HashMap<Long, String> partecipantsWithId = geIdForEmails(partecipants);
+        HashMap<Long, String> partecipantsWithId = getIdForEmails(partecipants);
         return addPartecipantsWithId(partecipantsWithId, eventId);
     }
 
@@ -305,7 +303,7 @@ public class EventGestorService {
         return eventDTOs;
     }
 
-    public HashMap<Long, String> geIdForEmails(List<String> emails) {
+    public HashMap<Long, String> getIdForEmails(List<String> emails) {
         try {
             HashMap<Long, String> result = userManagementWebClient.post()
                     .uri("/info")
