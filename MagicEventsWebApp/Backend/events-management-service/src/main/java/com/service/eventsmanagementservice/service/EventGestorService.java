@@ -99,12 +99,12 @@ public class EventGestorService {
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
-        System.out.println("PRE: Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
+        System.out.println("PRE - Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         if(!(eventDTO.getPartecipants().contains(creatorEmail))){
             eventDTO.addPartecipant(creatorEmail);
             System.out.println("Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         }
-        System.out.println("POST: Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
+        System.out.println("POST - Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         addPartecipants(eventDTO.getPartecipants(), event.getEventId());
         return event.getEventId();
     }

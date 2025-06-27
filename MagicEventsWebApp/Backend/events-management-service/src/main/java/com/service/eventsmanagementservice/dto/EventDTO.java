@@ -122,6 +122,7 @@ public class EventDTO {
     public void setPartecipants(ArrayList<String> partecipants) {
         this.partecipants = partecipants;
     }
+
     public void addPartecipant(String partecipant) {
         this.partecipants.add(partecipant);
     }
