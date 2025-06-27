@@ -319,10 +319,8 @@ public class EventGestorService {
                             .map(body -> new RuntimeException("Server error: " + body)))
                     .bodyToMono(new ParameterizedTypeReference<HashMap<Long, String>>() {})
                     .block();
-            System.out.println("Fetched user IDs: " + result);
             return result;
         } catch (Exception e) {
-            System.err.println("Error fetching user IDs: " + e.getMessage());
             throw new RuntimeException("Failed to fetch user IDs: " + e.getMessage(), e);
         }
     }
