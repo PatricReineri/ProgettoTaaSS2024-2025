@@ -286,10 +286,11 @@ public class EventSetupService {
                     .retrieve()
                     .bodyToMono(Long.class)
                     .block();
-
+            
             return eventId;
 
         } catch (Exception e) {
+            System.err.println("Failed to create event: " + e.getMessage());
             return null;
         }
     }
