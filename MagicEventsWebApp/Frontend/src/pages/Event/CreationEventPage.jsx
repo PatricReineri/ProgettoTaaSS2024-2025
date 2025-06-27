@@ -1,11 +1,14 @@
-import { faClose, faGamepad, faImagePortrait, faImages, faMapMarker } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faGamepad, faImages, faMapMarker } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/buttons/Button';
 import ServiceCard from '../../components/Card/ServiceCard';
 import Input from '../../components/inputs/Input';
 import InputArea from '../../components/inputs/InputArea';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from 'react-router-dom';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
+import { createEvent } from '../../api/eventAPI';
 
 const CreationEventPage = () => {
 	const [partecipantInput, setPartecipantInput] = useState('');
@@ -18,9 +21,10 @@ const CreationEventPage = () => {
 		starting: '',
 		ending: '',
 		location: '',
+		boardEnabled: true,
 		creatorEmail: JSON.parse(sessionStorage.getItem('user')).email,
 		creatorMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
-		partecipants: ['alescicolone01@gmail.com', 'admin@test.it', 'test@yahoo.it'],
+		participants: [],
 		admins: [],
 		image: '',
 		gameEnabled: false,
@@ -30,8 +34,54 @@ const CreationEventPage = () => {
 		gameDescription: '',
 	});
 
-	function handleChange(e) {
-		const { name, value } = e.target;
+	const geocodingAPILoaded = useMapsLibrary('geocoding');
+	const [geocodingService, setGeocodingService] = useState();
+	const [geocodingResult, setGeocodingResult] = useState();
+
+	useEffect(() => {
+		if (!geocodingAPILoaded) return;
+		console.log('APILoaded: ' + geocodingAPILoaded);
+
+		setGeocodingService(new window.google.maps.Geocoder());
+	}, [geocodingAPILoaded]);
+
+	const onLocationSet = async (address) => {
+		console.log('Service: ' + geocodingService);
+
+		if (!geocodingService || !address) return; // errore o impossibile fare la chiamata
+		console.log('Sto per chiamare geocodingService...');
+
+		await geocodingService.geocode({ address }, (results, status) => {
+			console.log('Sono dentro geocodingService.geocode');
+
+			if (results && status === 'OK') {
+				if (!results[0]) {
+					console.log('result non valid? ', results[0]);
+
+					return;
+				}
+				console.log('Result:' + results[0].formatted_address);
+				console.log('Lat:' + results[0].geometry.location.lat());
+				console.log('Lng:' + results[0].geometry.location.lng());
+				setEventDetail((prev) => ({
+					...prev,
+					location: (results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString(),
+				}));
+				setTimeout(() => {
+					createEventForm((results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString());
+				}, 1);
+			} else {
+				console.log('errore con geocoding');
+				setError('Nessuna location trovata, prova con un altro indirizzo');
+			}
+		});
+	};
+
+	const navigate = useNavigate();
+
+	function handleChange(e, name) {
+		const { value } = e.target;
+
 		setEventDetail((prev) => ({ ...prev, [name]: value }));
 	}
 
@@ -39,48 +89,161 @@ const CreationEventPage = () => {
 		setEventDetail((prev) => ({ ...prev, [name]: !prev[name] }));
 	};
 
+	const imgInput = useRef(null);
+	const handleChangeImage = (e) => {
+		alert('Handled');
+		imageUploaded(e.target.files[0]);
+	};
+
+	const handleRemoveIMG = () => {
+		imgInput.current.value = '';
+		setEventDetail((prev) => ({ ...prev, image: '' }));
+	};
+
+	function imageUploaded(file) {
+		let base64String = '';
+
+		let reader = new FileReader();
+		console.log('next');
+
+		reader.onload = function () {
+			base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+
+			setEventDetail((prev) => ({ ...prev, image: base64String }));
+			console.log(base64String);
+		};
+		reader.readAsDataURL(file);
+	}
+
+	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
+	async function handleCreate() {
+		if (eventDetail.location) {
+			onLocationSet(eventDetail.location);
+		} else {
+			createEventForm();
+		}
+	}
+
+	async function createEventForm(locationCoords = '') {
+		if (!eventDetail.title) {
+			setError('Inserisci il titolo del evento');
+			return;
+		}
+		if (!eventDetail.boardTitle) {
+			setError('Inserisci il titolo della bacheca');
+			return;
+		}
+		if (!eventDetail.starting || !eventDetail.ending) {
+			setError('Inserisci la data di inizio e fine');
+			return;
+		}
+		if (eventDetail.description.length < 10 || eventDetail.description.length > 255) {
+			setError('La descrizione del evento deve essere almeno di 10 lettere con un massimo di 255');
+			return;
+		}
+		if (eventDetail.boardDescription.length < 10 || eventDetail.boardDescription.length > 255) {
+			setError('La descrizione della bacheca deve essere almeno di 10 lettere con un massimo di 255');
+			return;
+		}
+		if (eventDetail.image.length <= 0) {
+			setError("L'immagine del evento è obligatoria");
+			return;
+		}
+		setError('');
+
+		setLoading(true);
+		createEvent({
+			...eventDetail,
+			starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
+			ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
+			location: mapEnabled ? locationCoords : '',
+		})
+			.then(async (value) => {
+				setLoading(false);
+				const jsno = await value.json();
+				console.log(jsno);
+
+				if (jsno.setupSuccessful) {
+					navigate('/myevents');
+				}
+			})
+			.catch((error) => {
+				setLoading(false);
+				setError(error);
+				alert('Finished with error');
+			});
+	}
+
 	return (
 		<div className="h-full bg-[#363540] flex flex-col ">
-			<div className="flex-auto flex flex-row p-4 gap-2 ">
+			<div className="flex-auto flex flex-row p-4 gap-2 overflow-x-auto ">
 				<div className=" border border-[#E8F2FC]/60 text-[#E8F2FC] rounded-md p-4 gap-2 flex flex-col ">
 					<h1 className="font-semibold mb-4">What event are you thinking about?</h1>
-					<Input onChange={handleChange} value={eventDetail.title} label="Event Title" name="title" />
+					<Input
+						onChange={(e) => handleChange(e, 'title')}
+						value={eventDetail.title}
+						label="Titolo del evento"
+						name="titolo"
+					/>
 
 					<div className="flex flex-row gap-2 ">
 						<Input
-							onChange={handleChange}
+							onChange={(e) => handleChange(e, 'starting')}
 							value={eventDetail.starting}
 							type="date"
 							customClassContainer="flex-auto"
-							label="Start in"
+							label="Inizia il"
 							name="starting"
 						/>
 						<Input
-							onChange={handleChange}
+							onChange={(e) => handleChange(e, 'ending')}
 							value={eventDetail.ending}
 							type="date"
 							customClassContainer="flex-auto"
-							label="End in"
+							label="Finisce il"
 							name="ending"
 						/>
 					</div>
 					<InputArea
-						onChange={handleChange}
+						minLength={10}
+						onChange={(e) => handleChange(e, 'description')}
 						value={eventDetail.description}
-						name="description"
-						label="Description"
+						name="descrizione"
+						label="Descrizione"
 						customClass="flex-auto "
 						customClassContainer="flex-auto"
 					/>
+					<Input
+						onChange={handleChangeImage}
+						ref={imgInput}
+						label={'Immagine del evento'}
+						name="immagine"
+						type="file"
+						accept="image/*"
+						rigthComponent={
+							<Button
+								custom="!bg-transparent !hover:bg-black/50 !border-none mt-[0.15rem]"
+								onClick={handleRemoveIMG}
+								text={<FontAwesomeIcon icon={faClose} />}
+							></Button>
+						}
+					></Input>
 				</div>
 				<div className=" border border-[#E8F2FC]/60 text-[#E8F2FC] bg-[#505458] rounded-md p-4 gap-2 flex flex-col ">
 					<h1 className="font-semibold mb-4">Info for board</h1>
-					<Input onChange={handleChange} value={eventDetail.boardTitle} label="Board Title" name="title" />
+					<Input
+						onChange={(e) => handleChange(e, 'boardTitle')}
+						value={eventDetail.boardTitle}
+						label="Titolo della bacheca"
+						name="titolo"
+					/>
 					<InputArea
-						onChange={handleChange}
+						minLength={10}
+						onChange={(e) => handleChange(e, 'boardDescription')}
 						value={eventDetail.boardDescription}
-						name="Board Description"
-						label="Description"
+						name="Descrizione Bacheca"
+						label="Descrizione"
 						customClass="flex-auto "
 						customClassContainer="flex-auto"
 					/>
@@ -88,7 +251,7 @@ const CreationEventPage = () => {
 				<div className=" border border-[#363540]/60 text-[#363540] bg-[#E4DCEF] flex-auto rounded-md p-4 gap-1 flex flex-col ">
 					<div className=" !mb-4 gap-2 flex flex-row justify-evenly ">
 						<Button
-							text="Services"
+							text="Servizi"
 							link
 							custom={clsx({
 								' !font-semibold hover:bg-current/20 p-2 w-full !text-lg !text-[#363540]': true,
@@ -97,7 +260,7 @@ const CreationEventPage = () => {
 							onClick={() => setTab('services')}
 						/>
 						<Button
-							text="Users"
+							text="Partecipanti"
 							link
 							custom={clsx({
 								' !font-semibold hover:bg-current/20 p-2 w-full !text-lg !text-[#363540]': true,
@@ -121,39 +284,39 @@ const CreationEventPage = () => {
 								onChange={() => setMapEnabled((prev) => !prev)}
 								icon={faMapMarker}
 								value={mapEnabled}
-								name="Map"
+								name="Maps"
 							/>
 							<ServiceCard
 								onChange={() => handleChangeService('galleryEnabled')}
 								icon={faImages}
 								value={eventDetail.galleryEnabled}
-								name="Gallery"
+								name="Galleria"
 							/>
 							<ServiceCard
 								onChange={() => handleChangeService('gameEnabled')}
 								icon={faGamepad}
 								value={eventDetail.gameEnabled}
-								name="Guest Game"
+								name="Mystery Guest Game"
 							/>
 							<div></div>
 							{mapEnabled ? (
 								<Input
-									onChange={handleChange}
+									onChange={(e) => handleChange(e, 'location')}
 									value={eventDetail.location}
-									label="Location"
+									label="Indirizzo"
 									customClass="bg-[#363540] text-[#E8F2FC]"
-									name="location"
+									name="indirizzo"
 								/>
 							) : (
 								''
 							)}
 							{eventDetail.gameEnabled ? (
 								<InputArea
-									onChange={handleChange}
+									onChange={(e) => handleChange(e, 'gameDescription')}
 									value={eventDetail.gameDescription}
-									label="Game Description"
+									label="Descrizione del gioco"
 									customClass="bg-[#363540] text-[#E8F2FC]"
-									name="gameDescription"
+									name="descrizione"
 								/>
 							) : (
 								''
@@ -163,23 +326,25 @@ const CreationEventPage = () => {
 						<div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
 							<Input
 								onEnterPress={() => {
-									setEventDetail((prev) => ({ ...prev, partecipants: [...prev.partecipants, partecipantInput] }));
+									setEventDetail((prev) => ({ ...prev, participants: [...prev.participants, partecipantInput] }));
 									setPartecipantInput('');
 								}}
 								onChange={(e) => setPartecipantInput(e.target.value)}
 								value={partecipantInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="Email for Partecipating"
+								name="Email del utenta da invitare"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
-								{eventDetail.partecipants.map((item) => (
+								{eventDetail.participants.length === 0 ? <p className="text-center">Nessun utente invitato</p> : ''}
+								{eventDetail.participants.map((item) => (
 									<div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
 										<p>{item}</p>
+
 										<Button
 											onClick={() => {
 												setEventDetail((prev) => ({
 													...prev,
-													partecipants: prev.partecipants.filter((p) => p !== item),
+													participants: prev.participants.filter((p) => p !== item),
 												}));
 											}}
 											link
@@ -200,9 +365,14 @@ const CreationEventPage = () => {
 								onChange={(e) => setAdminInput(e.target.value)}
 								value={adminInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="Email for Admin"
+								name="Email del Admin"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
+								{eventDetail.admins.length === 0 ? (
+									<p className="text-center">Nessun utente invitato come admin</p>
+								) : (
+									''
+								)}
 								{eventDetail.admins.map((item) => (
 									<div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
 										<p>{item}</p>
@@ -225,8 +395,9 @@ const CreationEventPage = () => {
 				</div>
 			</div>
 			<div className="flex flex-row gap-4 items-center p-4 justify-end px-8">
-				<Button text="Cancel" secondary></Button>
-				<Button text="Create"></Button>
+				<p className="text-[#EE0E51]">{error}</p>
+				<Button onClick={() => navigate('/')} text="Annulla" secondary></Button>
+				<Button disabled={loading} onClick={handleCreate} text="Crea Evento"></Button>
 			</div>
 		</div>
 	);

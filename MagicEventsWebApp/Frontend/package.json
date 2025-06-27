@@ -1,5 +1,5 @@
 {
-	"name": "auth-service",
+	"name": "magicevents",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
@@ -8,6 +8,7 @@
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@react-oauth/google": "^0.8.0",
 		"@tailwindcss/vite": "^4.1.10",
+		"@vis.gl/react-google-maps": "^1.5.3",
 		"clsx": "^2.1.1",
 		"jwt-decode": "^4.0.0",
 		"lineicons": "^1.3.2",

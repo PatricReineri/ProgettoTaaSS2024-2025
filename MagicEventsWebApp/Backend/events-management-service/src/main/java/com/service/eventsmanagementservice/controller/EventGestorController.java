@@ -28,9 +28,9 @@ public class EventGestorController {
             @Valid @RequestBody EventDTO eventDTO,
             @RequestParam("creatorEmail") String creatorEmail
     ) {
-        for(String partecipantId : eventDTO.getPartecipants()){
-            if(eventDTO.getAdmins().contains(partecipantId)){
-                eventDTO.getPartecipants().remove(partecipantId);
+        for(String partecipantEmail : eventDTO.getPartecipants()){
+            if(eventDTO.getAdmins().contains(partecipantEmail)){
+                eventDTO.getPartecipants().remove(partecipantEmail);
             }
         }
         if(eventDTO.getEnding().isAfter(eventDTO.getStarting())) {

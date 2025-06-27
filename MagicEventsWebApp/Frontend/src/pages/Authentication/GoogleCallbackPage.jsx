@@ -15,12 +15,11 @@ function GoogleCallbackPage({ setLogged }) {
 				return;
 			}
 			try {
-				const res = await fetch('https://localhost:8443/login/userprofile', {
+				const res = await fetch(`https://localhost:8443/login/userprofile?accessToken=${accessToken}`, {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
-					body: new URLSearchParams({ accessToken }).toString(),
 				});
 
 				if (!res.ok) throw new Error('User not found');

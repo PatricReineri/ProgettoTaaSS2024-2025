@@ -27,11 +27,11 @@ function ForgotPassword() {
 
 	return (
 		<div className="w-full">
-			<h2>Forgot password?</h2>
+			<h2>Password dimenticata?</h2>
 			<form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 				<input
 					type="email"
-					placeholder="Enter the email associated with the account"
+					placeholder="Inserisci l'email associata all'account"
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					required
@@ -45,7 +45,7 @@ function ForgotPassword() {
 				>
 					{loading ? 'Processing...' : 'Send'}
 				</button> */}
-				<Button text={loading ? 'Processing...' : 'Send'}></Button>
+				<Button text={loading ? 'Caricamento...' : 'Invia'}></Button>
 			</form>
 			{message && <p style={{ marginTop: 15, color: message.startsWith('Error') ? 'red' : 'green' }}>{message}</p>}
 		</div>

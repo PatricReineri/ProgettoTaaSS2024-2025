@@ -3,7 +3,7 @@ const Homepage = () => {
 		<div className="h-full backgroundHome overflow-y-auto overscroll-none snap-y  ">
 			<div className="snap-start  p-4">
 				<div className=" bg-black/30 h-24 backdrop-blur-md p-4 w-40 text-[#E4DCEF]  text-center rounded-md shadow-2xl ">
-					Make your <p className="!text-[#EE0E51] font-bold text-center">Event</p> like a magic
+					Crea un <p className="!text-[#EE0E51] font-bold text-center">Evento</p> magico
 				</div>
 				<div className=" h-[calc(100vh-15rem)]  w-20"></div>
 			</div>

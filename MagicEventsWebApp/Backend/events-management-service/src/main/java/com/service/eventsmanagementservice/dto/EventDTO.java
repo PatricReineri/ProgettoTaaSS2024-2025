@@ -123,6 +123,10 @@ public class EventDTO {
         this.partecipants = partecipants;
     }
 
+    public void addPartecipant(String partecipant) {
+        this.partecipants.add(partecipant);
+    }
+
     public void setImage(String image) {
         this.image = image;
     }
