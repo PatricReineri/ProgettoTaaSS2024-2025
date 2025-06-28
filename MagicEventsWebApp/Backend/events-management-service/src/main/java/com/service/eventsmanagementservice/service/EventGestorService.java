@@ -20,6 +20,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.service.eventsmanagementservice.exception.UnauthorizedException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -274,11 +275,16 @@ public class EventGestorService {
         ).toList();
     }
 
-    public List<Long> getEventId(Long creatorId, String title) {
+    public List<Long> getEventId(Long creatorId, String title, LocalDateTime day) {
        List<Event> events = eventsRepository.findAll();
        List<Long> eventIds = new ArrayList<>();
        for (Event event : events) {
-           if(event.getCreator().equals(creatorId) && event.getTitle().equals(title)) {
+           if(
+                   event.getCreator().equals(creatorId) &&
+                   event.getTitle().equals(title) &&
+                   (event.getStarting().isBefore(day) || event.getStarting().isEqual(day)) &&
+                   (event.getEnding().isAfter(day) || event.getEnding().isEqual(day))
+           ) {
                eventIds.add(event.getEventId());
            }
        }
