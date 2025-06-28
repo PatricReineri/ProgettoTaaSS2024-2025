@@ -12,6 +12,7 @@ const Button = ({ secondary = false, text = 'Button', onClick, link = false, cus
 				[custom]: true,
 				' text-[#EE0E51]  border-2 border-[#EE0E51]  rounded-md p-2 px-4 hover:shadow-2xl hover:bg-[#ee0e51d5] hover:text-[#E4DCEF]':
 					secondary,
+				'cursor-pointer': true,
 			})}
 		>
 			{text}

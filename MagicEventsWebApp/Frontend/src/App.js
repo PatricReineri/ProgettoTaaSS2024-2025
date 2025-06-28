@@ -17,6 +17,8 @@ import MyEventsPage from './pages/Event/MyEventsPage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxArchive, faHome, faPen } from '@fortawesome/free-solid-svg-icons';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import EventsPage from './pages/Event/EventPage';
+import clsx from 'clsx';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -73,7 +75,7 @@ function App() {
 							</div>
 						}
 						link
-						custom="  !w-max text-md  "
+						custom={clsx({ '!w-max text-md  ': true, hidden: !logged })}
 					></Button>
 				</NavLink>
 				<NavLink className="w-fit" to="/newevent">
@@ -85,7 +87,7 @@ function App() {
 							</div>
 						}
 						link
-						custom="  !w-max  !text-md    "
+						custom={clsx({ '!w-max text-md  ': true, hidden: !logged })}
 					></Button>
 				</NavLink>
 			</NavBar>
@@ -109,6 +111,7 @@ function App() {
 					/>
 					<Route path="/myevents" element={<MyEventsPage />} />
 					<Route path="/:eventId/board" element={<BoardPage eventID={1} />} />
+					<Route path="/:eventId" element={<EventsPage />} />
 				</Routes>
 			</div>
 		</Router>
