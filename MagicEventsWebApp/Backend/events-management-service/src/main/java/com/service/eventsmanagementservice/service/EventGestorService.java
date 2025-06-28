@@ -38,6 +38,8 @@ public class EventGestorService {
     PartecipantsRepository partecipantsRepository;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Value("${spring.rabbitmq.exchange.event}")
+    private String exchangeName;
     @Autowired
     private WebClient userManagementWebClient;
     @Autowired
@@ -97,6 +99,16 @@ public class EventGestorService {
 
     @Transactional
     public Long create(@Valid EventDTO eventDTO, String creatorEmail) {
+        List<EventDTO> eventsForCreator = getEventsCreated(eventDTO.getCreator());
+        for(EventDTO eventForCreator : eventsForCreator) {
+            if(
+                    eventForCreator.getTitle().equals(eventDTO.getTitle()) &&
+                    (eventForCreator.getStarting().isBefore(eventDTO.getStarting()) || eventForCreator.getStarting().isEqual(eventDTO.getStarting())) &&
+                    (eventForCreator.getEnding().isAfter(eventDTO.getEnding()) || eventForCreator.getEnding().isEqual(eventDTO.getEnding()))
+            ) {
+                return -1L;
+            }
+        }
         Event event = new Event(
                 eventDTO.getTitle(),
                 eventDTO.getDescription(),
@@ -220,9 +232,14 @@ public class EventGestorService {
             if(event.getCreator().equals(creatorId)) {
                 event.setStatus("ANNULLED");
                 eventsRepository.save(event);
-                rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventId);
-                rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventId);
-                rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
+                if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
+                    rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventId);
+                }
+                if(event.getGuestGameEnabled() != null && event.getGuestGameEnabled()) {
+                    rabbitTemplate.convertAndSend(exchangeName, deleteGuestgameRoutingKey, eventId);
+                }
+                
                 return true;
             }else{
                 return false;
