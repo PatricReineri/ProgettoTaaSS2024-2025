@@ -230,7 +230,7 @@ public class EventGestorService {
             Event event = eventsRepository.findById(eventId)
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
             if(event.getCreator().equals(creatorId)) {
-                event.setStatus("ANNULLED");
+                event.setStatus("DELETED");
                 eventsRepository.save(event);
                 rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
                 if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
@@ -259,7 +259,7 @@ public class EventGestorService {
         List<Event> myEvents = eventsRepository.findAll();
         List<EventDTO> eventDTOs = new ArrayList<>();
         for (Event event : myEvents) {
-            if(event.getCreator().equals(creatorId)) {
+            if(event.getCreator().equals(creatorId) && !(event.getStatus().equals("DELETED"))) {
                 EventDTO eventDTO = new EventDTO();
                 eventDTO.setTitle(event.getTitle());
                 eventDTO.setDescription(event.getDescription());
@@ -313,14 +313,16 @@ public class EventGestorService {
                 .orElseThrow(() -> new IllegalArgumentException("Partecipant not found: " + partecipantId));
         List<EventDTO> eventDTOs = new ArrayList<>();
         for (Event event : partecipant.getEvents()) {
-            EventDTO eventDTO = new EventDTO();
-            eventDTO.setTitle(event.getTitle());
-            eventDTO.setDescription(event.getDescription());
-            eventDTO.setStarting(event.getStarting());
-            eventDTO.setEnding(event.getEnding());
-            eventDTO.setLocation(event.getLocation());
-            eventDTO.setCreator(event.getCreator());
-            eventDTOs.add(eventDTO);
+            if(!(event.getStatus().equals("DELETED"))) {
+                EventDTO eventDTO = new EventDTO();
+                eventDTO.setTitle(event.getTitle());
+                eventDTO.setDescription(event.getDescription());
+                eventDTO.setStarting(event.getStarting());
+                eventDTO.setEnding(event.getEnding());
+                eventDTO.setLocation(event.getLocation());
+                eventDTO.setCreator(event.getCreator());
+                eventDTOs.add(eventDTO);
+            }
         }
         return eventDTOs;
     }
