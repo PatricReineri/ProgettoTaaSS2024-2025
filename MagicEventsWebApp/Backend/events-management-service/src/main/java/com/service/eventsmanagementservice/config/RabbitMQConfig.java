@@ -10,6 +10,15 @@ public class RabbitMQConfig {
     @Value("${spring.rabbitmq.exchange.event}")
     private String exchangeName;
 
+    @Value("${spring.rabbitmq.routing-key.delete-event-board}")
+    private String deleteBoardRoutingKey;
+
+    @Value("${spring.rabbitmq.routing-key.delete-event-gallery}")
+    private String deleteGalleryRoutingKey;
+
+    @Value("${spring.rabbitmq.routing-key.delete-event-guestgame}")
+    private String deleteGuestgameRoutingKey;
+
     @Value("${spring.rabbitmq.queue.delete-ack}")
     private String deleteAckQueue;
 
@@ -27,9 +36,9 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding deleteAckBinding(Queue deleteAckQueue, Exchange boardExchange) {
+    public Binding deleteAckBinding(Queue deleteAckQueue, Exchange eventExchange) {
         return BindingBuilder.bind(deleteAckQueue)
-                .to(boardExchange)
+                .to(eventExchange)
                 .with(deleteAckRoutingKey)
                 .noargs();
     }

@@ -1,7 +1,7 @@
 package com.service.boardservice.service;
 
+import com.service.boardservice.dto.EventDeletionAckDTO;
 import com.service.boardservice.repository.BoardRepository;
-import org.antlr.v4.runtime.misc.Triple;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ public class DeleteBoardMessageListener {
     @Transactional
     public void deleteBoard(Long eventID) {
         try {
-            Triple<Long, String, Boolean> response = new Triple<>(eventID, "board", true);
+            EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "board", true);
             boardRepository.deleteByEventID(eventID);
             rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
         } catch (Exception e) {
-            Triple<Long, String, Boolean> response = new Triple<>(eventID, "board", false);
+            EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "board", false);
             rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
         }
     }

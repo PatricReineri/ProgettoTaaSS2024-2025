@@ -1,12 +1,12 @@
 package com.service.eventsmanagementservice.service;
 
+import com.service.eventsmanagementservice.dto.EventDeletionAckDTO;
 import com.service.eventsmanagementservice.model.Admin;
 import com.service.eventsmanagementservice.model.Event;
 import com.service.eventsmanagementservice.model.Partecipant;
 import com.service.eventsmanagementservice.repository.AdminsRepository;
 import com.service.eventsmanagementservice.repository.EventsRepository;
 import com.service.eventsmanagementservice.repository.PartecipantsRepository;
-import org.antlr.v4.runtime.misc.Triple;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,28 +36,28 @@ public class AckMessageListener {
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.delete-ack}")
     @Transactional
-    public void deleteEvent(Triple<Long, String, Boolean> eventDeleting) {
+    public void deleteEvent(EventDeletionAckDTO eventDeleting) {
         try {
-            Event event = eventsRepository.findById(eventDeleting.a)
-                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventDeleting.a));
-            switch (eventDeleting.b) {
+            Event event = eventsRepository.findById(eventDeleting.getEventId())
+                    .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventDeleting.getEventId()));
+            switch (eventDeleting.getServiceType()) {
                 case "board":
-                    if(!eventDeleting.c){
-                        rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventDeleting.a);
+                    if(!eventDeleting.getIsSuccess()){
+                        rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventDeleting.getEventId());
                     }else{
                         event.setBoardEnabled(false);
                     }
                     break;
                 case "gallery":
-                    if(!eventDeleting.c){
-                        rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventDeleting.a);
+                    if(!eventDeleting.getIsSuccess()){
+                        rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventDeleting.getEventId());
                     }else {
                         event.setGalleryEnabled(false);
                     }
                     break;
                 case "guest-game":
-                    if(!eventDeleting.c){
-                        rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventDeleting.a);
+                    if(!eventDeleting.getIsSuccess()){
+                        rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventDeleting.getEventId());
                     }else {
                         event.setGuestGameEnabled(false);
                     }
@@ -74,7 +74,7 @@ public class AckMessageListener {
                     admin.getEvents().remove(event);
                 }
                 adminsRepository.saveAll(admins);
-                eventsRepository.deleteById(eventDeleting.a);
+                eventsRepository.deleteById(eventDeleting.getEventId());
             }else{
                 eventsRepository.save(event);
             }

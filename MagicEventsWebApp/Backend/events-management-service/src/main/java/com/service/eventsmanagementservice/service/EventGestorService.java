@@ -38,6 +38,8 @@ public class EventGestorService {
     PartecipantsRepository partecipantsRepository;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Value("${spring.rabbitmq.exchange.event}")
+    private String exchangeName;
     @Autowired
     private WebClient userManagementWebClient;
     @Autowired
@@ -220,9 +222,15 @@ public class EventGestorService {
             if(event.getCreator().equals(creatorId)) {
                 event.setStatus("ANNULLED");
                 eventsRepository.save(event);
-                rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventId);
-                rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventId);
-                rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
+
+                if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
+                    rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventId);
+                }
+                if(event.getGuestGameEnabled() != null && event.getGuestGameEnabled()) {
+                    rabbitTemplate.convertAndSend(exchangeName, deleteGuestgameRoutingKey, eventId);
+                }
+                
                 return true;
             }else{
                 return false;
