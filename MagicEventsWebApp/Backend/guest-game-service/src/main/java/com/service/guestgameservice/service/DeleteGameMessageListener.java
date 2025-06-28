@@ -1,12 +1,22 @@
 package com.service.guestgameservice.service;
 
 import com.service.guestgameservice.repository.GameRepository;
+import org.antlr.v4.runtime.misc.Triple;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 @Service
 public class DeleteGameMessageListener {
+    @Value("${spring.rabbitmq.routing-key.delete-ack}")
+    private String deleteAckRoutingKey;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     private final GameRepository gameRepository;
 
     public DeleteGameMessageListener(GameRepository gameRepository) {
@@ -15,11 +25,14 @@ public class DeleteGameMessageListener {
 
     @RabbitListener(queues = "${spring.rabbitmq.queue.delete-game}")
     @Transactional
-    public void deleteGame(Long eventId) {
+    public void deleteGame(Long eventID) {
         try {
-            gameRepository.deleteById(eventId);
+            Triple<Long, String, Boolean> response = new Triple<>(eventID, "guest-game", true);
+            gameRepository.deleteById(eventID);
+            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
         } catch (Exception e) {
-            // Handle error silently or throw RuntimeException if needed
+            Triple<Long, String, Boolean> response = new Triple<>(eventID, "guest-game", false);
+            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
         }
     }
 }

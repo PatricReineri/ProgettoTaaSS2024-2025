@@ -12,6 +12,7 @@ import com.service.eventsmanagementservice.repository.PartecipantsRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,13 @@ public class EventGestorService {
     private WebClient userManagementWebClient;
     @Autowired
     EmailSender emailSender;
+
+    @Value("${spring.rabbitmq.routing-key.delete-event-board}")
+    private String deleteBoardRoutingKey;
+    @Value("${spring.rabbitmq.routing-key.delete-event-gallery}")
+    private String deleteGalleryRoutingKey;
+    @Value("${spring.rabbitmq.routing-key.delete-event-guestgame}")
+    private String deleteGuestgameRoutingKey;
 
     public String updateEventAdmins(ArrayList<String> admins, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
@@ -204,23 +212,16 @@ public class EventGestorService {
                 .anyMatch(admin -> admin.getUser().getMagicEventTag().equals(magicEventsTag));
     }
 
-    public boolean deleteEvent(Long eventId, Long creatorId) {
+    public boolean delete(Long eventId, Long creatorId) {
         try{
             Event event = eventsRepository.findById(eventId)
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
             if(event.getCreator().equals(creatorId)) {
-                List<Partecipant> partecipants = event.getPartecipants();
-                for(Partecipant partecipant : partecipants) {
-                    partecipant.getEvents().remove(event);
-                }
-                partecipantsRepository.saveAll(partecipants);
-                List<Admin> admins = event.getAdmins();
-                for(Admin admin : admins) {
-                    admin.getEvents().remove(event);
-                }
-                adminsRepository.saveAll(admins);
-                eventsRepository.deleteById(eventId);
-                rabbitTemplate.convertAndSend(eventId);
+                event.setStatus("ANNULLED");
+                eventsRepository.save(event);
+                rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventId);
                 return true;
             }else{
                 return false;
