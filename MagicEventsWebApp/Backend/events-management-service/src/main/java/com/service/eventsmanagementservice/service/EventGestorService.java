@@ -302,6 +302,7 @@ public class EventGestorService {
             eventDTO.setStarting(event.getStarting());
             eventDTO.setEnding(event.getEnding());
             eventDTO.setLocation(event.getLocation());
+            eventDTO.setCreator(event.getCreator());
             eventDTOs.add(eventDTO);
         }
         return eventDTOs;
