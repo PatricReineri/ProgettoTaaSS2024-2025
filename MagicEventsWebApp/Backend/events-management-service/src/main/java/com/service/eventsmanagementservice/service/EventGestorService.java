@@ -91,8 +91,8 @@ public class EventGestorService {
                 event.getEnding(),
                 event.getLocation(),
                 event.getCreator(),
-                admins,
                 partecipants,
+                admins,
                 event.getImage()
         );
     }
