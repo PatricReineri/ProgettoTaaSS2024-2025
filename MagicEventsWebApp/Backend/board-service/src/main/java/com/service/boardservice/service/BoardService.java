@@ -49,12 +49,10 @@ public class BoardService {
             System.err.println("Not authorized to view board for event ID: " + eventID + " and user tag: " + userMagicEventsTag);
             throw new UnauthorizedException("Not authorized to view board for event ID: " + eventID);
         }
-
         Board board = boardRepository.findByEventID(eventID);
         if (board == null) {
             return null;
         }
-
         // Fetch messages for the board with pagination and sorting by date
         var messages = messageRepository.findByBoard(board)
                 .stream()
@@ -69,7 +67,6 @@ public class BoardService {
                     )
                 )
                 .toList();
-
         return new BoardDTO(
                 board.getEventID(),
                 board.getTitle(),
@@ -88,7 +85,6 @@ public class BoardService {
             System.err.println("Not authorized to delete board for event ID: " + eventID);
             throw new UnauthorizedException("Not authorized to delete board for event ID: " + eventID);
         }
-        
         Board board = boardRepository.findByEventID(eventID);
         if (board != null) {
             boardRepository.delete(board); // Delete the board itself

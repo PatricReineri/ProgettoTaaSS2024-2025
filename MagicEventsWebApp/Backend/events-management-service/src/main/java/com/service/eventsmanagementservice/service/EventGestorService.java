@@ -12,6 +12,7 @@ import com.service.eventsmanagementservice.repository.PartecipantsRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.service.eventsmanagementservice.exception.UnauthorizedException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,13 @@ public class EventGestorService {
     private WebClient userManagementWebClient;
     @Autowired
     EmailSender emailSender;
+
+    @Value("${spring.rabbitmq.routing-key.delete-event-board}")
+    private String deleteBoardRoutingKey;
+    @Value("${spring.rabbitmq.routing-key.delete-event-gallery}")
+    private String deleteGalleryRoutingKey;
+    @Value("${spring.rabbitmq.routing-key.delete-event-guestgame}")
+    private String deleteGuestgameRoutingKey;
 
     public String updateEventAdmins(ArrayList<String> admins, Long eventId, Long creatorId) {
         Event event = eventsRepository.findById(eventId)
@@ -99,12 +108,9 @@ public class EventGestorService {
         );
         event = eventsRepository.save(event);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
-        System.out.println("PRE - Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         if(!(eventDTO.getPartecipants().contains(creatorEmail))){
             eventDTO.addPartecipant(creatorEmail);
-            System.out.println("Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         }
-        System.out.println("POST - Aggiunto partecipante: " + eventDTO.getPartecipants().toArray().length);
         addPartecipants(eventDTO.getPartecipants(), event.getEventId());
         return event.getEventId();
     }
@@ -207,23 +213,16 @@ public class EventGestorService {
                 .anyMatch(admin -> admin.getUser().getMagicEventTag().equals(magicEventsTag));
     }
 
-    public boolean deleteEvent(Long eventId, Long creatorId) {
+    public boolean delete(Long eventId, Long creatorId) {
         try{
             Event event = eventsRepository.findById(eventId)
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
             if(event.getCreator().equals(creatorId)) {
-                List<Partecipant> partecipants = event.getPartecipants();
-                for(Partecipant partecipant : partecipants) {
-                    partecipant.getEvents().remove(event);
-                }
-                partecipantsRepository.saveAll(partecipants);
-                List<Admin> admins = event.getAdmins();
-                for(Admin admin : admins) {
-                    admin.getEvents().remove(event);
-                }
-                adminsRepository.saveAll(admins);
-                eventsRepository.deleteById(eventId);
-                rabbitTemplate.convertAndSend(eventId);
+                event.setStatus("ANNULLED");
+                eventsRepository.save(event);
+                rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventId);
+                rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventId);
                 return true;
             }else{
                 return false;
@@ -276,11 +275,16 @@ public class EventGestorService {
         ).toList();
     }
 
-    public List<Long> getEventId(Long creatorId, String title) {
+    public List<Long> getEventId(Long creatorId, String title, LocalDateTime day) {
        List<Event> events = eventsRepository.findAll();
        List<Long> eventIds = new ArrayList<>();
        for (Event event : events) {
-           if(event.getCreator().equals(creatorId) && event.getTitle().equals(title)) {
+           if(
+                   event.getCreator().equals(creatorId) &&
+                   event.getTitle().equals(title) &&
+                   (event.getStarting().isBefore(day) || event.getStarting().isEqual(day)) &&
+                   (event.getEnding().isAfter(day) || event.getEnding().isEqual(day))
+           ) {
                eventIds.add(event.getEventId());
            }
        }
@@ -298,6 +302,7 @@ public class EventGestorService {
             eventDTO.setStarting(event.getStarting());
             eventDTO.setEnding(event.getEnding());
             eventDTO.setLocation(event.getLocation());
+            eventDTO.setCreator(event.getCreator());
             eventDTOs.add(eventDTO);
         }
         return eventDTOs;

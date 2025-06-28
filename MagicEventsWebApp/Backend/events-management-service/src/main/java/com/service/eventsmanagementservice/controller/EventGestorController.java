@@ -9,6 +9,7 @@ import com.service.eventsmanagementservice.exception.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,8 +129,12 @@ public class EventGestorController {
     }
 
     @GetMapping("/geteventid")
-    public List<Long> getEventId(@RequestParam("creatorId") Long creatorId, @RequestParam("title") String title){
-        return eventGestorService.getEventId(creatorId, title);
+    public List<Long> getEventId(
+            @RequestParam("creatorId") Long creatorId,
+            @RequestParam("title") String title,
+            @RequestParam("day") LocalDateTime day
+    ){
+        return eventGestorService.getEventId(creatorId, title, day);
     }
 
     @GetMapping("/getadminsforevent")
@@ -144,7 +149,7 @@ public class EventGestorController {
 
     @DeleteMapping("/delete")
     public boolean deleteEvent(@RequestParam("eventId") Long eventId, @RequestParam("magicEventsTag") Long creatorId){
-        return eventGestorService.deleteEvent(eventId, creatorId);
+        return eventGestorService.delete(eventId, creatorId);
     }
 
     @GetMapping("/getEventEnabledServices")
