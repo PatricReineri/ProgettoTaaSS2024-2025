@@ -99,6 +99,16 @@ public class EventGestorService {
 
     @Transactional
     public Long create(@Valid EventDTO eventDTO, String creatorEmail) {
+        List<EventDTO> eventsForCreator = getEventsCreated(eventDTO.getCreator());
+        for(EventDTO eventForCreator : eventsForCreator) {
+            if(
+                    eventForCreator.getTitle().equals(eventDTO.getTitle()) &&
+                    (eventForCreator.getStarting().isBefore(eventDTO.getStarting()) || eventForCreator.getStarting().isEqual(eventDTO.getStarting())) &&
+                    (eventForCreator.getEnding().isAfter(eventDTO.getEnding()) || eventForCreator.getEnding().isEqual(eventDTO.getEnding()))
+            ) {
+                return -1L;
+            }
+        }
         Event event = new Event(
                 eventDTO.getTitle(),
                 eventDTO.getDescription(),
@@ -223,7 +233,6 @@ public class EventGestorService {
                 event.setStatus("ANNULLED");
                 eventsRepository.save(event);
                 rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
-
                 if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
                     rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventId);
                 }

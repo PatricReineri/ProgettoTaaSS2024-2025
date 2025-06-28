@@ -34,9 +34,17 @@ public class EventGestorController {
                 eventDTO.getPartecipants().remove(partecipantEmail);
             }
         }
-        if(eventDTO.getEnding().isAfter(eventDTO.getStarting())) {
+        if(
+                eventDTO.getEnding().isAfter(eventDTO.getStarting()) &&
+                eventDTO.getStarting().isAfter(LocalDateTime.now())
+        ) {
             Long eventId = eventGestorService.create(eventDTO, creatorEmail);
-            return ResponseEntity.status(HttpStatus.CREATED).body(eventId);
+            if(eventId != -1L) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(eventId);
+            }else{
+                /// Event with this title in range already exist
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
+            }
         }else{
             /// Invalid event ending value
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
