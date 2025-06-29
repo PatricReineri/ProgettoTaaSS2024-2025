@@ -7,6 +7,8 @@ import { getMessages } from '../../../api/boardApi';
 import { useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
 import { send, subscribe } from '../../../util/WebSocket';
+import ImageList from '../../../components/Lists/ImageList';
+import ImageGrid from '../../../components/imagesComponent/ImageGrid';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -84,8 +86,8 @@ const GalleryPage = () => {
 
 		if (!eventId) return;
 
-		connect();
-		fetchAPI();
+		// connect();
+		// fetchAPI();
 
 		// Cleanup on unmount
 		return () => {
@@ -217,17 +219,13 @@ const GalleryPage = () => {
 	};
 
 	return (
-		<div className="h-full bg-[#363540] relative bg-gradient-to-r  to-[#363540]  from-[#E4DCEF] flex flex-row ">
-			<div className="w-64 mt-4 shadow-2xl h-fit rounded-r-2xl bg-[#363540] text-[#E4DCEF] p-4 max-sm:hidden ">
-				<h1 className="font-bold">{title}</h1>
+		<div className="h-full bg-[#363540] relative bg-gradient-to-r  p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
+			<div className=" mt-4  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
+				<h1 className="font-bold w-40">{title ? title : 'Nessun titolo'}</h1>
 			</div>
-			{/* <MexssageList
-				displayOnloadMore={!messageFinish}
-				onLoadMore={loadMore}
-				onSend={(value) => sendMessage(value)}
-				messages={images}
-				onDelete={deleteMessage}
-			/> */}
+			<ImageList />
+			<h1>Galleria</h1>
+			<ImageGrid />
 		</div>
 	);
 };

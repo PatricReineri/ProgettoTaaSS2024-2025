@@ -19,6 +19,7 @@ import { faBoxArchive, faHome, faPen } from '@fortawesome/free-solid-svg-icons';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import EventsPage from './pages/Event/EventPage';
 import clsx from 'clsx';
+import GalleryPage from './pages/Event/Gallery/GalleryPage';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -110,7 +111,8 @@ function App() {
 						}
 					/>
 					<Route path="/myevents" element={<MyEventsPage />} />
-					<Route path="/:eventId/board" element={<BoardPage eventID={1} />} />
+					<Route path="/:eventId/board" element={<BoardPage />} />
+					<Route path="/:eventId/gallery" element={<GalleryPage />} />
 					<Route path="/:eventId" element={<EventsPage />} />
 				</Routes>
 			</div>
