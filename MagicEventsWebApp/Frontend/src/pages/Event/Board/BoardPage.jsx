@@ -5,8 +5,10 @@ import SockJS from 'sockjs-client';
 import MexssageList from '../../../components/Lists/List';
 import { getMessages } from '../../../api/boardApi';
 import { useIntersection } from '../../../util/hook';
+import { useParams } from 'react-router-dom';
+import { subscribe } from '../../../util/WebSocket';
 
-const BoardPage = ({ eventID }) => {
+const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -18,6 +20,8 @@ const BoardPage = ({ eventID }) => {
 	const [page, setPage] = useState(0);
 	const [messageFinish, setMessageFinish] = useState(false);
 
+	const { eventId } = useParams();
+
 	async function loadMore() {
 		if (messageFinish) {
 			return;
@@ -26,7 +30,7 @@ const BoardPage = ({ eventID }) => {
 
 		console.log(page);
 
-		let res = await getMessages(eventID, page);
+		let res = await getMessages(eventId, page);
 
 		if (!res.ok) throw new Error('Error on load more messages');
 		const data = await res.json();
@@ -51,7 +55,7 @@ const BoardPage = ({ eventID }) => {
 
 	useEffect(() => {
 		async function fetchAPI() {
-			let res = await getMessages(eventID, 0);
+			let res = await getMessages(eventId, 0);
 
 			if (!res.ok) throw new Error('Credential invalid');
 			setPage(1);
@@ -64,7 +68,7 @@ const BoardPage = ({ eventID }) => {
 			//sessionStorage.setItem('user', JSON.stringify({ username: 'Xandro01' }));
 		}
 
-		if (!eventID) return;
+		if (!eventId) return;
 
 		connect();
 		fetchAPI();
@@ -75,10 +79,10 @@ const BoardPage = ({ eventID }) => {
 				stompClient.disconnect();
 			}
 		};
-	}, []);
+	}, [eventId]);
 
 	const connect = () => {
-		if (!eventID || connected) return;
+		if (!eventId || connected) return;
 		setConnected(true);
 		const socket = new SockJS('http://localhost:8081/chat');
 		const client = Stomp.over(socket);
@@ -91,40 +95,20 @@ const BoardPage = ({ eventID }) => {
 		client.connect(
 			{},
 			(frame) => {
-				console.log('Connected:', frame);
-				console.log('Client pre: ', stompClient);
-
 				setStompClient(client);
-				console.log('Client post: ', stompClient);
 				setConnected(true);
-
 				// Subscribe to the topic with the correct path format
-				const subscription = client.subscribe(`/topic/chat/${eventID}`, (message) => {
-					console.log('Message received:', message);
-					try {
-						var hash = require('object-hash');
-						const receivedMessage = JSON.parse(message.body);
-						setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
-					} catch (error) {
-						console.error('Error parsing message:', error);
-					}
+				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
+					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
 				});
-
-				// const deleteSubscription = client.subscribe(`/topic/chat/deleteMessage/${eventID}`, (message) => {
-				// 	const deletedMessage = JSON.parse(message.body);
-				// 	console.log('Messaggio cancellato:', deletedMessage);
-				// 	var hash = require('object-hash');
-				// 	setMessages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
-				// });
-
+				const deleteSubscription = subscribe(client, `/topic/chat/deleteMessage/${eventId}`, (deletedMessage, hash) => {
+					setMessages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
+				});
 				client.onclose = () => {
 					console.log('Client disconesso');
 				};
-
-				console.log('Subscribed to:', `/topic/chat/${eventID}`);
 			},
 			(error) => {
-				console.log('Connection error:', error);
 				setConnected(false);
 			}
 		);
@@ -136,9 +120,21 @@ const BoardPage = ({ eventID }) => {
 			return;
 		}
 
-		for (let index = 0; index < sessionStorage.length; index++) {
-			const element = sessionStorage.key(index);
-			console.log(element);
+		let user = JSON.parse(sessionStorage.getItem('user'));
+
+		const chatMessage = {
+			messageID: mex.messageID,
+			deletedBy: user.username,
+			eventID: eventId,
+			userMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
+		};
+
+		console.log('Deleting message:', chatMessage);
+
+		try {
+			stompClient.send(`/app/chat/deleteMessage/${eventId}`, {}, JSON.stringify(chatMessage));
+		} catch (error) {
+			console.log('Error sending message:', error);
 		}
 	};
 
@@ -154,13 +150,14 @@ const BoardPage = ({ eventID }) => {
 			content: content,
 			username: user.username,
 			dateTime: new Date().toISOString(),
-			eventID: eventID,
+			eventID: eventId,
+			userMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
 		};
 
 		console.log('Sending message:', chatMessage);
 
 		try {
-			stompClient.send(`/app/chat/sendMessage/${eventID}`, {}, JSON.stringify(chatMessage));
+			stompClient.send(`/app/chat/sendMessage/${eventId}`, {}, JSON.stringify(chatMessage));
 		} catch (error) {
 			console.log('Error sending message:', error);
 		}

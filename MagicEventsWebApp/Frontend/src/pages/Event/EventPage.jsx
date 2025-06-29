@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { getEvent, getEventService } from '../../api/eventAPI';
 import Image from '../../components/imagesComponent/Image';
@@ -13,7 +13,8 @@ import {
 	faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import Menu from '../../components/navigation/Menu';
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, Marker, useMapsLibrary } from '@vis.gl/react-google-maps';
+import ErrorContainer from '../../components/Error/ErrorContainer';
 
 const EventsPage = () => {
 	const { eventId } = useParams();
@@ -27,17 +28,24 @@ const EventsPage = () => {
 		async function fetchAPI() {
 			const res = await getEvent(eventId);
 			if (!res.ok) {
-				throw new Error('Error on load Event Detail');
+				setEvent(null);
+				return;
 			}
 			const data = await res.json();
 			console.log(data);
 			setEvent(data);
+			if (data.location) {
+				const coordinates = data.location.split('-');
+				setLat(Number(coordinates[0]));
+				setLng(Number(coordinates[1]));
+			}
 		}
 
 		async function fetchAPIServices() {
 			const res = await getEventService(eventId);
 			if (!res.ok) {
-				throw new Error('Error on load Event Services');
+				setEvent(null);
+				return;
 			}
 			const data = await res.json();
 			console.log(data);
@@ -45,17 +53,12 @@ const EventsPage = () => {
 		}
 
 		fetchAPI();
-		if (event.location) {
-			const coordinates = event.location.split('-');
-			setLat(coordinates[0]);
-			setLng(coordinates[1]);
-		}
 
 		fetchAPIServices();
 	}, [eventId]);
 
 	return !event ? (
-		<p>Nessun evento trovato</p>
+		<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
 	) : (
 		<div className="h-full text-[#E4DCEF]  p-4 flex flex-col gap-2 relative  bg-[#505458] ">
 			<Menu
@@ -84,23 +87,27 @@ const EventsPage = () => {
 					},
 					{
 						action: faMap,
-						content: (
+						content: event.location ? (
 							<div>
 								<h1>Mappa</h1>
-								<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
-									<Map
-										key={lat + '--' + lng}
-										style={{ width: '400px', height: '400px' }}
-										defaultCenter={{ lat: lat, lng: lng }}
-										onCenterChanged={(value) => console.log('Center changed!:' + value.detail.center)}
-										defaultZoom={15}
-										gestureHandling={'greedy'}
-										disableDefaultUI={true}
-									>
-										<Marker position={{ lat: lat ? lat : 0, lng: lng ? lng : 0 }}></Marker>
-									</Map>
-								</APIProvider>
+								<div className="border-[#E4DCEF] border rounded-md m-2">
+									<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+										<Map
+											key={lat + '--' + lng}
+											style={{ width: '400px', height: '400px' }}
+											defaultCenter={{ lat: lat, lng: lng }}
+											onCenterChanged={(value) => console.log('Center changed!:' + value.detail.center)}
+											defaultZoom={15}
+											gestureHandling={'greedy'}
+											disableDefaultUI={true}
+										>
+											<Marker position={{ lat: lat ? lat : 0, lng: lng ? lng : 0 }}></Marker>
+										</Map>
+									</APIProvider>
+								</div>
 							</div>
+						) : (
+							<p>Nessuna location fornita</p>
 						),
 					},
 					{

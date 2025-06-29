@@ -118,7 +118,7 @@ public class EventGestorController {
 
     @GetMapping("/isadmin")
     public boolean isAdmin(@RequestParam("partecipantId") Long magicEventsTag, @RequestParam("eventId") Long eventId){
-        return eventGestorService.isAdmin(magicEventsTag, eventId);
+        return eventGestorService.isAdmin(magicEventsTag, eventId) || eventGestorService.isCreator(magicEventsTag, eventId);
     }
 
     @GetMapping("/iscreator")
