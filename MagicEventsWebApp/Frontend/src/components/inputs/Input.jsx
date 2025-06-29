@@ -16,7 +16,7 @@ const Input = ({
 	minLength = 0,
 	required = false,
 	label,
-	onEnterPress,
+	onEnterPress = () => '',
 	rigthComponent,
 }) => {
 	return (

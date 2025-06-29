@@ -14,7 +14,7 @@ const CreationEventPage = () => {
 	const [partecipantInput, setPartecipantInput] = useState('');
 	const [adminInput, setAdminInput] = useState('');
 	const [mapEnabled, setMapEnabled] = useState(false);
-	const [tab, setTab] = useState('users');
+	const [tab, setTab] = useState('services');
 	const [eventDetail, setEventDetail] = useState({
 		title: '',
 		description: '',
@@ -28,6 +28,7 @@ const CreationEventPage = () => {
 		admins: [],
 		image: '',
 		gameEnabled: false,
+		galleryTitle: '',
 		galleryEnabled: false,
 		boardTitle: '',
 		boardDescription: '',
@@ -155,8 +156,8 @@ const CreationEventPage = () => {
 		setLoading(true);
 		createEvent({
 			...eventDetail,
-			starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
-			ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
+			// starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
+			// ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
 			location: mapEnabled ? locationCoords : '',
 		})
 			.then(async (value) => {
@@ -191,7 +192,7 @@ const CreationEventPage = () => {
 						<Input
 							onChange={(e) => handleChange(e, 'starting')}
 							value={eventDetail.starting}
-							type="date"
+							type="datetime-local"
 							customClassContainer="flex-auto"
 							label="Inizia il"
 							name="starting"
@@ -199,7 +200,7 @@ const CreationEventPage = () => {
 						<Input
 							onChange={(e) => handleChange(e, 'ending')}
 							value={eventDetail.ending}
-							type="date"
+							type="datetime-local"
 							customClassContainer="flex-auto"
 							label="Finisce il"
 							name="ending"
@@ -248,14 +249,14 @@ const CreationEventPage = () => {
 						customClassContainer="flex-auto"
 					/>
 				</div>
-				<div className=" border border-[#363540]/60 text-[#363540] bg-[#E4DCEF] flex-auto rounded-md p-4 gap-1 flex flex-col ">
-					<div className=" !mb-4 gap-2 flex flex-row justify-evenly ">
+				<div className=" border border-[#363540]/60 text-[#363540] bg-[#E4DCEF] flex-auto rounded-md gap-1 flex overflow-y-auto flex-col ">
+					<div className=" !mb-2  flex flex-row justify-evenly ">
 						<Button
 							text="Servizi"
 							link
 							custom={clsx({
 								' !font-semibold hover:bg-current/20 p-2 w-full !text-lg !text-[#363540]': true,
-								'bg-current/20': tab === 'services',
+								'bg-current/10 shadow-inner ': tab === 'services',
 							})}
 							onClick={() => setTab('services')}
 						/>
@@ -264,7 +265,7 @@ const CreationEventPage = () => {
 							link
 							custom={clsx({
 								' !font-semibold hover:bg-current/20 p-2 w-full !text-lg !text-[#363540]': true,
-								'bg-current/20': tab === 'users',
+								'bg-current/10 shadow-inner ': tab === 'users',
 							})}
 							onClick={() => setTab('users')}
 						/>
@@ -273,13 +274,13 @@ const CreationEventPage = () => {
 							link
 							custom={clsx({
 								' !font-semibold hover:bg-current/20 p-2 w-full !text-lg !text-[#363540]': true,
-								'bg-current/20': tab === 'admins',
+								'bg-current/10 shadow-inner ': tab === 'admins',
 							})}
 							onClick={() => setTab('admins')}
 						/>
 					</div>
 					{tab === 'services' ? (
-						<div className="text-[#363540] bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
+						<div className="text-[#363540] bg-[#e4dcefb7] flex-auto rounded-md px-2 gap-1 flex flex-col">
 							<ServiceCard
 								onChange={() => setMapEnabled((prev) => !prev)}
 								icon={faMapMarker}
@@ -306,6 +307,17 @@ const CreationEventPage = () => {
 									label="Indirizzo"
 									customClass="bg-[#363540] text-[#E8F2FC]"
 									name="indirizzo"
+								/>
+							) : (
+								''
+							)}
+							{eventDetail.galleryEnabled ? (
+								<Input
+									onChange={(e) => handleChange(e, 'galleryTitle')}
+									value={eventDetail.galleryTitle}
+									label="Titolo galleria"
+									customClass="bg-[#363540] text-[#E8F2FC]"
+									name="titolo"
 								/>
 							) : (
 								''
