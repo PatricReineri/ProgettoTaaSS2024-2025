@@ -59,13 +59,15 @@ public class GalleryService {
                 .limit(pageSize)
                 .map(img -> {
                     int likesCount = imageUserLikeRepository.countByImage(img);
+                    boolean userLike = !imageUserLikeRepository.findByImageAndUserMagicEventsTag(img, userMagicEventsTag.toString()).isEmpty();
                     return new ImageDTO(
                         img.getId(),
                         img.getTitle(),
                         img.getBase64Image(),
                         img.getUploadedBy(),
                         img.getDateTime(),
-                        likesCount
+                        likesCount,
+                        userLike
                     );
                 })
                 .toList();
@@ -96,13 +98,15 @@ public class GalleryService {
                 .limit(pageSize)
                 .map(img -> {
                     int likesCount = imageUserLikeRepository.countByImage(img);
+                    boolean userLike = !imageUserLikeRepository.findByImageAndUserMagicEventsTag(img, userMagicEventsTag.toString()).isEmpty();
                     return new ImageDTO(
                         img.getId(),
                         img.getTitle(),
                         img.getBase64Image(),
                         img.getUploadedBy(),
                         img.getDateTime(),
-                        likesCount
+                        likesCount,
+                        userLike
                     );
                 })
                 .toList();
