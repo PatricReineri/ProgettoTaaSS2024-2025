@@ -10,6 +10,7 @@ public class ImageDTO {
     private String uploadedBy;
     private LocalDateTime dateTime;
     private int likes;
+    private boolean userLike;
 
     public ImageDTO() { }
 
@@ -20,6 +21,16 @@ public class ImageDTO {
         this.uploadedBy = uploadedBy;
         this.dateTime = dateTime;
         this.likes = likes;
+    }
+
+    public ImageDTO(Long id, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes, boolean userLike) {
+        this.id = id;
+        this.title = title;
+        this.base64Image = base64Image;
+        this.uploadedBy = uploadedBy;
+        this.dateTime = dateTime;
+        this.likes = likes;
+        this.userLike = userLike;
     }
 
     public Long getId() {
@@ -70,12 +81,21 @@ public class ImageDTO {
         this.likes = likes;
     }
 
+    public boolean isUserLike() {
+        return userLike;
+    }
+
+    public void setUserLike(boolean userLike) {
+        this.userLike = userLike;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ImageDTO imageDTO = (ImageDTO) o;
         return likes == imageDTO.likes &&
+               userLike == imageDTO.userLike &&
                Objects.equals(id, imageDTO.id) &&
                Objects.equals(title, imageDTO.title) &&
                Objects.equals(base64Image, imageDTO.base64Image) &&
@@ -85,7 +105,7 @@ public class ImageDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, base64Image, uploadedBy, dateTime, likes);
+        return Objects.hash(id, title, base64Image, uploadedBy, dateTime, likes, userLike);
     }
 
     @Override
@@ -97,6 +117,7 @@ public class ImageDTO {
                ", uploadedBy='" + uploadedBy + '\'' +
                ", dateTime=" + dateTime +
                ", likes=" + likes +
+               ", userLike=" + userLike +
                '}';
     }
 }
