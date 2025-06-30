@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
-import MexssageList from '../../../components/Lists/List';
-import { getMessages } from '../../../api/boardApi';
 import { useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
 import { send, subscribe } from '../../../util/WebSocket';
 import ImageList from '../../../components/Lists/ImageList';
 import ImageGrid from '../../../components/imagesComponent/ImageGrid';
+import Button from '../../../components/buttons/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import ImageDropImage from '../../../components/popup/ImageDropImage';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -34,7 +36,6 @@ const GalleryPage = () => {
 		let res = await getImages(eventId, page);
 		if (!res.ok) throw new Error('Error on load more images');
 		const data = await res.json();
-		console.log(data);
 		if (data.images.length === 0) {
 			setMessageFinish(true);
 			return;
@@ -86,8 +87,8 @@ const GalleryPage = () => {
 
 		if (!eventId) return;
 
-		// connect();
-		// fetchAPI();
+		connect();
+		fetchAPI();
 
 		// Cleanup on unmount
 		return () => {
@@ -117,17 +118,26 @@ const GalleryPage = () => {
 					setImages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
+					console.log('Subscribe!!!');
+
 					setImages((prev) =>
 						prev.map((item) =>
-							hash(item) === hash(receivedImageLike)
+							item.id === receivedImageLike.imageID
 								? {
 										...item,
 										likes: receivedImageLike.likedCount,
-										userLike:
-											receivedImageLike.userMagicEventsTag ===
-											JSON.parse(sessionStorage.getItem('user')).userMagicEventsTag
-												? receivedImageLike.like
-												: item.userLike,
+										userLike: receivedImageLike.like,
+								  }
+								: item
+						)
+					);
+					setImagesPopular((prev) =>
+						prev.map((item) =>
+							item.id === receivedImageLike.imageID
+								? {
+										...item,
+										likes: receivedImageLike.likedCount,
+										userLike: receivedImageLike.like,
 								  }
 								: item
 						)
@@ -162,18 +172,6 @@ const GalleryPage = () => {
 		}
 	};
 
-	function imageUploaded(file) {
-		let base64String = '';
-
-		let reader = new FileReader();
-
-		reader.onload = function () {
-			base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-			sendImage(title, base64String);
-		};
-		reader.readAsDataURL(file);
-	}
-
 	const sendImage = (title, image) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
@@ -181,7 +179,6 @@ const GalleryPage = () => {
 		}
 
 		let user = JSON.parse(sessionStorage.getItem('user'));
-		// TODO::  image -> bas64Image
 		const galleryImage = {
 			title: title,
 			uploadedBy: user.username,
@@ -219,13 +216,18 @@ const GalleryPage = () => {
 	};
 
 	return (
-		<div className="h-full bg-[#363540] relative bg-gradient-to-r  p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
+		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
 			<div className=" mt-4  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
-				<h1 className="font-bold w-40">{title ? title : 'Nessun titolo'}</h1>
+				<h1 className="font-bold text-2xl">{title ? title : 'Nessun titolo'}</h1>
 			</div>
-			<ImageList />
+			<ImageList onLike={(img) => likeImage(img)} images={imagesPopular} />
 			<h1>Galleria</h1>
-			<ImageGrid />
+			<ImageGrid onLike={(img) => likeImage(img)} images={images} />
+			<Button
+				custom="absolute right-4 bottom-4  shadow-[20rem] !rounded-full "
+				text={<FontAwesomeIcon icon={faPlus} />}
+			></Button>
+			<ImageDropImage onSend={(title, image) => sendImage(title, image)} />
 		</div>
 	);
 };

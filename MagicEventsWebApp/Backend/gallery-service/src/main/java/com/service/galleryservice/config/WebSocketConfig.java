@@ -1,5 +1,6 @@
 package com.service.galleryservice.config;
 
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -13,10 +14,21 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.context.annotation.Bean;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Bean
+    public ServletServerContainerFactoryBean createWebSocketContainer() {
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        // Aumenta i buffer per gestire immagini da 10MB
+        container.setMaxTextMessageBufferSize(15 * 1024 * 1024); // 15MB
+        container.setMaxBinaryMessageBufferSize(15 * 1024 * 1024); // 15MB
+        container.setMaxSessionIdleTimeout(30 * 60000L); // 30 minuti
+        return container;
+    }
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint for clients to connect

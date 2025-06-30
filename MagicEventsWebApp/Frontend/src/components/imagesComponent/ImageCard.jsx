@@ -3,9 +3,9 @@ import Button from '../buttons/Button';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 
-const ImageCard = ({ mex }) => {
+const ImageCard = ({ mex, onLike }) => {
 	return (
-		<div className="snap-start hover:scale-110 hover:border-2 hover:z-100 border-[#E8F2FC] shadow-xl relative min-w-[12rem] ">
+		<div className="snap-start hover:scale-110  aspect-4/5 hover:border-2 hover:z-100 border-[#E8F2FC] shadow-xl relative h-64 ">
 			<div className="absolute items-center bottom-2 left-0 px-2 py-0 h-fit flex flex-row gap-4 justify-between w-full">
 				<div className=" text-[#E8F2FC] max-w-[10rem] bg-[#505458]/20 p-1 px-4 rounded-md text-clip  line-clamp-1 backdrop-blur-xl ">
 					{mex.title}
@@ -13,6 +13,7 @@ const ImageCard = ({ mex }) => {
 				<div className="flex flex-row gap-1 items-center">
 					<p className=" translate-x-0">{mex.likes}</p>
 					<Button
+						onClick={() => onLike(mex)}
 						custom=" !rounded-full bg-transparent !border-none justify-center group flex items-center"
 						text={
 							<FontAwesomeIcon
@@ -29,7 +30,11 @@ const ImageCard = ({ mex }) => {
 			</div>
 
 			<div className=" h-full flex">
-				<img className=" object-cover aspect-4/5  " src={mex.base64Image} alt="post"></img>
+				<img
+					className="aspect-4/5 object-cover w-full  "
+					src={'data:image/*;base64,' + mex.base64Image}
+					alt="post"
+				></img>
 			</div>
 		</div>
 	);

@@ -36,7 +36,7 @@ const Input = ({
 				className={customClass}
 				style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
 				name={name}
-				placeholder={'Insert ' + name + '...'}
+				placeholder={'Inserisci ' + name + '...'}
 				value={value}
 				onChange={onChange}
 				required
