@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: magicevents-ingress
+  namespace: magicevents
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2        # riscrive il path
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: magicevents.192.168.49.2.nip.io
+      http:
+        paths:
+          - path: /api/events(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: events-management-service
+                port:
+                  number: 8080
+          - path: /api/boards(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: board-service
+                port:
+                  number: 8081
+          - path: /api/games(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: guest-game-service
+                port:
+                  number: 8083
+          - path: /api/galleries(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: gallery-service
+                port:
+                  number: 8085
+
