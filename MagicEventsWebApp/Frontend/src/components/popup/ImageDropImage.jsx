@@ -4,12 +4,19 @@ import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import Input from '../inputs/Input';
+import { useDropzone } from 'react-dropzone';
 
 const ImageDropImage = ({ onSend }) => {
 	const addImageRef = useRef(null);
 	const [image, setImage] = useState('');
 	const [title, setTitle] = useState('');
 	const [error, setError] = useState('');
+	const { getRootProps, getInputProps } = useDropzone({
+		accept: 'image/*',
+		onDrop: (acceptedFiles) => {
+			imageUploaded(acceptedFiles[0]);
+		},
+	});
 
 	function onClick() {
 		if (!addImageRef) return;
@@ -60,6 +67,7 @@ const ImageDropImage = ({ onSend }) => {
 				<div className="flex flex-col  items-center justify-center p-2 ">
 					{!image ? (
 						<button
+							{...getRootProps({ className: 'dropzone' })}
 							onClick={onClick}
 							className="border-3 border-[#E4DCEF] border-dashed  rounded-md w-full aspect-4/5 "
 						>
@@ -91,7 +99,14 @@ const ImageDropImage = ({ onSend }) => {
 						</div>
 					)}
 
-					<input onChange={selectImage} className="hidden" ref={addImageRef} type="file" accept="image/*" />
+					<input
+						{...getInputProps()}
+						onChange={selectImage}
+						className="hidden"
+						ref={addImageRef}
+						type="file"
+						accept="image/*"
+					/>
 				</div>
 			}
 		/>
