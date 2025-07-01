@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-
 import { useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
 import { send, subscribe } from '../../../utils/WebSocket';
@@ -69,7 +68,6 @@ const GalleryPage = () => {
 		if (gallery === null || gallery2 == null) {
 			return;
 		}
-
 		setTimeout(() => {
 			gallery?.scrollTo({ left: 0, top: gallery.scrollHeight, behavior: 'smooth' });
 			gallery2?.scrollTo({ left: 0, top: gallery2.scrollHeight, behavior: 'smooth' });
@@ -80,7 +78,6 @@ const GalleryPage = () => {
 		async function fetchAPI() {
 			let res = await getImages(eventId, 0);
 			let resp = await getImagesPopular(eventId, 0);
-
 			if (!res.ok) throw new Error('Error on load images');
 			if (!resp.ok) throw new Error('Error on load popular images');
 			setPage(1);

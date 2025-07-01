@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { getEvent, getEventService } from '../../api/eventAPI';
 import Image from '../../components/imagesComponent/Image';

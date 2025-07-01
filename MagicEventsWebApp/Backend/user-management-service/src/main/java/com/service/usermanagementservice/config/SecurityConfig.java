@@ -1,6 +1,7 @@
 package com.service.usermanagementservice.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,12 @@ import java.util.List;
 public class SecurityConfig {
     @Autowired
     BearerTokenAuthFilter bearerTokenAuthFilter;
+
+    @Value("${services.eventmanagement.url}")
+    private String eventManagementServiceUrl;
+
+    @Value("${client.url}")
+    private String clientUrl;
 
     private static final String[] WHITELIST_URLS = {
             "/login/form",
@@ -45,10 +52,10 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(
                             List.of(
-                                    "https://localhost:3000",
-                                    "http://localhost:3000",
+                                    "https://" + clientUrl,
+                                    "http://" + clientUrl,
                                     "https://localhost:8443",
-                                    "http://localhost:8080"
+                                    eventManagementServiceUrl
                             )
                     );
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));

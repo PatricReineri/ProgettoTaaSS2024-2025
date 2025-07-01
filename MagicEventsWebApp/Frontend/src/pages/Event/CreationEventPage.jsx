@@ -37,18 +37,13 @@ const CreationEventPage = () => {
 
 	const geocodingAPILoaded = useMapsLibrary('geocoding');
 	const [geocodingService, setGeocodingService] = useState();
-	const [geocodingResult, setGeocodingResult] = useState();
 
 	useEffect(() => {
 		if (!geocodingAPILoaded) return;
-		console.log('APILoaded: ' + geocodingAPILoaded);
-
 		setGeocodingService(new window.google.maps.Geocoder());
 	}, [geocodingAPILoaded]);
 
 	const onLocationSet = async (address) => {
-		console.log('Service: ' + geocodingService);
-
 		if (!geocodingService || !address) return; // errore o impossibile fare la chiamata
 
 		await geocodingService.geocode({ address }, (results, status) => {
@@ -240,7 +235,7 @@ const CreationEventPage = () => {
 						minLength={10}
 						onChange={(e) => handleChange(e, 'boardDescription')}
 						value={eventDetail.boardDescription}
-						name="Descrizione bacheca"
+						name="descrizione bacheca"
 						label="Descrizione"
 						customClass="flex-auto "
 						customClassContainer="flex-auto"
