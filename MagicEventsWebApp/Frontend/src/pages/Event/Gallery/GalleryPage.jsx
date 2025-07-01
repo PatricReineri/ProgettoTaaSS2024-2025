@@ -122,15 +122,15 @@ const GalleryPage = () => {
 					setImages((prev) => [receivedImage, ...prev.filter((item) => !(hash(item) === hash(receivedImage)))]);
 				});
 				subscribe(client, `/topic/gallery/deleteImage/${eventId}`, (deletedMessage, hash) => {
-					setImages((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
-					setImagesPopular((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
+					setImages((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
+					setImagesPopular((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
 					console.log('Subscribe!!!');
 
 					setImages((prev) =>
 						prev.map((item) =>
-							item.id === receivedImageLike.imageID
+							item.imageID === receivedImageLike.imageID
 								? {
 										...item,
 										likes: receivedImageLike.likedCount,
@@ -141,7 +141,7 @@ const GalleryPage = () => {
 					);
 					setImagesPopular((prev) =>
 						prev.map((item) =>
-							item.id === receivedImageLike.imageID
+							item.imageID === receivedImageLike.imageID
 								? {
 										...item,
 										likes: receivedImageLike.likedCount,
@@ -170,7 +170,7 @@ const GalleryPage = () => {
 		const galleryImage = {
 			deletedBy: user.username,
 			eventID: eventId,
-			imageID: mex.id,
+			imageID: mex.imageID,
 			magiceventstag: user.magicEventTag.toString(),
 		};
 		try {
@@ -213,7 +213,7 @@ const GalleryPage = () => {
 		const galleryImage = {
 			userMagicEventsTag: user.magicEventTag.toString(),
 			like: !image.userLike,
-			imageID: image.id || image.imageID,
+			imageID: image.imageID,
 			eventID: eventId,
 			likedCount: 0,
 		};

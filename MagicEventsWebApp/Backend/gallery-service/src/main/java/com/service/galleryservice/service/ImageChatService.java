@@ -49,7 +49,7 @@ public class ImageChatService {
         image.setGallery(gallery);
         Image savedImage = imageRepository.save(image);
         request.setDateTime(savedImage.getDateTime());
-        request.setImage_id(savedImage.getId());
+        request.setImageID(savedImage.getId());
         return request;
     }
 
