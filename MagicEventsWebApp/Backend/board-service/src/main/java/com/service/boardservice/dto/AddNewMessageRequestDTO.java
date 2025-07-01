@@ -25,14 +25,17 @@ public class AddNewMessageRequestDTO {
     @Positive(message = "User Magic Events tag must be positive")
     private Long userMagicEventsTag;
 
+    private Long messageID;
+
     public AddNewMessageRequestDTO() {}
 
-    public AddNewMessageRequestDTO(Long eventID, String content, String username, LocalDateTime dateTime, Long userMagicEventsTag) {
+    public AddNewMessageRequestDTO(Long eventID, String content, String username, LocalDateTime dateTime, Long userMagicEventsTag, Long messageID) {
         this.eventID = eventID;
         this.content = content;
         this.username = username;
         this.dateTime = dateTime;
         this.userMagicEventsTag = userMagicEventsTag;
+        this.messageID = messageID;
     }
 
     public Long getEventID() { return eventID; }
@@ -49,4 +52,7 @@ public class AddNewMessageRequestDTO {
 
     public Long getUserMagicEventsTag() { return userMagicEventsTag; }
     public void setUserMagicEventsTag(Long userMagicEventsTag) { this.userMagicEventsTag = userMagicEventsTag; }
+
+    public Long getMessageID() { return messageID; }
+    public void setMessageID(Long messageID) { this.messageID = messageID; }
 }
