@@ -9,6 +9,13 @@ body {
 	background-image: url('./img/background.jpg');
 }
 
+.gameBackground {
+	background-image: url('./img/genie2.png');
+	background-size: auto;
+	background-position: center 0px;
+	background-repeat: no-repeat;
+}
+
 .backgroundHome {
 	background-image: url('./img/Hero.jpg');
 	background-size: cover;

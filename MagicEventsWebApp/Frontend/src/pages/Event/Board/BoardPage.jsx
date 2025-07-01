@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-
-import MexssageList from '../../../components/Lists/List';
+import MessageList from '../../../components/Lists/MessageList';
 import { getMessages } from '../../../api/boardApi';
-import { useIntersection } from '../../../util/hook';
-import { useParams } from 'react-router-dom';
-import { subscribe } from '../../../util/WebSocket';
+import { useNavigate, useParams } from 'react-router-dom';
+import { subscribe } from '../../../utils/WebSocket';
+import Button from '../../../components/buttons/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -16,7 +17,7 @@ const BoardPage = () => {
 	const board2 = document.getElementById('board2');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
-
+	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [messageFinish, setMessageFinish] = useState(false);
 
@@ -64,7 +65,6 @@ const BoardPage = () => {
 			setTitle(data.title);
 			setDescription(data.description);
 			setMessages(data.messages);
-
 			//sessionStorage.setItem('user', JSON.stringify({ username: 'Xandro01' }));
 		}
 
@@ -97,12 +97,13 @@ const BoardPage = () => {
 			(frame) => {
 				setStompClient(client);
 				setConnected(true);
+
 				// Subscribe to the topic with the correct path format
 				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
 					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
 				});
 				const deleteSubscription = subscribe(client, `/topic/chat/deleteMessage/${eventId}`, (deletedMessage, hash) => {
-					setMessages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
+					setMessages((prev) => prev.filter((item) => !(item.messageID === deletedMessage.messageID)));
 				});
 				client.onclose = () => {
 					console.log('Client disconesso');
@@ -128,7 +129,7 @@ const BoardPage = () => {
 			eventID: eventId,
 			userMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
 		};
-
+		console.log('pre - message:', mex);
 		console.log('Deleting message:', chatMessage);
 
 		try {
@@ -166,10 +167,11 @@ const BoardPage = () => {
 	return (
 		<div className="h-full bg-[#363540] relative bg-gradient-to-r  to-[#363540]  from-[#E4DCEF] flex flex-row ">
 			<div className="w-64 mt-4 shadow-2xl h-fit rounded-r-2xl bg-[#363540] text-[#E4DCEF] p-4 max-sm:hidden ">
+				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
 				<h1 className="font-bold">{title}</h1>
 				<p className="text-xs">{description}</p>
 			</div>
-			<MexssageList
+			<MessageList
 				displayOnloadMore={!messageFinish}
 				onLoadMore={loadMore}
 				onSend={(value) => sendMessage(value)}

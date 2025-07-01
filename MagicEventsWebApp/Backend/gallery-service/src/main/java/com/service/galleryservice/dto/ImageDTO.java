@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ImageDTO {
-    private Long id;
+    private Long imageID;
     private String title;
     private String base64Image;
     private String uploadedBy;
@@ -14,8 +14,8 @@ public class ImageDTO {
 
     public ImageDTO() { }
 
-    public ImageDTO(Long id, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes) {
-        this.id = id;
+    public ImageDTO(Long imageID, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes) {
+        this.imageID = imageID;
         this.title = title;
         this.base64Image = base64Image;
         this.uploadedBy = uploadedBy;
@@ -23,8 +23,8 @@ public class ImageDTO {
         this.likes = likes;
     }
 
-    public ImageDTO(Long id, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes, boolean userLike) {
-        this.id = id;
+    public ImageDTO(Long imageID, String title, String base64Image, String uploadedBy, LocalDateTime dateTime, int likes, boolean userLike) {
+        this.imageID = imageID;
         this.title = title;
         this.base64Image = base64Image;
         this.uploadedBy = uploadedBy;
@@ -33,12 +33,12 @@ public class ImageDTO {
         this.userLike = userLike;
     }
 
-    public Long getId() {
-        return id;
+    public Long getimageID() {
+        return imageID;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setimageID(Long imageID) {
+        this.imageID = imageID;
     }
 
     public String getTitle() {
@@ -96,7 +96,7 @@ public class ImageDTO {
         ImageDTO imageDTO = (ImageDTO) o;
         return likes == imageDTO.likes &&
                userLike == imageDTO.userLike &&
-               Objects.equals(id, imageDTO.id) &&
+               Objects.equals(imageID, imageDTO.imageID) &&
                Objects.equals(title, imageDTO.title) &&
                Objects.equals(base64Image, imageDTO.base64Image) &&
                Objects.equals(uploadedBy, imageDTO.uploadedBy) &&
@@ -105,13 +105,13 @@ public class ImageDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, base64Image, uploadedBy, dateTime, likes, userLike);
+        return Objects.hash(imageID, title, base64Image, uploadedBy, dateTime, likes, userLike);
     }
 
     @Override
     public String toString() {
         return "ImageDTO{" +
-               "id=" + id +
+               "imageID=" + imageID +
                ", title='" + title + '\'' +
                ", base64Image='" + base64Image + '\'' +
                ", uploadedBy='" + uploadedBy + '\'' +

@@ -16,8 +16,8 @@ function ForgotPassword() {
 			const res = await forgotPasswordRequest(email);
 			const message = await res.text();
 			if (!res.ok) throw new Error('email not found');
-			if (message === 'Error') throw new Error('internat error');
-			setMessage('Open your email to reset your password');
+			if (message === 'Error') throw new Error('internal error');
+			setMessage('Apri la tua email per reimpostare la password');
 		} catch (error) {
 			setMessage(`Error: ${error.message}`);
 		} finally {
@@ -38,11 +38,11 @@ function ForgotPassword() {
 					style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
 					disabled={loading}
 				/>
-				{/* <button
+				{/*<button
 					type="submit"
 					disabled={loading}
 					style={{ padding: 10, backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: 4 }}
-				>
+					>
 					{loading ? 'Processing...' : 'Send'}
 				</button> */}
 				<Button text={loading ? 'Caricamento...' : 'Invia'}></Button>

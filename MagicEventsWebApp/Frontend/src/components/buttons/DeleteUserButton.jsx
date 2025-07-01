@@ -1,5 +1,4 @@
 import { deleteUser } from '../../api/authentication';
-import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function DeleteUserButton({ user, setLogged }) {
@@ -38,7 +37,7 @@ function DeleteUserButton({ user, setLogged }) {
 				cursor: 'pointer',
 			}}
 		>
-			Delete Account
+			Elimina Account
 		</button>
 	);
 }

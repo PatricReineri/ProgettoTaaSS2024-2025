@@ -3,10 +3,10 @@ import clsx from 'clsx';
 
 const ServiceCard = ({ name, icon, value, onChange }) => {
 	return (
-		<div className="flex flex-col min-h-16 lg:flex-row lg:items-center  bg-[#363540] text-[#E8F2FC] gap-1 rounded-md ">
+		<div className="flex flex-col min-h-16 lg:flex-row lg:items-center  bg-[#363540] text-[#E8F2FC] gap-1 rounded-md">
 			<div className="p-2 flex-auto lg:flex-3/5 flex f gap-2 justify-center items-center lg:w-10">
 				<FontAwesomeIcon icon={icon}></FontAwesomeIcon>
-				<h1 className="text-clip line-clamp-1  ">{name}</h1>
+				<h1 className="text-clip line-clamp-1">{name}</h1>
 			</div>
 
 			<button

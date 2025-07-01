@@ -415,5 +415,48 @@ public class EventGestorService {
         
         return services;
     }
+
+    public String removePartecipant(String partecipantEmail, Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        HashMap<Long, String> partecipantId = getIdForEmails(List.of(partecipantEmail));
+        for (Map.Entry<Long, String> partecipantEntry : partecipantId.entrySet()) {
+            Partecipant partecipant = partecipantsRepository.findById(partecipantEntry.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Partecipant not found: " + partecipantId));
+            if (event.getCreator().equals(creatorId) && partecipant.getEvents().contains(event)) {
+                partecipant.getEvents().remove(event);
+                partecipantsRepository.save(partecipant);
+                event.getPartecipants().remove(partecipant);
+                eventsRepository.save(event);
+            }else{
+                return "Error";
+            }
+        }
+        return "Success";
+    }
+
+    public String removeAdmin(String adminEmail, Long eventId, Long creatorId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        HashMap<Long, String> adminId = getIdForEmails(List.of(adminEmail));
+        for (Map.Entry<Long, String> adminEntry : adminId.entrySet()) {
+            Admin admin = adminsRepository.findById(adminEntry.getKey())
+                    .orElseThrow(() -> new IllegalArgumentException("Admin not found: " + adminId));
+            if (event.getCreator().equals(creatorId) && admin.getEvents().contains(event)) {
+                admin.getEvents().remove(event);
+                adminsRepository.save(admin);
+                event.getAdmins().remove(admin);
+                eventsRepository.save(event);
+            }else{
+                return "Error";
+            }
+        }
+        String res = removePartecipant(adminEmail, eventId, creatorId);
+        if(res.equals("Success")){
+            return "Success";
+        } else{
+            return "Error";
+        }
+    }
 }
 

@@ -18,12 +18,12 @@ function ChangePasswordForm() {
 		setSuccessMsg('');
 
 		if (newPassword.length < 6) {
-			setError('Password must contain at least 6 characters');
+			setError('La password deve contenere almeno 6 caratteri');
 			return;
 		}
 
 		if (newPassword !== confirmPassword) {
-			setError('The passwords do not match');
+			setError('Le password non corrispondono');
 			return;
 		}
 
@@ -40,7 +40,7 @@ function ChangePasswordForm() {
 			if (!res.ok) throw new Error('Error while changing password');
 			if (message === 'Error') throw new Error('Internal error');
 
-			setSuccessMsg('Password changed successfully');
+			setSuccessMsg('La password è stata modificata con successo');
 			setNewPassword('');
 			setConfirmPassword('');
 		} catch (err) {
@@ -57,7 +57,7 @@ function ChangePasswordForm() {
 				<form onSubmit={handleSubmit} className="flex  flex-row flex-wrap space-y-2 gap-2 p-2  rounded-md   ">
 					<Input
 						customClassContainer="flex-auto"
-						label="New password"
+						label="Nuova password"
 						type="password"
 						name="password"
 						minLength={6}
@@ -67,7 +67,7 @@ function ChangePasswordForm() {
 					/>
 					<Input
 						customClassContainer="flex-auto"
-						label="Confirm password"
+						label="Conferma password"
 						type="password"
 						name="password"
 						minLength={6}
@@ -81,7 +81,7 @@ function ChangePasswordForm() {
 					<Button
 						custom={clsx({ 'w-full active:animate-pulse': true, active: loading })}
 						disabled={loading}
-						text={loading ? 'Processing...' : 'Change Password'}
+						text={loading ? 'Processing...' : 'Cambia Password'}
 					/>
 				</form>
 			</div>

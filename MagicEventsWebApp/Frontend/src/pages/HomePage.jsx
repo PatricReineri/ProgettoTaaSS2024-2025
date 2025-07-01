@@ -1,9 +1,9 @@
 const Homepage = () => {
 	return (
-		<div className="h-full backgroundHome overflow-y-auto overscroll-none snap-y  ">
+		<div className="h-full backgroundHome overflow-y-auto overscroll-none snap-y">
 			<div className="snap-start  p-4">
 				<div className=" bg-black/30 h-24 backdrop-blur-md p-4 w-40 text-[#E4DCEF]  text-center rounded-md shadow-2xl ">
-					Crea un <p className="!text-[#EE0E51] font-bold text-center">Evento</p> magico
+					Crea degli <p className="!text-[#EE0E51] font-bold text-center">eventi</p> magici!
 				</div>
 				<div className=" h-[calc(100vh-15rem)]  w-20"></div>
 			</div>
@@ -13,19 +13,19 @@ const Homepage = () => {
 				<div className="bg-[#363540] hover:shadow-xl hover:shadow-[#EE0E51] hover:scale-110 snap-center min-w-[12rem] text-[#E4DCEF] p-4 flex-auto max-w-[15rem] rounded-2xl border border-[#EE0E51] ">
 					<h1 className="text-xl font-extrabold mb-2">Crea</h1>
 					<p>
-						Crea i tuoi eventi privati, inviando il link o il QR ai tuoi invitati! Altrimenti permetti a tutti di
-						chiedere di entrare con gli eventi pubblici!
+						Crea i tuoi eventi esclusivi, inviando il link o il QR code ai tuoi invitati potrà partecipare solo chi vuoi
 					</p>
 				</div>
 				<div className="bg-[#363540] hover:shadow-xl hover:shadow-[#EE0E51] hover:scale-110 snap-center min-w-[12rem] text-[#E4DCEF] p-4  flex-auto max-w-[15rem] rounded-2xl border border-[#EE0E51] ">
 					<h1 className="text-xl font-extrabold mb-2">Partecipa</h1>
-					<p>Partecipa a tutti gli eventi che vuoi! Tramite invito o cercandoli tra gli eventi pubblici</p>
+					<p> 
+						Gestisci e partecipa ad eventi e divertiti
+					</p>
 				</div>
 				<div className="bg-[#363540] hover:shadow-xl hover:shadow-[#EE0E51] hover:scale-110 snap-center min-w-[12rem] text-[#E4DCEF] p-4 flex-auto max-w-[15rem] rounded-2xl border border-[#EE0E51] ">
 					<h1 className="text-xl font-extrabold mb-2">Interagisci</h1>
 					<p>
-						Interagisci con tutti i partecipanti! Ci sarà una chat e tutto quello da sapere sull’evento a portata di
-						mano!
+						Interagisci con i tuoi invitati: sono disponibili diverse funzionalità che puoi abilitare per il tuo evento, provale tutte
 					</p>
 				</div>
 			</div>

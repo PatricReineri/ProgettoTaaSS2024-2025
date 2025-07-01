@@ -97,6 +97,24 @@ public class EventGestorController {
         return eventGestorService.updateEventPartecipants(partecipants, eventId, creatorId);
     }
 
+    @PutMapping("/removepartecipant")
+    public String removePartecipant(
+            @RequestParam("partecipant") String partecipant,
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        return eventGestorService.removePartecipant(partecipant, eventId, creatorId);
+    }
+
+    @PutMapping("/removeadmin")
+    public String removeAdmin(
+            @RequestParam("admin") String admin,
+            @RequestParam("eventId") Long eventId,
+            @RequestParam("magicEventsTag") Long creatorId
+    ) {
+        return eventGestorService.removeAdmin(admin, eventId, creatorId);
+    }
+
     @GetMapping("/geteventinfo")
     public EventDTO getEventInfo(@RequestParam("eventId") Long eventId) {
         return eventGestorService.getEventInfo(eventId);

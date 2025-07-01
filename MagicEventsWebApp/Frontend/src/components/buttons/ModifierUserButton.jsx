@@ -13,7 +13,7 @@ function LogoutButton() {
 						cursor: 'pointer',
 					}}
 		>
-			Modify Account
+			Modifica Account
 		</button>
 	);
 }

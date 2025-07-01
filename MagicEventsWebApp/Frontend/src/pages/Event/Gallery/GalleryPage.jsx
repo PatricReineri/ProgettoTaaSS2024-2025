@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
-import { send, subscribe } from '../../../util/WebSocket';
+import { send, subscribe } from '../../../utils/WebSocket';
 import ImageList from '../../../components/Lists/ImageList';
 import ImageGrid from '../../../components/imagesComponent/ImageGrid';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import img from '../../../img/background.jpg';
 import clsx from 'clsx';
@@ -25,7 +24,7 @@ const GalleryPage = () => {
 	const gallery2 = document.getElementById('gallery2');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
-
+	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [pagep, setPagep] = useState(0);
 	const [messageFinish, setMessageFinish] = useState(false);
@@ -69,7 +68,6 @@ const GalleryPage = () => {
 		if (gallery === null || gallery2 == null) {
 			return;
 		}
-
 		setTimeout(() => {
 			gallery?.scrollTo({ left: 0, top: gallery.scrollHeight, behavior: 'smooth' });
 			gallery2?.scrollTo({ left: 0, top: gallery2.scrollHeight, behavior: 'smooth' });
@@ -80,7 +78,6 @@ const GalleryPage = () => {
 		async function fetchAPI() {
 			let res = await getImages(eventId, 0);
 			let resp = await getImagesPopular(eventId, 0);
-
 			if (!res.ok) throw new Error('Error on load images');
 			if (!resp.ok) throw new Error('Error on load popular images');
 			setPage(1);
@@ -122,15 +119,15 @@ const GalleryPage = () => {
 					setImages((prev) => [receivedImage, ...prev.filter((item) => !(hash(item) === hash(receivedImage)))]);
 				});
 				subscribe(client, `/topic/gallery/deleteImage/${eventId}`, (deletedMessage, hash) => {
-					setImages((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
-					setImagesPopular((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
+					setImages((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
+					setImagesPopular((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
 					console.log('Subscribe!!!');
 
 					setImages((prev) =>
 						prev.map((item) =>
-							item.id === receivedImageLike.imageID
+							item.imageID === receivedImageLike.imageID
 								? {
 										...item,
 										likes: receivedImageLike.likedCount,
@@ -141,7 +138,7 @@ const GalleryPage = () => {
 					);
 					setImagesPopular((prev) =>
 						prev.map((item) =>
-							item.id === receivedImageLike.imageID
+							item.imageID === receivedImageLike.imageID
 								? {
 										...item,
 										likes: receivedImageLike.likedCount,
@@ -170,7 +167,7 @@ const GalleryPage = () => {
 		const galleryImage = {
 			deletedBy: user.username,
 			eventID: eventId,
-			imageID: mex.id,
+			imageID: mex.imageID,
 			magiceventstag: user.magicEventTag.toString(),
 		};
 		try {
@@ -213,7 +210,7 @@ const GalleryPage = () => {
 		const galleryImage = {
 			userMagicEventsTag: user.magicEventTag.toString(),
 			like: !image.userLike,
-			imageID: image.id || image.imageID,
+			imageID: image.imageID,
 			eventID: eventId,
 			likedCount: 0,
 		};
@@ -234,7 +231,8 @@ const GalleryPage = () => {
 
 	return (
 		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
-			<div className=" mt-4  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
+			<div className=" mt-4  flex items-center flex-row gap-2  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
+				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
 				<h1 className="font-bold text-2xl">{title ? title : 'Nessun titolo'}</h1>
 			</div>
 			<ImageList

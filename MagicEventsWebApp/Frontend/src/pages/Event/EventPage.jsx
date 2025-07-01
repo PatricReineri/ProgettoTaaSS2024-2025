@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { getEvent, getEventService } from '../../api/eventAPI';
 import Image from '../../components/imagesComponent/Image';
@@ -60,7 +60,7 @@ const EventsPage = () => {
 	return !event ? (
 		<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
 	) : (
-		<div className="h-full text-[#E4DCEF]  p-4 flex flex-col gap-2 relative  bg-[#505458] ">
+		<div className="h-full text-[#E4DCEF]  p-4 flex flex-col gap-2 relative  bg-[#505458] overflow-y-auto ">
 			<Menu
 				onClose={() => setMenuOpen(false)}
 				onOpen={() => setMenuOpen(true)}
@@ -158,7 +158,7 @@ const EventsPage = () => {
 			></Menu>
 			<Image src={event.image} />
 			<h1 className=" text-xl rounded-full p-2  font-extrabold w-fit ">{event.title}</h1>
-			<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm  flex-auto overflow-y-auto  rounded-md">
+			<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm  h-fit  rounded-md">
 				{event.description}
 			</p>
 			<div className="flex flex-row justify-between items-center">

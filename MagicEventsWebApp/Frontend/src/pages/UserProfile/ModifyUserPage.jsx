@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../auth/AuthContext';
 import { useState } from 'react';
 import { modifyUser } from '../../api/authentication';
 
@@ -23,7 +22,7 @@ function UserEditPage({ setLogged }) {
 		try {
 			const res = await modifyUser(JSON.stringify(user).replace('null', '""'));
 			if (!res.ok) throw new Error('error for user modify operation');
-			setMessage('Change successful');
+			setMessage('Modifica riuscita');
 			sessionStorage.setItem('user', JSON.stringify(user));
 			navigate('/modifyuser');
 			setLogged(false);
@@ -86,8 +85,8 @@ function UserEditPage({ setLogged }) {
 				<button
 					type="submit"
 					className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-				>
-					Save modify
+				>	
+				Salva modifica
 				</button>
 			</form>
 		</div>
