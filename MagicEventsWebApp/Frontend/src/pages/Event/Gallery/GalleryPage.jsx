@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
 import { send, subscribe } from '../../../utils/WebSocket';
 import ImageList from '../../../components/Lists/ImageList';
 import ImageGrid from '../../../components/imagesComponent/ImageGrid';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import img from '../../../img/background.jpg';
 import clsx from 'clsx';
@@ -24,7 +24,7 @@ const GalleryPage = () => {
 	const gallery2 = document.getElementById('gallery2');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
-
+	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [pagep, setPagep] = useState(0);
 	const [messageFinish, setMessageFinish] = useState(false);
@@ -231,7 +231,8 @@ const GalleryPage = () => {
 
 	return (
 		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
-			<div className=" mt-4  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
+			<div className=" mt-4  flex items-center flex-row gap-2  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
+				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
 				<h1 className="font-bold text-2xl">{title ? title : 'Nessun titolo'}</h1>
 			</div>
 			<ImageList

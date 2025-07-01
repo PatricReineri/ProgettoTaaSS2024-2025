@@ -3,8 +3,11 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import MessageList from '../../../components/Lists/MessageList';
 import { getMessages } from '../../../api/boardApi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { subscribe } from '../../../utils/WebSocket';
+import Button from '../../../components/buttons/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -14,7 +17,7 @@ const BoardPage = () => {
 	const board2 = document.getElementById('board2');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
-
+	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [messageFinish, setMessageFinish] = useState(false);
 
@@ -164,6 +167,7 @@ const BoardPage = () => {
 	return (
 		<div className="h-full bg-[#363540] relative bg-gradient-to-r  to-[#363540]  from-[#E4DCEF] flex flex-row ">
 			<div className="w-64 mt-4 shadow-2xl h-fit rounded-r-2xl bg-[#363540] text-[#E4DCEF] p-4 max-sm:hidden ">
+				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
 				<h1 className="font-bold">{title}</h1>
 				<p className="text-xs">{description}</p>
 			</div>
