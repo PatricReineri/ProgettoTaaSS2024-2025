@@ -4,7 +4,7 @@ import SockJS from 'sockjs-client';
 
 import { useParams } from 'react-router-dom';
 import { getImages, getImagesPopular } from '../../../api/galleryAPI';
-import { send, subscribe } from '../../../util/WebSocket';
+import { send, subscribe } from '../../../utils/WebSocket';
 import ImageList from '../../../components/Lists/ImageList';
 import ImageGrid from '../../../components/imagesComponent/ImageGrid';
 import Button from '../../../components/buttons/Button';

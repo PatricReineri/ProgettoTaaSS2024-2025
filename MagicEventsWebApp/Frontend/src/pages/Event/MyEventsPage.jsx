@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getEventsc } from '../../api/eventAPI';
-import { mapEventDTOtoCardProps } from '../../utils/eventObjectMapping'; 
+import { mapEventDTOtoCardProps } from '../../utils/eventObjectMapping';
 import EventList from '../../components/Lists/EventList';
 
 const MyEventsPage = () => {
@@ -27,11 +27,11 @@ const MyEventsPage = () => {
 		}
 		fetchAPI();
 	}, []);
-	 return (
-		<div className="h-full">
-		{ready ? <EventList events={events} /> : <p className="p-4">Caricamento...</p>}
+	return (
+		<div className="h-full overflow-auto">
+			{ready ? <EventList events={events} /> : <p className="p-4">Caricamento...</p>}
 		</div>
-  	);
+	);
 };
 
 export default MyEventsPage;

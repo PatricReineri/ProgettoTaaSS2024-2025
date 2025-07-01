@@ -163,7 +163,7 @@ const CreationEventPage = () => {
 				console.log(jsno);
 
 				if (jsno.setupSuccessful) {
-					navigate('/myevents');
+					navigate('/home');
 				}
 			})
 			.catch((error) => {
@@ -246,7 +246,7 @@ const CreationEventPage = () => {
 						customClassContainer="flex-auto"
 					/>
 				</div>
-				<div className=" border border-[#363540]/60 text-[#363540] bg-[#E4DCEF] flex-auto rounded-md gap-1 flex overflow-y-auto flex-col ">
+				<div className=" border border-[#363540]/60 text-[#363540] bg-[#E4DCEF] flex-auto rounded-md gap-1 flex overflow-y-auto flex-col min-w-[20rem] ">
 					<div className=" !mb-2  flex flex-row justify-evenly ">
 						<Button
 							text="Servizi"
