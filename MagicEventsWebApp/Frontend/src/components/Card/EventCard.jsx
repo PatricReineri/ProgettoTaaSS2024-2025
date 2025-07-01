@@ -2,11 +2,12 @@ import React from 'react';
 import Button from '../buttons/Button';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
-import { getEventId } from '../../api/eventAPI';
+import { deleteEvent, getEventId } from '../../api/eventAPI';
 import { useCoordinatesConverter } from '../../utils/coordinatesConverter';
 
 const EventCard = ({ localDataTime, day, month, eventName, time, location, description }) => {
 	const navigate = useNavigate();
+	const address = useCoordinatesConverter(location);
 
 	return (
 		<div
@@ -39,13 +40,13 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 					<div className="flex items-center gap-4 text-sm text-gray-500 mt-2">
 						<span>🕒 {time}</span>
-						{useCoordinatesConverter(location)}
+						{address}
 					</div>
 				</div>
 			</div>
 
 			{/* Pulsante */}
-			<div className="mt-4 self-end">
+			<div className="mt-4 self-end flex flex-row space-x-1">
 				<Button 
 					text="Modifica evento" 
 					onClick={async (e) => {
@@ -54,6 +55,19 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 							const res = await getEventId(eventName, localDataTime);
 							const id = await res.text();
 							navigate(`/modifyevent/${id[1]}`);
+						} catch (err) {
+							console.error('Error contacting server:', err);
+						}
+				}}>
+				</Button>
+				<Button 
+					text="Elimina evento" 
+					onClick={async (e) => {
+						e.stopPropagation();
+						try {
+							const res = await getEventId(eventName, localDataTime);
+							const id = await res.text();
+							await deleteEvent(id[1])
 						} catch (err) {
 							console.error('Error contacting server:', err);
 						}

@@ -1,14 +1,13 @@
 import { faClose, faGamepad, faImages, faMapMarker } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/buttons/Button';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getEvent, getEventService, updatePartecipants, updateAdmins } from '../../api/eventAPI';
+import { useParams } from 'react-router-dom';
+import { getEvent, getEventService, updatePartecipants, updateAdmins, removePartecipant } from '../../api/eventAPI';
 import ErrorContainer from '../../components/Error/ErrorContainer';
 import Input from '../../components/inputs/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ModifyEventPage = () => {
-    const navigate = useNavigate();
     const { eventId } = useParams();
 	const [event, setEvent] = useState(null);
 	const [eventServices, setEventServices] = useState(null);
@@ -16,8 +15,6 @@ const ModifyEventPage = () => {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
 	const [eventDetail, setEventDetail] = useState({
-		creatorEmail: JSON.parse(sessionStorage.getItem('user')).email,
-		creatorMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
 		participants: [],
 		admins: [],
 	});
@@ -65,7 +62,28 @@ const ModifyEventPage = () => {
             <h1>Partecipanti</h1>
             <div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-1  rounded-md">
                 {event.partecipants.map((p) => (
-                    <p className="p-2">{p}</p>
+                    <div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
+                        <p className="p-2">{p}</p>
+                        <Button
+                            onClick={async () => {
+                                setError(null);
+                                setMessage(null);
+                                try {
+                                    const res = await removePartecipant(eventId, p);
+                                    if(res === 'Error' || res.status != 200){
+                                        setError('Errore durante la cancellazione :(');
+                                    }else{
+                                        setMessage('Modifica riuscita');
+                                    }
+                                } catch (err) {
+                                    setError(err.message);
+                                }
+                            }}
+                            link
+                            custom="cursor-pointer"
+                            text={<FontAwesomeIcon icon={faClose} />}
+                        ></Button>
+                    </div>
                 ))}
             </div>
             <div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
@@ -104,9 +122,8 @@ const ModifyEventPage = () => {
                         setError(null);
 		                setMessage(null);
 						try {
-                            console.log('Partecipants added:', eventDetail.participants)
 							const res = await updatePartecipants(eventId, eventDetail.participants);
-							if(res.text() === 'Error'){
+							if(res === 'Error' || res.status != 200){
                                 setError('Errore durante la modifica dei partecipanti :(');
                             }else{
                                 setMessage('Modifica riuscita');

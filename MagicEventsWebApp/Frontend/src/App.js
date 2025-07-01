@@ -112,7 +112,14 @@ function App() {
 							</APIProvider>
 						}
 					/>
-					<Route path="/myevents" element={<MyEventsPage />} />
+					<Route 
+						path="/myevents" 
+						element={
+							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+								<MyEventsPage />
+							</APIProvider>
+						} 
+					/>
 					<Route path="/modifyevent/:eventId" element={<ModifyEventPage />} />
 					<Route path="/:eventId/board" element={<BoardPage />} />
 					<Route path="/:eventId/gallery" element={<GalleryPage />} />

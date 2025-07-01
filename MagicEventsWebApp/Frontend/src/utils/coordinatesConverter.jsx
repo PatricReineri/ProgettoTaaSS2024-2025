@@ -37,10 +37,10 @@ export function useCoordinatesConverter(coordinates) {
         })
         .catch((error) => {
             console.error(error);
-            setAddress('Errore nella codifica della location');
+            setAddress('Non fornita');
         });
     }, [geocodingService, lat, lng]);
-
+    
     return (
         <span>📍{address}</span>
     );

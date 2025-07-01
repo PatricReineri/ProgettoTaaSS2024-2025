@@ -121,7 +121,7 @@ export function updateAdmins(eventId, newAdmins) {
 
 export function updatePartecipants(eventId, newPartecipants) {
 	return fetch(
-		`http://localhost:8080/gestion/addpartecipants?admins=${newPartecipants}&eventId=${eventId}&magicEventsTag=${
+		`http://localhost:8080/gestion/addpartecipants?partecipants=${newPartecipants}&eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -130,6 +130,31 @@ export function updatePartecipants(eventId, newPartecipants) {
 		}
 	);
 }
+
+export function removePartecipant(eventId, partecipantEmail) {
+	return fetch(
+		`http://localhost:8080/gestion/removepartecipant?partecipant=${partecipantEmail}&eventId=${eventId}&magicEventsTag=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}`,
+		{
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
+}
+
+export function removeAdmin(eventId, adminEmail) {
+	return fetch(
+		`http://localhost:8080/gestion/removeadmin?admin=${adminEmail}&eventId=${eventId}&magicEventsTag=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}`,
+		{
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
+}
+
 
 export function getEvent(eventId) {
 	return fetch(`http://localhost:8080/gestion/geteventinfo?eventId=${eventId}`, {
