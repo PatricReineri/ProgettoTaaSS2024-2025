@@ -10,10 +10,11 @@ export function mapEventDTOtoCardProps(eventDTO) {
   const time = `${start.getHours().toString().padStart(2, "0")}:${start.getMinutes().toString().padStart(2, "0")} - ${end.getHours().toString().padStart(2, "0")}:${end.getMinutes().toString().padStart(2, "0")}`;
 
   return {
+    localDataTime: eventDTO.starting,
     day,
     month,
     eventName: eventDTO.title,
-    eventImage: `data:image/jpeg;base64,${eventDTO.image}`,
+    eventImage: eventDTO.image,
     time,
     location: eventDTO.location,
     description: eventDTO.description

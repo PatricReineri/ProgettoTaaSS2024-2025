@@ -21,8 +21,8 @@ const EventCard = ({
       onClick={async ()=> {
             try {
                 const res = await getEventId(eventName, localDataTime)
-                const id = await res.json();
-                navigate(`/${id}`)
+                const id = await res.text();
+                navigate(`/${id[1]}`)
             }catch (err) {
                 console.error('Error contacting server:', err);
             }
@@ -42,7 +42,7 @@ const EventCard = ({
         <div className="flex items-center gap-4">
         {/* Immagine */}
         <img
-            src={eventImage}
+            src={'data:image/*;base64,' + eventImage}
             alt={eventName}
             className="w-16 h-16 object-cover rounded-lg"
         />

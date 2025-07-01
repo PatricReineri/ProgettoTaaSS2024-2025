@@ -12,7 +12,7 @@ export function getEventsp() {
 
 export function getEventsc() {
 	return fetch(
-		`http://localhost:8080/gestion/geteventslistc?partecipantId=${
+		`http://localhost:8080/gestion/geteventslistc?creatorId=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
