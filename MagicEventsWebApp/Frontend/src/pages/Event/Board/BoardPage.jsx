@@ -94,13 +94,13 @@ const BoardPage = () => {
 			(frame) => {
 				setStompClient(client);
 				setConnected(true);
-				
+
 				// Subscribe to the topic with the correct path format
 				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
 					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
 				});
 				const deleteSubscription = subscribe(client, `/topic/chat/deleteMessage/${eventId}`, (deletedMessage, hash) => {
-					setMessages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
+					setMessages((prev) => prev.filter((item) => !(item.messageID === deletedMessage.messageID)));
 				});
 				client.onclose = () => {
 					console.log('Client disconesso');
@@ -126,7 +126,7 @@ const BoardPage = () => {
 			eventID: eventId,
 			userMagicEventsTag: JSON.parse(sessionStorage.getItem('user')).magicEventTag,
 		};
-
+		console.log('pre - message:', mex);
 		console.log('Deleting message:', chatMessage);
 
 		try {

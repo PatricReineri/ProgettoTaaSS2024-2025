@@ -163,7 +163,7 @@ const CreationEventPage = () => {
 				console.log(jsno);
 
 				if (jsno.setupSuccessful) {
-					navigate('/home');
+					navigate('/myevents');
 				}
 			})
 			.catch((error) => {
