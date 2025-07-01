@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out k8s --namespace=magicevents
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    io.kompose.service: events-management-service
+  name: events-management-service
+  namespace: magicevents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: events-management-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --out k8s --namespace=magicevents
+        kompose.version: 1.34.0 (cbf2835db)
+      labels:
+        io.kompose.service: events-management-service
+    spec:
+      containers:
+        - env:
+            - name: SERVICES_USERMANAGEMENT_URL
+              value: https://user-management-service:8443
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://events-management-db:5432/EventsManagementMEADB
+            - name: SPRING_DATASOURCE_USERNAME
+              value: user
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+          image: magicevents/events-management-service:latest
+          imagePullPolicy: IfNotPresent
+          name: events-management-service
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

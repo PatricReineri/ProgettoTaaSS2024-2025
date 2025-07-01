@@ -47,8 +47,9 @@ public class ImageChatService {
         image.setDateTime(request.getDateTime() != null ? request.getDateTime() : LocalDateTime.now());
         image.setUploadedBy(request.getUploadedBy());
         image.setGallery(gallery);
-        imageRepository.save(image);
-        request.setDateTime(image.getDateTime());
+        Image savedImage = imageRepository.save(image);
+        request.setDateTime(savedImage.getDateTime());
+        request.setImage_id(savedImage.getId());
         return request;
     }
 

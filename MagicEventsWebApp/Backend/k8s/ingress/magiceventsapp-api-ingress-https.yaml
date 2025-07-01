@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: magicevents-ingress-https
+  namespace: magicevents
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2        # riscrive il path
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - magicevents.192.168.49.2.nip.io
+      secretName: magicevents-tls  # cert. per TLS esterno
+  rules:
+    - host: magicevents.192.168.49.2.nip.io
+      http:
+        paths:
+          - path: /api/users(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: user-management-service
+                port:
+                  number: 8443
+
+
