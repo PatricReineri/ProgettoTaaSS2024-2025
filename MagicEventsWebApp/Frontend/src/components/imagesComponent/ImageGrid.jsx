@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import ImageCard from './ImageCard';
+import Button from '../buttons/Button';
 
 const ImageGrid = ({
 	onDelete = (image) => alert('delete: ', image.id),
 	onLoadMore = () => alert('load more; '),
+	onClickImage = (image) => alert('image click'),
 	onLike = (image) => alert('like: ', image.id),
 	displayOnloadMore = true,
 	images,
@@ -12,12 +14,14 @@ const ImageGrid = ({
 
 	useEffect(() => {
 		const items = images;
-		const listItems = items.map((mex, index) => <ImageCard key={index} onLike={onLike} mex={mex}></ImageCard>);
+		const listItems = items.map((mex, index) => (
+			<ImageCard key={index} onDelete={onDelete} onClick={onClickImage} onLike={onLike} mex={mex}></ImageCard>
+		));
 		setList(listItems);
 	}, [images]);
 
 	return (
-		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3   max-[1080px]:grid-cols-4  grid-cols-5   gap-[1px] space-y-2 p-2">
+		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3    max-[1080px]:grid-cols-4  grid-cols-5   gap-[1px] space-y-2 p-2">
 			{list.length > 0 ? (
 				list
 			) : (
@@ -25,6 +29,7 @@ const ImageGrid = ({
 					Nessauna immaggine
 				</div>
 			)}
+			{displayOnloadMore ? <Button onClick={onLoadMore} custom="!col-span-full " text="Carica più immagini  " /> : ''}
 		</div>
 	);
 };

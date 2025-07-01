@@ -9,11 +9,16 @@ import ImageList from '../../../components/Lists/ImageList';
 import ImageGrid from '../../../components/imagesComponent/ImageGrid';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
+import img from '../../../img/background.jpg';
+import clsx from 'clsx';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
+	const [imagePopup, setImagePopup] = useState('');
+	const [titlePopup, setTitlePopup] = useState('');
+	const [openPopup, setOpenPopup] = useState(false);
 	const [imagesPopular, setImagesPopular] = useState([]);
 	const [title, setTitle] = useState('');
 	const gallery = document.getElementById('gallery');
@@ -36,7 +41,8 @@ const GalleryPage = () => {
 		let res = await getImages(eventId, page);
 		if (!res.ok) throw new Error('Error on load more images');
 		const data = await res.json();
-		if (data.images.length === 0) {
+		if (data.images.length < 10) {
+			setImages((prev) => [...prev, ...data.images]);
 			setMessageFinish(true);
 			return;
 		}
@@ -51,7 +57,8 @@ const GalleryPage = () => {
 		let res = await getImagesPopular(eventId, page);
 		if (!res.ok) throw new Error('Error on load more popular images');
 		const data = await res.json();
-		if (data.images.length === 0) {
+		if (data.images.length < 10) {
+			setImagesPopular((prev) => [...prev, ...data.images]);
 			setMessageFinishp(true);
 			return;
 		}
@@ -115,7 +122,8 @@ const GalleryPage = () => {
 					setImages((prev) => [receivedImage, ...prev.filter((item) => !(hash(item) === hash(receivedImage)))]);
 				});
 				subscribe(client, `/topic/gallery/deleteImage/${eventId}`, (deletedMessage, hash) => {
-					setImages((prev) => prev.filter((item) => !(hash(item) === hash(deletedMessage))));
+					setImages((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
+					setImagesPopular((prev) => prev.filter((item) => !(item.id === deletedMessage.imageID)));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
 					console.log('Subscribe!!!');
@@ -200,14 +208,17 @@ const GalleryPage = () => {
 			return;
 		}
 
+		console.log(image);
 		let user = JSON.parse(sessionStorage.getItem('user'));
 		const galleryImage = {
 			userMagicEventsTag: user.magicEventTag.toString(),
 			like: !image.userLike,
-			imageID: image.id,
+			imageID: image.id || image.imageID,
 			eventID: eventId,
 			likedCount: 0,
 		};
+		console.log(galleryImage);
+
 		try {
 			send(stompClient, `/app/gallery/imageLike/${eventId}`, galleryImage);
 		} catch (error) {
@@ -215,19 +226,63 @@ const GalleryPage = () => {
 		}
 	};
 
+	function openImage(image) {
+		setImagePopup(image.base64Image);
+		setTitlePopup(image.title);
+		setOpenPopup(true);
+	}
+
 	return (
 		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
 			<div className=" mt-4  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
 				<h1 className="font-bold text-2xl">{title ? title : 'Nessun titolo'}</h1>
 			</div>
-			<ImageList onLike={(img) => likeImage(img)} images={imagesPopular} />
+			<ImageList
+				displayOnloadMore={!messageFinishp}
+				onLoadMore={loadMorep}
+				onClickImage={(img) => openImage(img)}
+				onLike={(img) => likeImage(img)}
+				onDelete={(img) => deleteImage(img)}
+				images={imagesPopular}
+			/>
 			<h1>Galleria</h1>
-			<ImageGrid onLike={(img) => likeImage(img)} images={images} />
+			<ImageGrid
+				displayOnloadMore={!messageFinish}
+				onLoadMore={loadMore}
+				onClickImage={(img) => openImage(img)}
+				onLike={(img) => likeImage(img)}
+				onDelete={(img) => deleteImage(img)}
+				images={images}
+			/>
 			<Button
 				custom="absolute right-4 bottom-4  shadow-[20rem] !rounded-full "
 				text={<FontAwesomeIcon icon={faPlus} />}
 			></Button>
 			<ImageDropImage onSend={(title, image) => sendImage(title, image)} />
+			{/* POpup image open */}
+			<div
+				className={clsx({
+					'absolute p-4  top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px]  h-full w-full flex max-sm:flex-col items-center justify-center ':
+						openPopup,
+					hidden: !openPopup,
+				})}
+			>
+				<div className="sm:h-full max-sm:h-[calc(100%-5.5rem)]">
+					<img
+						className="aspect-4/5 object-cover h-full  rounded-sm "
+						src={'data:image/*;base64,' + imagePopup}
+						alt="test"
+					/>
+				</div>
+				<p className="text-lg text-[#E4DCEF] max-sm:w-full bg-[#363540] rounded-md p-4 sm:w-max sm:max-w-80 text-ellipsis max-sm:line-clamp-2 max-sm:h-[4.89rem]   ">
+					{titlePopup}
+				</p>
+				<Button
+					onClick={() => setOpenPopup(false)}
+					custom="absolute top-4 right-4"
+					text={<FontAwesomeIcon icon={faClose} />}
+				></Button>
+			</div>
 		</div>
 	);
 };
