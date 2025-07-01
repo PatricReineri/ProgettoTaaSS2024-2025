@@ -46,7 +46,19 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 			{/* Pulsante */}
 			<div className="mt-4 self-end">
-				<Button text="Modifica evento"></Button>
+				<Button 
+					text="Modifica evento" 
+					onClick={async (e) => {
+						e.stopPropagation();
+						try {
+							const res = await getEventId(eventName, localDataTime);
+							const id = await res.text();
+							navigate(`/modifyevent/${id[1]}`);
+						} catch (err) {
+							console.error('Error contacting server:', err);
+						}
+				}}>
+				</Button>
 			</div>
 		</div>
 	);

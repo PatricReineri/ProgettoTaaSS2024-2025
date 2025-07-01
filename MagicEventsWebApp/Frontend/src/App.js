@@ -5,7 +5,7 @@ import RegisterPage from './pages/Authentication/RegisterPage';
 import UserProfilePage from './pages/UserProfile/UserProfilePage';
 import GoogleCallbackPage from './pages/Authentication/GoogleCallbackPage';
 import ChangePasswordPage from './pages/Authentication/ChangePasswordPage';
-import ModifyUserValuePage from './pages/UserProfile/ModifyUserValuePage';
+import ModifyUserValuePage from './pages/UserProfile/ModifyUserPage';
 import HomePage from './pages/HomePage';
 import NavBar from './components/navigation/NavBar';
 import BoardPage from './pages/Event/Board/BoardPage';
@@ -21,6 +21,7 @@ import EventsPage from './pages/Event/EventPage';
 import clsx from 'clsx';
 import GalleryPage from './pages/Event/Gallery/GalleryPage';
 import GamePage from './pages/Event/Game/GamePage';
+import ModifyEventPage from './pages/Event/ModifyEventPage';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -112,6 +113,7 @@ function App() {
 						}
 					/>
 					<Route path="/myevents" element={<MyEventsPage />} />
+					<Route path="/modifyevent/:eventId" element={<ModifyEventPage />} />
 					<Route path="/:eventId/board" element={<BoardPage />} />
 					<Route path="/:eventId/gallery" element={<GalleryPage />} />
 					<Route path="/:eventId" element={<EventsPage />} />

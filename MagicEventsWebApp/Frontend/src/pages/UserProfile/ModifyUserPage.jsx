@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../auth/AuthContext';
 import { useState } from 'react';
 import { modifyUser } from '../../api/authentication';
 
@@ -86,8 +85,7 @@ function UserEditPage({ setLogged }) {
 				<button
 					type="submit"
 					className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-				>
-					
+				>	
 				Salva modifica
 				</button>
 			</form>
