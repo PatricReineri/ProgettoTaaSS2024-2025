@@ -12,9 +12,21 @@ export function getEventsp() {
 
 export function getEventsc() {
 	return fetch(
-		`http://localhost:8080/gestion/geteventslistc?partecipantId=${
+		`http://localhost:8080/gestion/geteventslistc?creatorId=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
+		{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
+}
+
+export function getEventId(title, day) {
+	return fetch(
+		`http://localhost:8080/gestion/geteventid?creatorId=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}&title=${title}&day=${day}`,
 		{
 			method: 'GET',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

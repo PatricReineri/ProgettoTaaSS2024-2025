@@ -50,11 +50,8 @@ const CreationEventPage = () => {
 		console.log('Service: ' + geocodingService);
 
 		if (!geocodingService || !address) return; // errore o impossibile fare la chiamata
-		console.log('Sto per chiamare geocodingService...');
 
 		await geocodingService.geocode({ address }, (results, status) => {
-			console.log('Sono dentro geocodingService.geocode');
-
 			if (results && status === 'OK') {
 				if (!results[0]) {
 					console.log('result non valid? ', results[0]);
@@ -128,7 +125,7 @@ const CreationEventPage = () => {
 
 	async function createEventForm(locationCoords = '') {
 		if (!eventDetail.title) {
-			setError('Inserisci il titolo del evento');
+			setError('Inserisci il titolo per evento');
 			return;
 		}
 		if (!eventDetail.boardTitle) {
@@ -140,7 +137,7 @@ const CreationEventPage = () => {
 			return;
 		}
 		if (eventDetail.description.length < 10 || eventDetail.description.length > 255) {
-			setError('La descrizione del evento deve essere almeno di 10 lettere con un massimo di 255');
+			setError('La descrizione di evento deve essere almeno di 10 lettere con un massimo di 255');
 			return;
 		}
 		if (eventDetail.boardDescription.length < 10 || eventDetail.boardDescription.length > 255) {
@@ -148,7 +145,7 @@ const CreationEventPage = () => {
 			return;
 		}
 		if (eventDetail.image.length <= 0) {
-			setError("L'immagine del evento è obligatoria");
+			setError("L'immagine di evento è obligatoria");
 			return;
 		}
 		setError('');
@@ -184,7 +181,7 @@ const CreationEventPage = () => {
 					<Input
 						onChange={(e) => handleChange(e, 'title')}
 						value={eventDetail.title}
-						label="Titolo del evento"
+						label="Titolo evento"
 						name="titolo"
 					/>
 
@@ -243,7 +240,7 @@ const CreationEventPage = () => {
 						minLength={10}
 						onChange={(e) => handleChange(e, 'boardDescription')}
 						value={eventDetail.boardDescription}
-						name="Descrizione Bacheca"
+						name="Descrizione bacheca"
 						label="Descrizione"
 						customClass="flex-auto "
 						customClassContainer="flex-auto"
@@ -344,7 +341,7 @@ const CreationEventPage = () => {
 								onChange={(e) => setPartecipantInput(e.target.value)}
 								value={partecipantInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="Email del utenta da invitare"
+								name="email utente da invitare"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
 								{eventDetail.participants.length === 0 ? <p className="text-center">Nessun utente invitato</p> : ''}
@@ -377,7 +374,7 @@ const CreationEventPage = () => {
 								onChange={(e) => setAdminInput(e.target.value)}
 								value={adminInput}
 								customClass="bg-[#363540] text-[#E8F2FC]"
-								name="Email del Admin"
+								name="email degli utenti admin"
 							/>
 							<div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
 								{eventDetail.admins.length === 0 ? (
@@ -386,7 +383,7 @@ const CreationEventPage = () => {
 									''
 								)}
 								{eventDetail.admins.map((item) => (
-									<div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
+									<div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center">
 										<p>{item}</p>
 										<Button
 											onClick={() => {

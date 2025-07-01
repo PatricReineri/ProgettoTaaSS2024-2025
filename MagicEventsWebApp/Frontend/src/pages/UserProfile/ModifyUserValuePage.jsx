@@ -23,7 +23,7 @@ function UserEditPage({ setLogged }) {
 		try {
 			const res = await modifyUser(JSON.stringify(user).replace('null', '""'));
 			if (!res.ok) throw new Error('error for user modify operation');
-			setMessage('Change successful');
+			setMessage('Modifica riuscita');
 			sessionStorage.setItem('user', JSON.stringify(user));
 			navigate('/modifyuser');
 			setLogged(false);
@@ -87,7 +87,8 @@ function UserEditPage({ setLogged }) {
 					type="submit"
 					className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
 				>
-					Save modify
+					
+				Salva modifica
 				</button>
 			</form>
 		</div>

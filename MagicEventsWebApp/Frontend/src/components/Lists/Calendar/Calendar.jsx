@@ -3,7 +3,7 @@ import CalendarDay from './CalendarDay';
 
 const Calendar = ({ days }) => {
 	if (days === undefined || days.length === 0) {
-		return <p className="p-6 text-current/30 font-bold text-center w-full ">No events in board</p>;
+		return <p className="p-6 text-current/30 font-bold text-center w-full ">Nessun evento previsto</p>;
 	}
 
 	const items = days;
