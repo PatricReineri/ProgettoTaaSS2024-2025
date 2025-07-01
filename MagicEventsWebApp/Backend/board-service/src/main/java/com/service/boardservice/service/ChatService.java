@@ -40,7 +40,8 @@ public class ChatService {
                 board
         );
         
-        messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+        request.setMessageID(savedMessage.getId());
     }
 
     public DeleteMessageRequestDTO deleteMessage(DeleteMessageRequestDTO request) {
