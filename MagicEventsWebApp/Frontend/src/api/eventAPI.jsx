@@ -22,6 +22,18 @@ export function getEventsc() {
 	);
 }
 
+export function getEventId(title, day) {
+	return fetch(
+		`http://localhost:8080/gestion/geteventid?creatorId=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}&title=${title}&day=${day}`,
+		{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
+}
+
 export function annullEvent(eventId) {
 	return fetch(
 		`http://localhost:8080/gestion/annullevent?eventId=${eventId}&magicEventsTag=${

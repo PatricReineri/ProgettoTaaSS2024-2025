@@ -62,7 +62,7 @@ const ImageDropImage = ({ onSend }) => {
 
 	return (
 		<Popup
-			title="Invia un immagine"
+			title="Invia un'immagine"
 			children={
 				<div className="flex flex-col  items-center justify-center p-2 ">
 					{!image ? (
@@ -92,7 +92,7 @@ const ImageDropImage = ({ onSend }) => {
 							<Input
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								name={'titollo'}
+								name={'titolo'}
 								label={'Titolo immagine'}
 							></Input>
 							<p className="text-xs text-[#EE0E51] ">{error}</p>

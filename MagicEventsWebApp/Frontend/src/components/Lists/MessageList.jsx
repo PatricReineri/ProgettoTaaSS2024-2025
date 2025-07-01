@@ -3,7 +3,7 @@ import Button from '../buttons/Button';
 import MessageCard from '../Card/MessageCard';
 import Input from '../inputs/Input';
 
-const MexssageList = ({
+const MessageList = ({
 	onDelete,
 	onLoadMore,
 	displayOnloadMore = true,
@@ -41,7 +41,7 @@ const MexssageList = ({
 						text="Invia"
 					/>
 				</div>
-				<p className="p-6 text-current/30 font-bold text-center w-full ">No message in board</p>;
+				<p className="p-6 text-current/30 font-bold text-center w-full ">Nessun messaggio</p>;
 			</div>
 		);
 	}
@@ -84,4 +84,4 @@ const MexssageList = ({
 	);
 };
 
-export default MexssageList;
+export default MessageList;

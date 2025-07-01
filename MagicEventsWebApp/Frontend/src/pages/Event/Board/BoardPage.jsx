@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
-
-import MexssageList from '../../../components/Lists/List';
+import MessageList from '../../../components/Lists/MessageList';
 import { getMessages } from '../../../api/boardApi';
-import { useIntersection } from '../../../util/hook';
 import { useParams } from 'react-router-dom';
-import { subscribe } from '../../../util/WebSocket';
+import { subscribe } from '../../../utils/WebSocket';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -64,7 +62,6 @@ const BoardPage = () => {
 			setTitle(data.title);
 			setDescription(data.description);
 			setMessages(data.messages);
-
 			//sessionStorage.setItem('user', JSON.stringify({ username: 'Xandro01' }));
 		}
 
@@ -97,6 +94,7 @@ const BoardPage = () => {
 			(frame) => {
 				setStompClient(client);
 				setConnected(true);
+				
 				// Subscribe to the topic with the correct path format
 				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
 					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
@@ -169,7 +167,7 @@ const BoardPage = () => {
 				<h1 className="font-bold">{title}</h1>
 				<p className="text-xs">{description}</p>
 			</div>
-			<MexssageList
+			<MessageList
 				displayOnloadMore={!messageFinish}
 				onLoadMore={loadMore}
 				onSend={(value) => sendMessage(value)}

@@ -7,7 +7,7 @@ const ImageList = ({
 	onLoadMore = () => alert('load more; '),
 	onLike = (image) => alert('like: ', image.id),
 	displayOnloadMore = true,
-	onClickImage = (image) => alert('image click'),
+	onClickImage = (image) => alert('click'),
 	images,
 }) => {
 	const items = images;
@@ -21,7 +21,7 @@ const ImageList = ({
 			{listItems.length > 0 ? (
 				<div className=" snap-x w-full  flex flex-row gap-2 p-4 overflow-x-auto   ">
 					{listItems}
-					{displayOnloadMore ? <Button onClick={onLoadMore} custom=" " text="Carica più immagini  " /> : ''}
+					{displayOnloadMore ? <Button onClick={onLoadMore} custom=" " text="Carica più immagini" /> : ''}
 				</div>
 			) : (
 				<div className=" bg-[#505458]/50 backdrop-blur-4xl snap-x w-full   text-[#E8F2FC] rounded-md  flex flex-row gap-2 p-2 overflow-x-auto ">
