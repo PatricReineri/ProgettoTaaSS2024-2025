@@ -20,6 +20,7 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import EventsPage from './pages/Event/EventPage';
 import clsx from 'clsx';
 import GalleryPage from './pages/Event/Gallery/GalleryPage';
+import GamePage from './pages/Event/Game/GamePage';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -110,16 +111,11 @@ function App() {
 							</APIProvider>
 						}
 					/>
-					<Route 
-						path="/myevents" 
-						element={
-							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
-								<MyEventsPage />
-							</APIProvider>
-						} />
+					<Route path="/myevents" element={<MyEventsPage />} />
 					<Route path="/:eventId/board" element={<BoardPage />} />
 					<Route path="/:eventId/gallery" element={<GalleryPage />} />
 					<Route path="/:eventId" element={<EventsPage />} />
+					<Route path="/:eventId/game" element={<GamePage />} />
 				</Routes>
 			</div>
 		</Router>
