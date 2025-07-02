@@ -299,7 +299,7 @@ public class EventGestorService {
         ).toList();
     }
 
-    public List<Long> getEventId(String title, LocalDateTime day) {
+    public List<Long> getEventId(Long magicEventTag, String title, LocalDateTime day) {
        List<Event> events = eventsRepository.findAll();
        List<Long> eventIds = new ArrayList<>();
        for (Event event : events) {
@@ -308,7 +308,9 @@ public class EventGestorService {
                    (event.getStarting().toLocalDate().isBefore(day.toLocalDate()) || event.getStarting().toLocalDate().isEqual(day.toLocalDate())) &&
                    (event.getEnding().toLocalDate().isAfter(day.toLocalDate()) || event.getEnding().toLocalDate().isEqual(day.toLocalDate()))
            ) {
-               eventIds.add(event.getEventId());
+               if(isPartecipant(magicEventTag, event.getEventId())) {
+                   eventIds.add(event.getEventId());
+               }
            }
        }
        return eventIds;
@@ -407,7 +409,7 @@ public class EventGestorService {
     }
 
     public ServicesDTO getEventEnabledServices(Long eventId, Long magicEventsTag) {
-        if (!isCreator(magicEventsTag, eventId)) {
+        if (!isPartecipant(magicEventsTag, eventId)) {
             throw new UnauthorizedException("User not authorized to access event services");
         }
 

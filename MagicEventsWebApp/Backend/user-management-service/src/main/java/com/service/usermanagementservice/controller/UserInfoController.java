@@ -1,5 +1,6 @@
 package com.service.usermanagementservice.controller;
 
+import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class UserInfoController {
     @GetMapping("/isauthenticated")
     public Boolean isAuthenticated(@RequestParam("email") String email) throws Exception {
         return userService.isAuthenticated(email);
+    }
+
+    @GetMapping("/profile")
+    public UserDTO userProfile(@RequestParam("magicEventTag") Long id) throws Exception {
+        return userService.userProfile(id);
     }
 }
 

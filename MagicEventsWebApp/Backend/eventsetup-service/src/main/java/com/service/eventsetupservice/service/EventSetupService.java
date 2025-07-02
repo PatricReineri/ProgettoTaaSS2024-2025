@@ -153,9 +153,9 @@ public class EventSetupService {
             return eventManagementWebClient
                     .get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/gestion/getEventEnabledServices")
+                            .path("/gestion/geteventenabledservices")
                             .queryParam("eventId", eventId)
-                            .queryParam("magicEventsTag", userMagicEventsTag)
+                            .queryParam("magicEventTag", userMagicEventsTag)
                             .build())
                     .retrieve()
                     .bodyToMono(ServicesDTO.class)
