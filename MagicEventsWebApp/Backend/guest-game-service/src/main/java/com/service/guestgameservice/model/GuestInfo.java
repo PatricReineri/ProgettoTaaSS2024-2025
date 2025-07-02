@@ -33,7 +33,7 @@ public class GuestInfo {
     @Column(name = "have_dark_hair", nullable = false)
     private Boolean haveDarkHair;
 
-    @Column(name = "user_magic_events_tag", nullable = false, unique = true)
+    @Column(name = "user_magic_events_tag", nullable = false)
     private String userMagicEventsTag;
 
     @ManyToOne

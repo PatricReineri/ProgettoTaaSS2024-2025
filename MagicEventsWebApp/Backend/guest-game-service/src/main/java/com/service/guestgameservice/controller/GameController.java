@@ -35,6 +35,16 @@ public class GameController {
         }
     }
 
+    @GetMapping("/hasUserInsertedInfo/{eventId}")
+    public ResponseEntity<Boolean> hasUserInsertedGuestInfo(@PathVariable Long eventId, @RequestParam Long userMagicEventsTag) {
+        try {
+            boolean hasInserted = gameService.hasUserInsertedGuestInfo(eventId, userMagicEventsTag);
+            return new ResponseEntity<>(hasInserted, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/gameExists/{eventId}")
     public ResponseEntity<Boolean> gameExists(@PathVariable Long eventId) {
         try {

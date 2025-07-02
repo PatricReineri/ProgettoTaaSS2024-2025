@@ -22,6 +22,7 @@ import clsx from 'clsx';
 import GalleryPage from './pages/Event/Gallery/GalleryPage';
 import GamePage from './pages/Event/Game/GamePage';
 import ModifyEventPage from './pages/Event/ModifyEventPage';
+import GameForm from './pages/Event/Game/GameForm';
 
 function App() {
 	const [logged, setLogged] = useState(sessionStorage.getItem('user') ? true : false);
@@ -112,19 +113,20 @@ function App() {
 							</APIProvider>
 						}
 					/>
-					<Route 
-						path="/myevents" 
+					<Route
+						path="/myevents"
 						element={
 							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
 								<MyEventsPage />
 							</APIProvider>
-						} 
+						}
 					/>
 					<Route path="/modifyevent/:eventId" element={<ModifyEventPage />} />
 					<Route path="/:eventId/board" element={<BoardPage />} />
 					<Route path="/:eventId/gallery" element={<GalleryPage />} />
 					<Route path="/:eventId" element={<EventsPage />} />
 					<Route path="/:eventId/game" element={<GamePage />} />
+					<Route path="/:eventId/game/form" element={<GameForm />} />
 				</Routes>
 			</div>
 		</Router>

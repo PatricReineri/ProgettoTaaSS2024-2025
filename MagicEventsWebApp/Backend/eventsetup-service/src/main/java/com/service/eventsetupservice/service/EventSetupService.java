@@ -352,7 +352,7 @@ public class EventSetupService {
 
             Boolean result = guestGameServiceWebClient
                     .post()
-                    .uri("/guestgame/createGuestGame")
+                    .uri("/guest-game/createGame")
                     .body(Mono.just(guestGameRequest), GameRequestDTO.class)
                     .retrieve()
                     .bodyToMono(Boolean.class)

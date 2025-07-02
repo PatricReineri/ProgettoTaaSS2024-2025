@@ -2,10 +2,11 @@ import { useState } from 'react';
 import GameNode from '../../../components/gameComponents/GameNode';
 import { useEffect } from 'react';
 import { getGame } from '../../../api/gameAPI';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const GamePage = () => {
 	const { eventId } = useParams();
+	const navigate = useNavigate();
 
 	const tree = {
 		root: {
@@ -51,6 +52,12 @@ const GamePage = () => {
 
 	useEffect(() => {
 		async function fetchAPI() {
+			const isInGameAPI = false;
+
+			if (!isInGameAPI) {
+				navigate(`/${eventId}/game/form`);
+			}
+
 			const res = await getGame(eventId);
 		}
 

@@ -136,6 +136,16 @@ public class GameService {
         }
     }
 
+    public boolean hasUserInsertedGuestInfo(Long eventId, Long userMagicEventsTag) {
+        Game game = gameRepository.findByEventId(eventId);
+        if (game == null) {
+            return false;
+        }
+
+        GuestInfo existingGuestInfo = guestGameRepository.findByGameAndUserMagicEventsTag(game, userMagicEventsTag.toString());
+        return existingGuestInfo != null;
+    }
+
     private boolean authorizeAdmin(Long eventId, Long userMagicEventsTag) {
         try {
             Boolean isAdmin = eventManagementWebClient.get()
