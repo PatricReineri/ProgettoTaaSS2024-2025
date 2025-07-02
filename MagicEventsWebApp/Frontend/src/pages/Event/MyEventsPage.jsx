@@ -28,7 +28,7 @@ const MyEventsPage = () => {
 		fetchAPI();
 	}, []);
 	return (
-		<div className="h-full overflow-auto">
+		<div className="h-full overflow-y-auto bg-[#505458] p-4">
 			{ready ? <EventList events={events} /> : <p className="p-4">Caricamento...</p>}
 		</div>
 	);

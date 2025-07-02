@@ -103,8 +103,8 @@ public class EventGestorService {
         for(EventDTO eventForCreator : eventsForCreator) {
             if(
                     eventForCreator.getTitle().equals(eventDTO.getTitle()) &&
-                    (eventForCreator.getStarting().isBefore(eventDTO.getStarting()) || eventForCreator.getStarting().isEqual(eventDTO.getStarting())) &&
-                    (eventForCreator.getEnding().isAfter(eventDTO.getEnding()) || eventForCreator.getEnding().isEqual(eventDTO.getEnding()))
+                    (eventForCreator.getStarting().toLocalDate().isBefore(eventDTO.getStarting().toLocalDate()) || eventForCreator.getStarting().toLocalDate().isEqual(eventDTO.getStarting().toLocalDate())) &&
+                    (eventForCreator.getEnding().toLocalDate().isAfter(eventDTO.getEnding().toLocalDate()) || eventForCreator.getEnding().toLocalDate().isEqual(eventDTO.getEnding().toLocalDate()))
             ) {
                 return -1L;
             }
@@ -299,8 +299,8 @@ public class EventGestorService {
            if(
                    event.getCreator().equals(creatorId) &&
                    event.getTitle().equals(title) &&
-                   (event.getStarting().isBefore(day) || event.getStarting().isEqual(day)) &&
-                   (event.getEnding().isAfter(day) || event.getEnding().isEqual(day))
+                   (event.getStarting().toLocalDate().isBefore(day.toLocalDate()) || event.getStarting().toLocalDate().isEqual(day.toLocalDate())) &&
+                   (event.getEnding().toLocalDate().isAfter(day.toLocalDate()) || event.getEnding().toLocalDate().isEqual(day.toLocalDate()))
            ) {
                eventIds.add(event.getEventId());
            }

@@ -83,12 +83,13 @@ const CreationEventPage = () => {
 	};
 
 	const imgInput = useRef(null);
+
 	const handleChangeImage = (e) => {
 		alert('Handled');
 		imageUploaded(e.target.files[0]);
 	};
 
-	const handleRemoveIMG = () => {
+	const handleRemoveImage = () => {
 		imgInput.current.value = '';
 		setEventDetail((prev) => ({ ...prev, image: '' }));
 	};
@@ -140,7 +141,7 @@ const CreationEventPage = () => {
 			return;
 		}
 		if (eventDetail.image.length <= 0) {
-			setError("L'immagine di evento è obligatoria");
+			setError("L'immagine di evento è obbligatoria");
 			return;
 		}
 		setError('');
@@ -217,7 +218,7 @@ const CreationEventPage = () => {
 						rigthComponent={
 							<Button
 								custom="!bg-transparent !hover:bg-black/50 !border-none mt-[0.15rem]"
-								onClick={handleRemoveIMG}
+								onClick={handleRemoveImage}
 								text={<FontAwesomeIcon icon={faClose} />}
 							></Button>
 						}

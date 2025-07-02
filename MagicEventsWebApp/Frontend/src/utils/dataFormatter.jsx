@@ -98,3 +98,36 @@ export function getUpcomingEvents(events, daysAhead) {
         })
         .map(({ _startDate, _endDate, ...e }) => e);
 }
+
+export function convertDayToISO(dayObj) {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const second = now.getSeconds();
+
+    const monthMap = {
+        'Gennaio': 0,
+        'Febbraio': 1,
+        'Marzo': 2,
+        'Aprile': 3,
+        'Maggio': 4,
+        'Giugno': 5,
+        'Luglio': 6,
+        'Agosto': 7,
+        'Settembre': 8,
+        'Ottobre': 9,
+        'Novembre': 10,
+        'Dicembre': 11,
+    };
+
+    const [dayStr, monthStr] = dayObj.day.split(' ');
+    const day = parseInt(dayStr, 10);
+    const month = monthMap[monthStr];
+
+    const date = new Date(year, month, day, hour, minute, second);
+
+    return date.toISOString().replace('.000Z', '');
+}
+
