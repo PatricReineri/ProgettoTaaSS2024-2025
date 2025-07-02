@@ -2,20 +2,54 @@ import React from 'react';
 import Button from '../buttons/Button';
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
-import { deleteEvent, getEventId } from '../../api/eventAPI';
+import { useState, useEffect } from 'react';
+import { annullEvent, deannullEvent, deleteEvent, getEventId, isActive } from '../../api/eventAPI';
 import { useCoordinatesConverter } from '../../utils/coordinatesConverter';
 
 const EventCard = ({ localDataTime, day, month, eventName, time, location, description }) => {
 	const navigate = useNavigate();
 	const address = useCoordinatesConverter(location);
 
+	const [eventDisabled, setEventDisabled] = useState(false);
+	const [eventId, setEventId] = useState(-1);
+
+	useEffect(() => {
+	const fetchData = async () => {
+		try {
+			const res = await getEventId(eventName, localDataTime);
+			const id = await res.json();
+			setEventId(id);
+			const status = await isActive(id);
+			const flag = await status.json();
+			console.log(flag);
+			setEventDisabled(flag);
+		} catch (err) {
+			console.error('Error contacting server:', err);
+		}
+	};
+
+	fetchData();
+	}, []);
+
+	const handleClick = async (e) => {
+		e.stopPropagation();
+		try {
+			if (eventDisabled) {
+				await annullEvent(eventId);
+			} else {
+				await deannullEvent(eventId);
+			}
+			setEventDisabled((prev)=> !prev);
+		} catch (err) {
+			console.error('Error contacting server:', err);
+		}
+	};
+
 	return (
 		<div
 			onClick={async () => {
 				try {
-					const res = await getEventId(eventName, localDataTime);
-					const id = await res.text();
-					navigate(`/${id[1]}`);
+					navigate(`/${eventId}`);
 				} catch (err) {
 					console.error('Error contacting server:', err);
 				}
@@ -47,32 +81,31 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 			{/* Pulsante */}
 			<div className="mt-4 self-end flex flex-row space-x-1">
-				<Button 
-					text="Modifica evento" 
-					onClick={async (e) => {
-						e.stopPropagation();
-						try {
-							const res = await getEventId(eventName, localDataTime);
-							const id = await res.text();
-							navigate(`/modifyevent/${id[1]}`);
-						} catch (err) {
-							console.error('Error contacting server:', err);
-						}
-				}}>
-				</Button>
+				{eventDisabled && (
+					<Button 
+						text="Modifica evento" 
+						onClick={async (e) => {
+							e.stopPropagation();
+							try {
+								navigate(`/modifyevent/${eventId}`);
+							} catch (err) {
+								console.error('Error contacting server:', err);
+							}
+					}}>
+					</Button>
+				)}
 				<Button 
 					text="Elimina evento" 
 					onClick={async (e) => {
 						e.stopPropagation();
 						try {
-							const res = await getEventId(eventName, localDataTime);
-							const id = await res.text();
-							await deleteEvent(id[1])
+							await deleteEvent(eventId)
 						} catch (err) {
 							console.error('Error contacting server:', err);
 						}
 				}}>
 				</Button>
+				<Button text={!eventDisabled ? "Attiva evento" : "Annulla evento"} onClick={handleClick} />
 			</div>
 		</div>
 	);
