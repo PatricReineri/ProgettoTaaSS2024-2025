@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import Button from '../../buttons/Button';
 
 const CalendarDay = ({ day }) => {
 	return (
@@ -20,7 +21,12 @@ const CalendarDay = ({ day }) => {
 					day.events.map((event) => (
 						<div className="flex gap-2 items-center ">
 							<div className="h-4 w-4 bg-[#E4DCEF] group-first:bg-[#EE0E51] rounded-full"></div>
-							<p className="text-[#E4DCEF] group-first:text-[#363540] font-bold text-[12px]  ">{event.title}</p>
+							<p className="text-[#E4DCEF] group-first:text-[#363540] font-bold text-[12px]">
+								<Button 
+									text = {event.title}
+								>
+								</Button>
+							</p>
 						</div>
 					))
 				) : (

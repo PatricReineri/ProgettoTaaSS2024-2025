@@ -2,7 +2,7 @@ import { faClose, faGamepad, faImages, faMapMarker } from '@fortawesome/free-sol
 import Button from '../../components/buttons/Button';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getEvent, getEventService, updatePartecipants, updateAdmins, removePartecipant } from '../../api/eventAPI';
+import { getEvent, updatePartecipants, updateAdmins, removePartecipant, removeAdmin } from '../../api/eventAPI';
 import ErrorContainer from '../../components/Error/ErrorContainer';
 import Input from '../../components/inputs/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const ModifyEventPage = () => {
     const { eventId } = useParams();
 	const [event, setEvent] = useState(null);
-	const [eventServices, setEventServices] = useState(null);
     const [partecipantInput, setPartecipantInput] = useState('');
+    const [adminInput, setAdminInput] = useState('');
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
 	const [eventDetail, setEventDetail] = useState({
@@ -39,30 +39,22 @@ const ModifyEventPage = () => {
             }
         }
 
-        async function fetchAPIServices() {
-            const res = await getEventService(eventId);
-            if (!res.ok) {
-                setEvent(null);
-                return;
-            }
-            const data = await res.json();
-            console.log(data);
-            setEventServices(data);
-        }
-
         fetchAPI();
 
-        fetchAPIServices();
     }, [eventId]);
 
     return !event ? (
 		<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
 	) : (
-        <div className="flex flex-col gap-1 h-full">
+        <div className="flex flex-col gap-4 max-h-[80vh] overflow-auto p-2">
             <h1>Partecipanti</h1>
-            <div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-1  rounded-md">
+
+            <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md">
                 {event.partecipants.map((p) => (
-                    <div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
+                    <div 
+                        key={`participant-${p}`}
+                        className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center"
+                    >
                         <p className="p-2">{p}</p>
                         <Button
                             onClick={async () => {
@@ -86,7 +78,8 @@ const ModifyEventPage = () => {
                     </div>
                 ))}
             </div>
-            <div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
+
+            <div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] rounded-md gap-1 flex flex-col">
                 <Input
                     onEnterPress={() => {
                         setEventDetail((prev) => ({ ...prev, participants: [...prev.participants, partecipantInput] }));
@@ -97,10 +90,13 @@ const ModifyEventPage = () => {
                     customClass="bg-[#363540] text-[#E8F2FC]"
                     name="email utente da invitare"
                 />
-                <div className=" h-[19rem] flex flex-col gap-1 overflow-y-auto">
+                <div className="h-[10rem] flex flex-col gap-1 overflow-y-auto">
                     {eventDetail.participants.length === 0 ? <p className="text-center">Nessun utente aggiunto</p> : ''}
                     {eventDetail.participants.map((item) => (
-                        <div className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center ">
+                        <div 
+                            key={item}
+                            className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center"
+                        >
                             <p>{item}</p>
                             <Button
                                 onClick={() => {
@@ -116,6 +112,7 @@ const ModifyEventPage = () => {
                         </div>
                     ))}
                 </div>
+
                 <Button 
 					text="Aggiungi partecipanti" 
 					onClick={async () => {
@@ -133,9 +130,96 @@ const ModifyEventPage = () => {
 						}
 				}}>
 				</Button>
+
                 {message && <p className="text-green-600 text-sm">{message}</p>}
 				{error && <p className="text-red-600 text-sm">{error}</p>}
+
             </div>
+            <h1>Amministratori</h1>
+
+            <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md">
+                {event.admins.map((p) => (
+                    <div 
+                        key={`admin-${p}`}
+                        className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center"
+                    >
+                        <p className="p-2">{p}</p>
+                        <Button
+                            onClick={async () => {
+                                setError(null);
+                                setMessage(null);
+                                try {
+                                    const res = await removeAdmin(eventId, p);
+                                    if(res === 'Error' || res.status != 200){
+                                        setError('Errore durante la cancellazione :(');
+                                    }else{
+                                        setMessage('Modifica riuscita');
+                                    }
+                                } catch (err) {
+                                    setError(err.message);
+                                }
+                            }}
+                            link
+                            custom="cursor-pointer"
+                            text={<FontAwesomeIcon icon={faClose} />}
+                        ></Button>
+                    </div>
+                ))}
+            </div>
+
+            <div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] rounded-md gap-1 flex flex-col">
+                <Input
+                    onEnterPress={() => {
+                        setEventDetail((prev) => ({ ...prev, admins: [...prev.admins, adminInput] }));
+                        setAdminInput('');
+                    }}
+                    onChange={(e) => setAdminInput(e.target.value)}
+                    value={adminInput}
+                    customClass="bg-[#363540] text-[#E8F2FC]"
+                    name="email utente da invitare come amministratori"
+                />
+                <div className="h-[10rem] flex flex-col gap-1 overflow-y-auto">
+                    {eventDetail.admins.length === 0 ? <p className="text-center">Nessun utente aggiunto</p> : ''}
+                    {eventDetail.admins.map((item) => (
+                        <div
+                            className="p-2 flex flex-row items-center justify-between px-8 bg-[#363540]/75 text-[#E8F2FC] rounded-full text-center"
+                            key={item}
+                        >
+                            <p>{item}</p>
+                            <Button
+                                onClick={() => {
+                                    setEventDetail((prev) => ({
+                                        ...prev,
+                                        admins: prev.admins.filter((a) => a !== item),
+                                    }));
+                                }}
+                                link
+                                custom="cursor-pointer"
+                                text={<FontAwesomeIcon icon={faClose} />}
+                            ></Button>
+                        </div>
+                    ))}
+                </div>
+                <Button 
+                    text="Aggiungi amministratori" 
+                    onClick={async () => {
+                        setError(null);
+                        setMessage(null);
+                        try {
+                            const res = await updateAdmins(eventId, eventDetail.admins);
+                            if(res === 'Error' || res.status != 200){
+                                setError('Errore durante la modifica degli amministratori :(');
+                            }else{
+                                setMessage('Modifica riuscita');
+                            }
+                        } catch (err) {
+                            setError(err.message);
+                        }
+                }}>
+                </Button>
+                {message && <p className="text-green-600 text-sm">{message}</p>}
+                {error && <p className="text-red-600 text-sm">{error}</p>}
+            </div>   
         </div>
     )
 };
