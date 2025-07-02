@@ -154,6 +154,16 @@ public class EventGestorController {
         return eventGestorService.getEventPartecipated(partecipantId);
     }
 
+    @GetMapping("/isactive")
+    public ResponseEntity<Boolean> isActive(@RequestParam("creatorId") Long creatorId, @RequestParam("eventId") Long eventId) {
+        Boolean flag = eventGestorService.isActive(creatorId, eventId);
+        if(flag == null){
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(false);
+        }else{
+            return ResponseEntity.ok(flag);
+        }
+    }
+
     @GetMapping("/geteventid")
     public List<Long> getEventId(
             @RequestParam("title") String title,

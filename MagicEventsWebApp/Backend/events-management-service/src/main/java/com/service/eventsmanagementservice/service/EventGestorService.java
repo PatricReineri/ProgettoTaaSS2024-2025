@@ -464,5 +464,15 @@ public class EventGestorService {
             return "Error";
         }
     }
+
+    public Boolean isActive(Long creatorId, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if (event.getCreator().equals(creatorId)) {
+            return event.getStatus().equals("ACTIVE");
+        }else {
+            return null;
+        }
+    }
 }
 
