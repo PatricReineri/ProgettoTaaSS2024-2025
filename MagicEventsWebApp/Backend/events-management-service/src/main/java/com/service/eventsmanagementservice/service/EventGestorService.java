@@ -198,7 +198,7 @@ public class EventGestorService {
                 EmailDetails emailDetails = new EmailDetails();
                 emailDetails.setRecipient(partecipant.getEmail());
                 emailDetails.setSubject(event.getTitle() + " event has been modified!");
-                emailDetails.setBody("Go to the" + event.getTitle() + "event page to see details.");
+                emailDetails.setBody("Go to the " + event.getTitle() + " event page to see details.");
                 emailSender.sendMail(emailDetails);
             }
             return "Success";
@@ -232,6 +232,13 @@ public class EventGestorService {
             if(event.getCreator().equals(creatorId)) {
                 event.setStatus("DELETED");
                 eventsRepository.save(event);
+                for(Partecipant partecipant: event.getPartecipants()) {
+                    EmailDetails emailDetails = new EmailDetails();
+                    emailDetails.setRecipient(partecipant.getEmail());
+                    emailDetails.setSubject(event.getTitle() + " event has been cancelled :(");
+                    emailDetails.setBody("We regret to inform you that the creator of the event has decided to no longer do it.");
+                    emailSender.sendMail(emailDetails);
+                }
                 rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
                 if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
                     rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventId);
@@ -376,8 +383,8 @@ public class EventGestorService {
                 EmailDetails emailDetails = new EmailDetails();
                 emailDetails.setRecipient(partecipant.getEmail());
                 emailDetails.setSubject(event.getTitle() + " event will be held!");
-                emailDetails.setBody("We are happy to inform you that the event you wanted to attend will be held! Go to the" +
-                        event.getTitle() + "event page to see details.");
+                emailDetails.setBody("We are happy to inform you that the event you wanted to attend will be held! Go to the " +
+                        event.getTitle() + " event page to see details.");
                 emailSender.sendMail(emailDetails);
             }
             return "Success";
