@@ -35,6 +35,16 @@ public class GameController {
         }
     }
 
+    @GetMapping("/hasUserInsertedInfo/{eventId}")
+    public ResponseEntity<Boolean> hasUserInsertedGuestInfo(@PathVariable Long eventId, @RequestParam Long userMagicEventsTag) {
+        try {
+            boolean hasInserted = gameService.hasUserInsertedGuestInfo(eventId, userMagicEventsTag);
+            return new ResponseEntity<>(hasInserted, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/gameExists/{eventId}")
     public ResponseEntity<Boolean> gameExists(@PathVariable Long eventId) {
         try {
@@ -58,14 +68,14 @@ public class GameController {
     }
 
     @PostMapping("/createGame")
-    public ResponseEntity<Void> createGame(@Valid @RequestBody GameRequestDTO gameRequestDTO) {
+    public ResponseEntity<Boolean> createGame(@Valid @RequestBody GameRequestDTO gameRequestDTO) {
         try {
             gameService.createGame(gameRequestDTO);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.ok(true);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 

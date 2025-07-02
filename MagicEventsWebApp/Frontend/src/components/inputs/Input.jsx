@@ -16,18 +16,30 @@ const Input = ({
 	minLength = 0,
 	required = false,
 	label,
+	min = 0,
+	max = 130,
 	onEnterPress = () => '',
 	rigthComponent,
 }) => {
 	return (
-		<div className={clsx({ ' relative flex flex-col space-y-1 ': true, [customClassContainer]: true })}>
+		<div
+			className={clsx({
+				' relative flex flex-col space-y-1 ': true,
+				[customClassContainer]: true,
+				'!flex-row gap-2 p-2 items-center  ': type === 'radio',
+			})}
+		>
 			<div className="absolute top-5 right-0">{rigthComponent}</div>
 			{label ? (
-				<label className={clsx({ 'text-xs font-bold ms-1': true, [customClassLabel]: true })}>{label}</label>
+				<label className={clsx({ 'text-xs font-bold ms-1': true, [customClassLabel]: true, '!m-0': type === 'radio' })}>
+					{label}
+				</label>
 			) : (
 				<></>
 			)}
 			<input
+				min={min}
+				max={max}
 				accept={accept}
 				ref={ref}
 				onKeyDown={(e) => (e.key === 'Enter' ? onEnterPress() : '')}

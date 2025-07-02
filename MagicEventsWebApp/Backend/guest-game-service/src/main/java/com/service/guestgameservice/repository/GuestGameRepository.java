@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface GuestGameRepository extends JpaRepository<GuestInfo, Long> {
     List<GuestInfo> findByGame(Game game);
+
+    GuestInfo findByGameAndUserMagicEventsTag(Game game, String userMagicEventsTag);
 }

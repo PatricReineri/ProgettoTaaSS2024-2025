@@ -23,15 +23,10 @@ export function getEventsc() {
 }
 
 export function getEventId(title, day) {
-	return fetch(
-		`http://localhost:8080/gestion/geteventid?creatorId=${
-			JSON.parse(sessionStorage.getItem('user')).magicEventTag
-		}&title=${title}&day=${day}`,
-		{
-			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		}
-	);
+	return fetch(`http://localhost:8080/gestion/geteventid?title=${title}&day=${day}`, {
+		method: 'GET',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	});
 }
 
 export function annullEvent(eventId) {
@@ -155,7 +150,6 @@ export function removeAdmin(eventId, adminEmail) {
 	);
 }
 
-
 export function getEvent(eventId) {
 	return fetch(`http://localhost:8080/gestion/geteventinfo?eventId=${eventId}`, {
 		method: 'GET',
@@ -190,4 +184,16 @@ export function deleteEvent(eventId) {
 	return fetch(url, {
 		method: 'DELETE',
 	});
+}
+
+export function isActive(eventId) {
+	return fetch(
+		`http://localhost:8080/gestion/isActive?creatorId=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}&eventId=${eventId}`,
+		{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		}
+	);
 }

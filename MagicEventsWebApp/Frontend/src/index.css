@@ -6,18 +6,18 @@ body {
 }
 
 .backgroundLogin {
-	background-image: url('./img/background.jpg');
+	background-image: url('../public/background.jpg');
 }
 
 .gameBackground {
-	background-image: url('./img/genie2.png');
+	background-image: url('../public/genie2.png');
 	background-size: auto;
 	background-position: center 0px;
 	background-repeat: no-repeat;
 }
 
 .backgroundHome {
-	background-image: url('./img/Hero.jpg');
+	background-image: url('../public/Hero.jpg');
 	background-size: cover;
 	background-position: center;
 }

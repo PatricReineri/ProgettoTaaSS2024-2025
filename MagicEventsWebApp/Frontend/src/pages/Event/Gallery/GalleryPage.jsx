@@ -10,7 +10,6 @@ import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
-import img from '../../../img/background.jpg';
 import clsx from 'clsx';
 
 const GalleryPage = () => {

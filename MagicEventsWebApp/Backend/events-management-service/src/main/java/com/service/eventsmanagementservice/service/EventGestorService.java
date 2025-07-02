@@ -103,8 +103,8 @@ public class EventGestorService {
         for(EventDTO eventForCreator : eventsForCreator) {
             if(
                     eventForCreator.getTitle().equals(eventDTO.getTitle()) &&
-                    (eventForCreator.getStarting().isBefore(eventDTO.getStarting()) || eventForCreator.getStarting().isEqual(eventDTO.getStarting())) &&
-                    (eventForCreator.getEnding().isAfter(eventDTO.getEnding()) || eventForCreator.getEnding().isEqual(eventDTO.getEnding()))
+                    (eventForCreator.getStarting().toLocalDate().isBefore(eventDTO.getStarting().toLocalDate()) || eventForCreator.getStarting().toLocalDate().isEqual(eventDTO.getStarting().toLocalDate())) &&
+                    (eventForCreator.getEnding().toLocalDate().isAfter(eventDTO.getEnding().toLocalDate()) || eventForCreator.getEnding().toLocalDate().isEqual(eventDTO.getEnding().toLocalDate()))
             ) {
                 return -1L;
             }
@@ -198,7 +198,7 @@ public class EventGestorService {
                 EmailDetails emailDetails = new EmailDetails();
                 emailDetails.setRecipient(partecipant.getEmail());
                 emailDetails.setSubject(event.getTitle() + " event has been modified!");
-                emailDetails.setBody("Go to the" + event.getTitle() + "event page to see details.");
+                emailDetails.setBody("Go to the " + event.getTitle() + " event page to see details.");
                 emailSender.sendMail(emailDetails);
             }
             return "Success";
@@ -232,6 +232,13 @@ public class EventGestorService {
             if(event.getCreator().equals(creatorId)) {
                 event.setStatus("DELETED");
                 eventsRepository.save(event);
+                for(Partecipant partecipant: event.getPartecipants()) {
+                    EmailDetails emailDetails = new EmailDetails();
+                    emailDetails.setRecipient(partecipant.getEmail());
+                    emailDetails.setSubject(event.getTitle() + " event has been cancelled :(");
+                    emailDetails.setBody("We regret to inform you that the creator of the event has decided to no longer do it.");
+                    emailSender.sendMail(emailDetails);
+                }
                 rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventId);
                 if(event.getGalleryEnabled() != null && event.getGalleryEnabled()) {
                     rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventId);
@@ -292,15 +299,14 @@ public class EventGestorService {
         ).toList();
     }
 
-    public List<Long> getEventId(Long creatorId, String title, LocalDateTime day) {
+    public List<Long> getEventId(String title, LocalDateTime day) {
        List<Event> events = eventsRepository.findAll();
        List<Long> eventIds = new ArrayList<>();
        for (Event event : events) {
            if(
-                   event.getCreator().equals(creatorId) &&
                    event.getTitle().equals(title) &&
-                   (event.getStarting().isBefore(day) || event.getStarting().isEqual(day)) &&
-                   (event.getEnding().isAfter(day) || event.getEnding().isEqual(day))
+                   (event.getStarting().toLocalDate().isBefore(day.toLocalDate()) || event.getStarting().toLocalDate().isEqual(day.toLocalDate())) &&
+                   (event.getEnding().toLocalDate().isAfter(day.toLocalDate()) || event.getEnding().toLocalDate().isEqual(day.toLocalDate()))
            ) {
                eventIds.add(event.getEventId());
            }
@@ -376,8 +382,8 @@ public class EventGestorService {
                 EmailDetails emailDetails = new EmailDetails();
                 emailDetails.setRecipient(partecipant.getEmail());
                 emailDetails.setSubject(event.getTitle() + " event will be held!");
-                emailDetails.setBody("We are happy to inform you that the event you wanted to attend will be held! Go to the" +
-                        event.getTitle() + "event page to see details.");
+                emailDetails.setBody("We are happy to inform you that the event you wanted to attend will be held! Go to the " +
+                        event.getTitle() + " event page to see details.");
                 emailSender.sendMail(emailDetails);
             }
             return "Success";
@@ -456,6 +462,16 @@ public class EventGestorService {
             return "Success";
         } else{
             return "Error";
+        }
+    }
+
+    public Boolean isActive(Long creatorId, Long eventId) {
+        Event event = eventsRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+        if (event.getCreator().equals(creatorId)) {
+            return event.getStatus().equals("ACTIVE");
+        }else {
+            return null;
         }
     }
 }
