@@ -299,12 +299,11 @@ public class EventGestorService {
         ).toList();
     }
 
-    public List<Long> getEventId(Long creatorId, String title, LocalDateTime day) {
+    public List<Long> getEventId(String title, LocalDateTime day) {
        List<Event> events = eventsRepository.findAll();
        List<Long> eventIds = new ArrayList<>();
        for (Event event : events) {
            if(
-                   event.getCreator().equals(creatorId) &&
                    event.getTitle().equals(title) &&
                    (event.getStarting().toLocalDate().isBefore(day.toLocalDate()) || event.getStarting().toLocalDate().isEqual(day.toLocalDate())) &&
                    (event.getEnding().toLocalDate().isAfter(day.toLocalDate()) || event.getEnding().toLocalDate().isEqual(day.toLocalDate()))

@@ -1,4 +1,4 @@
-import { faClose, faArrowAltCircleRight, faPen, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
 import Button from '../../components/buttons/Button';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import ErrorContainer from '../../components/Error/ErrorContainer';
 import Input from '../../components/inputs/Input';
 import ImageEdit from '../../components/imagesComponent/ImageEdit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { convertDataTime } from '../../utils/dataFormatter';
 
 const ModifyEventPage = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -41,6 +42,11 @@ const ModifyEventPage = () => {
 		admins: [],
 	});
 
+    const handleChange = (e) => {
+		const { name, value } = e.target;
+		setEventDetail((prev) => ({ ...prev, [name]: value }));
+	};
+
     const imgInput = useRef(null);
     const [editingImage, setEditingImage] = useState(false);
 
@@ -54,15 +60,12 @@ const ModifyEventPage = () => {
 		setEventDetail((prev) => ({ ...prev, image: '' }));
 	};
 
-    	function imageUploaded(file) {
+    function imageUploaded(file) {
 		let base64String = '';
-
 		let reader = new FileReader();
-		console.log('next');
 
 		reader.onload = function () {
 			base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
-
 			setEventDetail((prev) => ({ ...prev, image: base64String }));
 			console.log(base64String);
 		};
@@ -140,18 +143,57 @@ const ModifyEventPage = () => {
                 </div>
             )}
 
-			<h1 className=" text-xl rounded-full p-2  font-extrabold w-fit ">{event.title}</h1>
-
-			<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm  h-fit  rounded-md">
-				{event.description}
-			</p>
-
-			<div className="flex flex-row justify-between items-center">
-				<p className=" font-bold">Data: </p>
-				<h1 className="bg-[#E4DCEF] text-[#363540]  rounded-full p-2 m-2 font-bold w-fit ">{event.starting}</h1>
-				<FontAwesomeIcon className="text-4xl" icon={faArrowAltCircleRight} color="#E4DCEF" />
-				<h1 className="bg-[#E4DCEF]  text-[#363540] rounded-full p-2 m-2 font-bold w-fit ">{event.ending}</h1>
+			<div className="py-4">
+            <label htmlFor="title" className="text-2xl font-bold mb-1 block">Titolo</label>
+                <input
+                    type="text"
+                    name="title"
+                    value={eventDetail.title}
+                    placeholder={event.title}
+                    onChange={handleChange}
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                    required
+                />
 			</div>
+
+            <div className="py-4">
+            <label htmlFor="title" className="text-1xl font-bold mb-1 block">Descrizione</label>
+                <input
+                    type="text"
+                    name="description"
+                    value={eventDetail.description}
+                    placeholder={event.description}
+                    onChange={handleChange}
+                    className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                    required
+                />
+			</div>
+
+            <div className="py-4">
+                <label htmlFor="title" className="text-1xl font-bold mb-1 block">Data</label>
+                <p>Inizio: {convertDataTime(event.starting)}</p>
+                <p>Fine: {convertDataTime(event.ending)}</p>
+                <div className="flex flex-row justify-between items-center py-4">
+                    <div className="flex flex-row gap-2 ">
+                        <Input
+                            onChange={handleChange}
+                            value={eventDetail.starting}
+                            type="datetime-local"
+                            customClassContainer="flex-auto"
+                            label="Inizia il"
+                            name="starting"
+                        />
+                        <Input
+                            onChange={handleChange}
+                            value={eventDetail.ending}
+                            type="datetime-local"
+                            customClassContainer="flex-auto"
+                            label="Finisce il"
+                            name="ending"
+                        />
+                    </div>
+                </div>
+            </div>
             
             <div className="flex flex-row justify-between justify-center">
                 <Button
@@ -160,7 +202,10 @@ const ModifyEventPage = () => {
                         setError(null);
                         setMessage(null);
                         try {
-                            console.log('EventDTO:', eventModified)
+                            if (eventModified.description.length < 10 || eventModified.description.length > 255) {
+			                    setError('La descrizione di evento deve essere almeno di 10 caretteri con un massimo di 255');
+			                    return;
+		                    }
                             const res = await modifyEvent(eventId, eventModified);
                             if(res === 'Error' || res.status != 200){
                                 setError('Errore durante la modifica dei dati :(');
@@ -175,10 +220,10 @@ const ModifyEventPage = () => {
             </div>
             {message && <p className="text-green-600 text-sm">{message}</p>}
             {error && <p className="text-red-600 text-sm">{error}</p>}
-            <div className="flex flex-col gap-4 max-h-[80vh] overflow-auto p-2">
+            <div className="h-[50rem] flex-col gap-4 max-h-[80vh] overflow-auto p-2">
                 <h1>Partecipanti</h1>
 
-                <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md">
+                <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md space-y-2">
                     {event.partecipants.map((p) => (
                         <div 
                             key={`participant-${p}`}
@@ -262,11 +307,11 @@ const ModifyEventPage = () => {
 
                     {message && <p className="text-green-600 text-sm">{message}</p>}
                     {error && <p className="text-red-600 text-sm">{error}</p>}
-
                 </div>
+
                 <h1>Amministratori</h1>
 
-                <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md">
+                <div className="h-[10rem] overflow-y-auto bg-[#505458] p-1 rounded-md space-y-2">
                     {event.admins.map((p) => (
                         <div 
                             key={`admin-${p}`}

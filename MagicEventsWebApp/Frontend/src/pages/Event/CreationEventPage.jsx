@@ -53,9 +53,6 @@ const CreationEventPage = () => {
 
 					return;
 				}
-				console.log('Result:' + results[0].formatted_address);
-				console.log('Lat:' + results[0].geometry.location.lat());
-				console.log('Lng:' + results[0].geometry.location.lng());
 				setEventDetail((prev) => ({
 					...prev,
 					location: (results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString(),
@@ -64,7 +61,7 @@ const CreationEventPage = () => {
 					createEventForm((results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString());
 				}, 1);
 			} else {
-				console.log('errore con geocoding');
+				console.log('Error with geocoding');
 				setError('Nessuna location trovata, prova con un altro indirizzo');
 			}
 		});
@@ -133,11 +130,11 @@ const CreationEventPage = () => {
 			return;
 		}
 		if (eventDetail.description.length < 10 || eventDetail.description.length > 255) {
-			setError('La descrizione di evento deve essere almeno di 10 lettere con un massimo di 255');
+			setError('La descrizione di evento deve essere almeno di 10 caratteri con un massimo di 255');
 			return;
 		}
 		if (eventDetail.boardDescription.length < 10 || eventDetail.boardDescription.length > 255) {
-			setError('La descrizione della bacheca deve essere almeno di 10 lettere con un massimo di 255');
+			setError('La descrizione della bacheca deve essere almeno di 10 caretteri con un massimo di 255');
 			return;
 		}
 		if (eventDetail.image.length <= 0) {
@@ -149,8 +146,6 @@ const CreationEventPage = () => {
 		setLoading(true);
 		createEvent({
 			...eventDetail,
-			// starting: new Date(eventDetail.starting).toISOString().slice(0, 19),
-			// ending: new Date(eventDetail.ending).toISOString().slice(0, 19),
 			location: mapEnabled ? locationCoords : '',
 		})
 			.then(async (value) => {

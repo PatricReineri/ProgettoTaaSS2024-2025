@@ -18,7 +18,7 @@ public class User {
     private String username;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(name = "profile_image_url")
+    @Column(name = "profile_image_url", columnDefinition = "TEXT")
     private String profileImageUrl;
     private String name;
     private String surname;

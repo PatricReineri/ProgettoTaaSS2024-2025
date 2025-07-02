@@ -156,11 +156,10 @@ public class EventGestorController {
 
     @GetMapping("/geteventid")
     public List<Long> getEventId(
-            @RequestParam("creatorId") Long creatorId,
             @RequestParam("title") String title,
             @RequestParam("day") LocalDateTime day
     ){
-        return eventGestorService.getEventId(creatorId, title, day);
+        return eventGestorService.getEventId(title, day);
     }
 
     @GetMapping("/getadminsforevent")

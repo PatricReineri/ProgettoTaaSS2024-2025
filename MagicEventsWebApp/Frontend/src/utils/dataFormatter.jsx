@@ -131,3 +131,9 @@ export function convertDayToISO(dayObj) {
     return date.toISOString().replace('.000Z', '');
 }
 
+export function convertDataTime(datetimeString) {
+    if (typeof datetimeString !== 'string') return datetimeString;
+    return datetimeString.replace('T', ' alle ore ').substring(0, 25);
+}
+
+
