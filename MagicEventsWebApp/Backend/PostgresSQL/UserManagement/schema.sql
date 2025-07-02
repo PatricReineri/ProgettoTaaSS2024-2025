@@ -2,7 +2,7 @@ CREATE TABLE user_info (
     magic_events_tag SERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    profile_image_url VARCHAR(512),
+    profile_image_url TEXT,
     name VARCHAR(100),
     surname VARCHAR(100),
     role VARCHAR(100),
