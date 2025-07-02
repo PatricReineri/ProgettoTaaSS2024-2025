@@ -2,9 +2,14 @@ import { useState } from 'react';
 import Button from '../../../components/buttons/Button';
 import BinaryRadio from '../../../components/inputs/BinaryCheckbox';
 import Input from '../../../components/inputs/Input';
+import { useNavigate, useParams } from 'react-router-dom';
+import { insertInfo } from '../../../api/gameAPI';
 
 const GameForm = () => {
+	const { eventId } = useParams();
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
+		gameId: eventId,
 		isMen: null,
 		age: 30,
 		isHostFamilyMember: null,
@@ -20,7 +25,10 @@ const GameForm = () => {
 		e.preventDefault();
 		console.log(formData);
 
-		const res = null;
+		const res = await insertInfo(formData);
+		if (res.ok) {
+			navigate(`/${eventId}/game`);
+		}
 	};
 
 	const handleChange = (name, value) => {
@@ -29,7 +37,7 @@ const GameForm = () => {
 
 	return (
 		<div className="h-full overflow-y-auto  bg-[#505458] ">
-			<form onSubmit={handleForm} className="p-2 flex flex-col gap-2 h-full ">
+			<form onSubmit={handleForm} className="p-2 flex flex-col gap-2 h-full border border-[] ">
 				<BinaryRadio onChange={(v) => handleChange('isMen', v)} question={'Genere: '} labels={['Maschio', 'Femmina']} />
 				<BinaryRadio
 					onChange={(v) => handleChange('isHostFamilyMember', v)}

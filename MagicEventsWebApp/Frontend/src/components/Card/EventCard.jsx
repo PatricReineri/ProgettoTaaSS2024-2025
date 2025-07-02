@@ -32,7 +32,6 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 			{/* Contenuto */}
 			<div className="flex items-center gap-4">
-
 				{/* Info Evento */}
 				<div className="flex flex-col">
 					<h3 className="text-lg font-semibold">{eventName}</h3>
@@ -47,8 +46,8 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 			{/* Pulsante */}
 			<div className="mt-4 self-end flex flex-row space-x-1">
-				<Button 
-					text="Modifica evento" 
+				<Button
+					text="Modifica evento"
 					onClick={async (e) => {
 						e.stopPropagation();
 						try {
@@ -58,21 +57,21 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 						} catch (err) {
 							console.error('Error contacting server:', err);
 						}
-				}}>
-				</Button>
-				<Button 
-					text="Elimina evento" 
+					}}
+				></Button>
+				<Button
+					text="Elimina evento"
 					onClick={async (e) => {
 						e.stopPropagation();
 						try {
 							const res = await getEventId(eventName, localDataTime);
 							const id = await res.text();
-							await deleteEvent(id[1])
+							await deleteEvent(id[1]);
 						} catch (err) {
 							console.error('Error contacting server:', err);
 						}
-				}}>
-				</Button>
+					}}
+				></Button>
 			</div>
 		</div>
 	);

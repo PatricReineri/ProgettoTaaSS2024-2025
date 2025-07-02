@@ -26,20 +26,19 @@ const CalendarDay = ({ day }) => {
 					day.events.map((event) => (
 						<div className="flex gap-2 items-center ">
 							<div className="h-4 w-4 bg-[#E4DCEF] group-first:bg-[#EE0E51] rounded-full"></div>
-							<p 
+							<p
 								className="text-[#E4DCEF] group-first:text-[#363540] font-bold text-[12px] underline"
-								onClick = { async() =>{
-											try {
-												const dayConverted = convertDayToISO(day)
-												const res = await getEventId(event.title, dayConverted);
-												const id = await res.text();
-												console.log(id)
-												navigate(`/${id[1]}`);
-											} catch (err) {
-												console.error('Error contacting server:', err);
-											}
-											}
-										}
+								onClick={async () => {
+									try {
+										const dayConverted = convertDayToISO(day);
+										const res = await getEventId(event.title, dayConverted);
+										const id = await res.json();
+										console.log(id);
+										navigate(`/${id[0]}`);
+									} catch (err) {
+										console.error('Error contacting server:', err);
+									}
+								}}
 							>
 								{event.title}
 							</p>

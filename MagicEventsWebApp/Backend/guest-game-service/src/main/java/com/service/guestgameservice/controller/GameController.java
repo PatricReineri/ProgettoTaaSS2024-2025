@@ -68,14 +68,14 @@ public class GameController {
     }
 
     @PostMapping("/createGame")
-    public ResponseEntity<Void> createGame(@Valid @RequestBody GameRequestDTO gameRequestDTO) {
+    public ResponseEntity<Boolean> createGame(@Valid @RequestBody GameRequestDTO gameRequestDTO) {
         try {
             gameService.createGame(gameRequestDTO);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.ok(true);
         } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
 
