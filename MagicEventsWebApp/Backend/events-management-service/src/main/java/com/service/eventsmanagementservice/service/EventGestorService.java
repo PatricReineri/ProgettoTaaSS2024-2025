@@ -109,6 +109,13 @@ public class EventGestorService {
                 return -1L;
             }
         }
+        partecipantsRepository.findById(eventDTO.getCreator())
+                .orElseGet(() -> {
+                    Partecipant newP = new Partecipant();
+                    newP.setMagicEventTag(eventDTO.getCreator());
+                    newP.setEmail(creatorEmail);
+                    return partecipantsRepository.saveAndFlush(newP);
+                });
         Event event = new Event(
                 eventDTO.getTitle(),
                 eventDTO.getDescription(),
