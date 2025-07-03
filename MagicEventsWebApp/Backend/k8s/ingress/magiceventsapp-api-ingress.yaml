@@ -20,6 +20,13 @@ spec:
                 name: events-management-service
                 port:
                   number: 8080
+          - path: /api/eventsetup(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: eventsetup-service
+                port:
+                  number: 8086
           - path: /api/boards(/|$)(.*)
             pathType: ImplementationSpecific
             backend:

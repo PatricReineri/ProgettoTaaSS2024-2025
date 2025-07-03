@@ -1,6 +1,6 @@
 import { url } from '../utils/utils';
 
-const galleryUrl = url === 'localhost' ? `${url}:8085` : url;
+const galleryUrl = url === 'localhost' ? `${url}:8085` : `${url}/api/galleries`;
 
 export function getImages(eventID, pageNumber) {
 	return fetch(

@@ -1,6 +1,6 @@
 import { url } from '../utils/utils';
 
-const userManagementUrl = url === 'localhost' ? `${url}:8443` : url;
+const userManagementUrl = url === 'localhost' ? `${url}:8443` : `${url}/api/users`;
 
 export function login(formData) {
 	const params = new URLSearchParams();
@@ -19,6 +19,12 @@ export function login(formData) {
 		console.error('Error:', err.message);
 		return null;
 	}
+}
+
+export function helloServer(protocol) {
+	return fetch(`https://${userManagementUrl}/login/helloserver?protocol=` + protocol, {
+		method: 'GET',
+	});	
 }
 
 export function forgotPasswordRequest(email) {

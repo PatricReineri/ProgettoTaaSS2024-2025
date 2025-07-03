@@ -1,6 +1,6 @@
 import { url } from '../utils/utils';
 
-const guestGameUrl = url === 'localhost' ? `${url}:8083` : url;
+const guestGameUrl = url === 'localhost' ? `${url}:8083` : `${url}/api/games`;
 
 export function getGame(eventID) {
 	return fetch(

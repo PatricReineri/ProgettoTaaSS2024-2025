@@ -56,6 +56,8 @@ public class SecurityConfig {
                                     "https://" + clientUrl,
                                     "http://" + clientUrl,
                                     "https://localhost:8443",
+                                    "https://magicevents.local",
+                                    "http://magicevents.local",
                                     eventManagementServiceUrl
                             )
                     );

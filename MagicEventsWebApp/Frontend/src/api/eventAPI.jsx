@@ -1,8 +1,8 @@
 import { url } from '../utils/utils';
 
 
-const eventsManagementUrl = url === 'localhost' ? `${url}:8080` : url;
-const eventsetupUrl = url === 'localhost' ? `${url}:8086` : url;
+const eventsManagementUrl = url === 'localhost' ? `${url}:8080` : `${url}url/api/events`;
+const eventsetupUrl = url === 'localhost' ? `${url}:8086` : `${url}url/api/eventsetup`;
 
 export function getEventsp() {
 	return fetch(

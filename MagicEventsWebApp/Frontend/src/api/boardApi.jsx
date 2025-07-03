@@ -1,6 +1,6 @@
 import { url } from '../utils/utils';
 
-const boardUrl = url === 'localhost' ? `${url}:8081` : url;
+const boardUrl = url === 'localhost' ? `${url}:8081` : `${url}/api/boards`;
 
 export function getMessages(eventID, pageNumber) {
 	return fetch(
