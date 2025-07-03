@@ -9,13 +9,21 @@ const ImageGrid = ({
 	onLike = (image) => alert('like: ', image.id),
 	displayOnloadMore = true,
 	images,
+	isAdmin = false,
 }) => {
 	const [list, setList] = useState([]);
 
 	useEffect(() => {
 		const items = images;
 		const listItems = items.map((mex, index) => (
-			<ImageCard key={index} onDelete={onDelete} onClick={onClickImage} onLike={onLike} mex={mex}></ImageCard>
+			<ImageCard
+				isAdmin={isAdmin}
+				key={index}
+				onDelete={onDelete}
+				onClick={onClickImage}
+				onLike={onLike}
+				mex={mex}
+			></ImageCard>
 		));
 		setList(listItems);
 	}, [images]);

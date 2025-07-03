@@ -3,7 +3,7 @@ import Button from '../buttons/Button';
 import { faClose, faHeart, faTrash } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 
-const ImageCard = ({ mex, onLike, onDelete, onClick }) => {
+const ImageCard = ({ mex, onLike, onDelete, onClick, isAdmin = false }) => {
 	return (
 		<div
 			onClick={() => onClick(mex)}
@@ -35,7 +35,7 @@ const ImageCard = ({ mex, onLike, onDelete, onClick }) => {
 					></Button>
 				</div>
 			</div>
-			<div className="absolute top-2 right-2">
+			<div className={clsx({ 'absolute top-2 right-2': true, hidden: isAdmin })}>
 				<Button
 					onClick={(e) => {
 						e.preventDefault();

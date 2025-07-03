@@ -6,7 +6,6 @@ function DeleteUserButton({ user, setLogged }) {
 
 	const handleDeleteUser = async (e) => {
 		e.preventDefault();
-
 		try {
 			console.log(user.email);
 			if (!user.email) {

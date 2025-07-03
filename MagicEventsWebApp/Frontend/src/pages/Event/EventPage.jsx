@@ -16,6 +16,7 @@ import Menu from '../../components/navigation/Menu';
 import { APIProvider, Map, Marker, useMapsLibrary } from '@vis.gl/react-google-maps';
 import ErrorContainer from '../../components/Error/ErrorContainer';
 import { convertDataTime } from '../../utils/dataFormatter';
+import { setAdmin } from '../../utils/utils';
 
 const EventsPage = () => {
 	const { eventId } = useParams();
@@ -33,7 +34,9 @@ const EventsPage = () => {
 				return;
 			}
 			const data = await res.json();
-			console.log(data);
+
+			setAdmin(eventId);
+
 			setEvent(data);
 			if (data.location) {
 				const coordinates = data.location.split('-');
@@ -164,9 +167,13 @@ const EventsPage = () => {
 			</p>
 			<div className="flex flex-row justify-between items-center">
 				<p className=" font-bold">Data: </p>
-				<h1 className="bg-[#E4DCEF] text-[#363540]  rounded-full p-2 m-2 font-bold w-fit ">{convertDataTime(event.starting)}</h1>
+				<h1 className="bg-[#E4DCEF] text-[#363540]  rounded-full p-2 m-2 font-bold w-fit ">
+					{convertDataTime(event.starting)}
+				</h1>
 				<FontAwesomeIcon className="text-4xl" icon={faArrowAltCircleRight} color="#E4DCEF" />
-				<h1 className="bg-[#E4DCEF]  text-[#363540] rounded-full p-2 m-2 font-bold w-fit ">{convertDataTime(event.ending)}</h1>
+				<h1 className="bg-[#E4DCEF]  text-[#363540] rounded-full p-2 m-2 font-bold w-fit ">
+					{convertDataTime(event.ending)}
+				</h1>
 			</div>
 		</div>
 	);

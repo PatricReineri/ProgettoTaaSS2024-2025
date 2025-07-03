@@ -5,6 +5,7 @@ import Button from '../buttons/Button';
 
 const MessageCard = ({
 	message,
+	isAdmin = false,
 	isSendbyMe,
 	onDelete = (mex) => {
 		alert(mex.username + ': ' + mex.content);
@@ -13,13 +14,11 @@ const MessageCard = ({
 	function formatDate(input) {
 		if (input == null) return null;
 		const date = new Date(input);
-
 		const day = String(date.getDate()).padStart(2, '0');
 		const month = String(date.getMonth() + 1).padStart(2, '0'); // I mesi partono da 0
 		const year = String(date.getFullYear()).slice(-2); // Ultime due cifre dell'anno
 		const hours = String(date.getHours()).padStart(2, '0');
 		const minutes = String(date.getMinutes()).padStart(2, '0');
-
 		return `${day}/${month}/${year} ${hours}:${minutes}`;
 	}
 
@@ -41,6 +40,7 @@ const MessageCard = ({
 						'hover:bg-[#363540]/20 p-2 rounded-full': true,
 						'!text-[#363540]': !isSendbyMe,
 						'!text-[#E4DCEF]': isSendbyMe,
+						hidden: isAdmin,
 					})}
 					text={<FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>}
 				></Button>

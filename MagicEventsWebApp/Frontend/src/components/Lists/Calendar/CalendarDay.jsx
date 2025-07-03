@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Button from '../../buttons/Button';
 import { getEventId } from '../../../api/eventAPI';
 import { useNavigate } from 'react-router-dom';
 import { convertDayToISO } from '../../../utils/dataFormatter';

@@ -8,7 +8,6 @@ function LogoutButton({ setLogged }) {
 
 	const handleLogout = async (e) => {
 		e.preventDefault();
-
 		try {
 			const res = await fetch('https://localhost:8443/login/logoutuser', {
 				method: 'PUT',

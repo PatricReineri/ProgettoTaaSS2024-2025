@@ -9,10 +9,18 @@ const ImageList = ({
 	displayOnloadMore = true,
 	onClickImage = (image) => alert('click'),
 	images,
+	isAdmin = false,
 }) => {
 	const items = images;
 	const listItems = items.map((mex, index) => (
-		<ImageCard onDelete={onDelete} onLike={onLike} onClick={onClickImage} key={index} mex={mex}></ImageCard>
+		<ImageCard
+			isAdmin={isAdmin}
+			onDelete={onDelete}
+			onLike={onLike}
+			onClick={onClickImage}
+			key={index}
+			mex={mex}
+		></ImageCard>
 	));
 
 	return (

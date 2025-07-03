@@ -9,7 +9,6 @@ const MagicEventHomePage = () => {
 
 	useEffect(() => {
 		setReady(false);
-
 		async function fetchAPI() {
 			const res = await getEventsp();
 			if (!res.ok) {

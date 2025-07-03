@@ -5,6 +5,28 @@ Follow and run this command in order:
 1) ```bash 
    minikube start 
    ```
+   ```bash
+   minikube addons enable ingress
+   ```
+
+Be sure to edit the hosts file mapping localhost as follows
+
+In Windows:
+```
+  127.0.0.1 magicevents.local
+```
+
+In MacOS or Linux:
+```
+  magicevents.192.168.49.2.nip.io magicevents.local
+```
+
+For modify hosts file in MacOS or Linux run:
+```bash
+  sudo nano /etc/hosts
+```
+In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
+
 2) ```bash 
    eval $(minikube docker-env) 
    ```
@@ -60,13 +82,20 @@ Follow and run this command in order:
     ```bash
     kubectl apply -f .
     ```
-   ```bash
-   minikube addons enable ingress
-   ```
+
 8) Open the dashboard with this command:
    ```bash
    minikube dashboard
    ```
+
+In windows make sure you do in a terminal running as administrator:
+```shell
+minikube tunnel
+```
+And leave the terminal open. Test connection with this command:
+```shell
+ping magicevents.local
+```
 
 For stopping minikube:
 ```bash

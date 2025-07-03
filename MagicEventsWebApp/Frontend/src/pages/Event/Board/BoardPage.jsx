@@ -8,6 +8,7 @@ import { subscribe } from '../../../utils/WebSocket';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { isAdmin } from '../../../utils/utils';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -19,16 +20,19 @@ const BoardPage = () => {
 	const [connected, setConnected] = useState(false);
 	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
+
 	const [messageFinish, setMessageFinish] = useState(false);
 
 	const { eventId } = useParams();
+
+	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
 	async function loadMore() {
 		if (messageFinish) {
 			return;
 		}
 		setPage((prev) => prev + 1);
-
+		setIsAdminVar(isAdmin(eventId));
 		console.log(page);
 
 		let res = await getMessages(eventId, page);
@@ -86,7 +90,6 @@ const BoardPage = () => {
 		setConnected(true);
 		const socket = new SockJS('http://localhost:8081/chat');
 		const client = Stomp.over(socket);
-
 		// Disable debug output (optional)
 		client.debug = null;
 
@@ -97,7 +100,6 @@ const BoardPage = () => {
 			(frame) => {
 				setStompClient(client);
 				setConnected(true);
-
 				// Subscribe to the topic with the correct path format
 				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
 					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
@@ -172,6 +174,7 @@ const BoardPage = () => {
 				<p className="text-xs">{description}</p>
 			</div>
 			<MessageList
+				isAdmin={isAdminVar}
 				displayOnloadMore={!messageFinish}
 				onLoadMore={loadMore}
 				onSend={(value) => sendMessage(value)}

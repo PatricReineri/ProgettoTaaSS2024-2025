@@ -144,6 +144,7 @@ const CreationEventPage = () => {
 		setError('');
 
 		setLoading(true);
+
 		createEvent({
 			...eventDetail,
 			location: mapEnabled ? locationCoords : '',

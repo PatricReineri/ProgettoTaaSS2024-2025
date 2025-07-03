@@ -8,7 +8,6 @@ const MyEventsPage = () => {
 	const [ready, setReady] = useState(false);
 	useEffect(() => {
 		setReady(false);
-
 		async function fetchAPI() {
 			const res = await getEventsc();
 			if (!res.ok) {

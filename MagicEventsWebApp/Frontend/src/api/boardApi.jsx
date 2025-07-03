@@ -1,6 +1,10 @@
+import { url } from '../utils/utils';
+
+const boardUrl = url === 'localhost' ? `${url}:8081` : url;
+
 export function getMessages(eventID, pageNumber) {
 	return fetch(
-		`http://localhost:8081/board/getBoard/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`http://${boardUrl}/board/getBoard/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{

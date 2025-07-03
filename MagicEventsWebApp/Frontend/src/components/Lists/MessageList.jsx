@@ -8,6 +8,7 @@ const MessageList = ({
 	onLoadMore,
 	displayOnloadMore = true,
 	messages,
+	isAdmin,
 	onSend = (value) => alert(value),
 }) => {
 	const [value, setValue] = useState('');
@@ -15,6 +16,7 @@ const MessageList = ({
 	const items = messages;
 	const listItems = items.map((mex, index) => (
 		<MessageCard
+			isAdmin={isAdmin}
 			isSendbyMe={mex.username === JSON.parse(sessionStorage.getItem('user')).username}
 			key={index}
 			message={mex}

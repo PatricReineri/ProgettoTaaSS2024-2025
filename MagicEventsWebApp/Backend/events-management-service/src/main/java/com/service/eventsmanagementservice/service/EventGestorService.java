@@ -109,7 +109,7 @@ public class EventGestorService {
                 return -1L;
             }
         }
-        partecipantsRepository.findById(eventDTO.getCreator())
+        Partecipant partecipant = partecipantsRepository.findById(eventDTO.getCreator())
                 .orElseGet(() -> {
                     Partecipant newP = new Partecipant();
                     newP.setMagicEventTag(eventDTO.getCreator());
@@ -126,10 +126,10 @@ public class EventGestorService {
                 eventDTO.getImage()
         );
         event = eventsRepository.save(event);
+        event.getPartecipants().add(partecipant);
+        partecipant.getEvents().add(event);
+        partecipantsRepository.save(partecipant);
         addAdmins(eventDTO.getAdmins(), event.getEventId());
-        if(!(eventDTO.getPartecipants().contains(creatorEmail))){
-            eventDTO.addPartecipant(creatorEmail);
-        }
         addPartecipants(eventDTO.getPartecipants(), event.getEventId());
         return event.getEventId();
     }
