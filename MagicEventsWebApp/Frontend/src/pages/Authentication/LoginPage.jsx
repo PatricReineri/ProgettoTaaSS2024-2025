@@ -6,7 +6,7 @@ import { useAuth } from '../../auth/AuthContext';
 import ForgotPassword from '../../components/buttons/ForgotPassword';
 import Button from '../../components/buttons/Button';
 import clsx from 'clsx';
-import { login } from '../../api/authentication';
+import { login, helloServer } from '../../api/authentication';
 
 function LoginPage({ setLogged }) {
 	const navigate = useNavigate();
@@ -20,9 +20,7 @@ function LoginPage({ setLogged }) {
 		console.log('✅ Trying to contact server...');
 		const detectClientProtocol = async () => {
 			try {
-				const res = await fetch('https://localhost:8443/login/helloserver?protocol=' + protocol, {
-					method: 'GET',
-				});
+				const res = await helloServer(protocol);
 				if (!res.ok) console.warn('Protocol detection failed');
 			} catch (err) {
 				console.error('Error contacting server:', err);

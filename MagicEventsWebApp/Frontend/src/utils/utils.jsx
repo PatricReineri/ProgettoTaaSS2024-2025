@@ -14,5 +14,5 @@ export function setAdmin(eventId) {
 	}
 }
 
-export const url = 'localhost';
-// export const url = 'magicevents.192.168.49.2.nip.io';
+// export const url = 'localhost';
+export const url = 'magicevents.local';
