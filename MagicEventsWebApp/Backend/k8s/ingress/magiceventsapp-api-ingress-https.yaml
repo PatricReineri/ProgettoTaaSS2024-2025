@@ -12,10 +12,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - magicevents.192.168.49.2.nip.io
+        - magicevents.local
       secretName: magicevents-tls  # cert. per TLS esterno
   rules:
-    - host: magicevents.192.168.49.2.nip.io
+    - host: magicevents.local
       http:
         paths:
           - path: /api/users(/|$)(.*)
