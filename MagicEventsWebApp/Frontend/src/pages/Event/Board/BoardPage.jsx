@@ -25,7 +25,7 @@ const BoardPage = () => {
 
 	const { eventId } = useParams();
 
-	const [isAdminVAr, setIsAdminVar] = useState(isAdmin(eventId));
+	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
 	async function loadMore() {
 		if (messageFinish) {
@@ -90,7 +90,6 @@ const BoardPage = () => {
 		setConnected(true);
 		const socket = new SockJS('http://localhost:8081/chat');
 		const client = Stomp.over(socket);
-
 		// Disable debug output (optional)
 		client.debug = null;
 
@@ -101,7 +100,6 @@ const BoardPage = () => {
 			(frame) => {
 				setStompClient(client);
 				setConnected(true);
-
 				// Subscribe to the topic with the correct path format
 				const subscription = subscribe(client, `/topic/chat/${eventId}`, (receivedMessage, hash) => {
 					setMessages((prev) => [receivedMessage, ...prev.filter((item) => !(hash(item) === hash(receivedMessage)))]);
@@ -176,7 +174,7 @@ const BoardPage = () => {
 				<p className="text-xs">{description}</p>
 			</div>
 			<MessageList
-				isAdmin={isAdminVAr}
+				isAdmin={isAdminVar}
 				displayOnloadMore={!messageFinish}
 				onLoadMore={loadMore}
 				onSend={(value) => sendMessage(value)}

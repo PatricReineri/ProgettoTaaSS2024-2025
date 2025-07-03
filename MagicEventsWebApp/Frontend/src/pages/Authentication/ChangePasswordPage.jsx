@@ -39,7 +39,6 @@ function ChangePasswordForm() {
 			const message = await res.text();
 			if (!res.ok) throw new Error('Error while changing password');
 			if (message === 'Error') throw new Error('Internal error');
-
 			setSuccessMsg('La password è stata modificata con successo');
 			setNewPassword('');
 			setConfirmPassword('');

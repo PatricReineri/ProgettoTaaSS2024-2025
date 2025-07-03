@@ -11,7 +11,6 @@ function ForgotPassword() {
 		e.preventDefault();
 		setMessage(null);
 		setLoading(true);
-
 		try {
 			const res = await forgotPasswordRequest(email);
 			const message = await res.text();
@@ -38,13 +37,6 @@ function ForgotPassword() {
 					style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
 					disabled={loading}
 				/>
-				{/*<button
-					type="submit"
-					disabled={loading}
-					style={{ padding: 10, backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: 4 }}
-					>
-					{loading ? 'Processing...' : 'Send'}
-				</button> */}
 				<Button text={loading ? 'Caricamento...' : 'Invia'}></Button>
 			</form>
 			{message && <p style={{ marginTop: 15, color: message.startsWith('Error') ? 'red' : 'green' }}>{message}</p>}

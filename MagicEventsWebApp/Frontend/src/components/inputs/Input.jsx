@@ -1,7 +1,4 @@
 import clsx from 'clsx';
-import Button from '../buttons/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
 
 const Input = ({
 	accept = '',

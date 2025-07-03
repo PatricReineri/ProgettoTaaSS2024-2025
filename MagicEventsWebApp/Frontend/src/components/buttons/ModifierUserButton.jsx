@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 
 function LogoutButton() {
 	const navigate = useNavigate();
-	
 	return (
 		<button onClick={ () => navigate('/modifyuser') } style={{
 						padding: '10px 20px',

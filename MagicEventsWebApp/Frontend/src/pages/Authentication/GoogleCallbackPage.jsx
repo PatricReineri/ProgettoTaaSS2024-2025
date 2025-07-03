@@ -21,7 +21,6 @@ function GoogleCallbackPage({ setLogged }) {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
 				});
-
 				if (!res.ok) throw new Error('User not found');
 				const data = await res.json();
 				console.log('Success:', data);
