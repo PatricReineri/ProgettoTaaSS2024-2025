@@ -50,6 +50,10 @@ public class AuthService {
     String clientId;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     String clientSecret;
+    @Value("${client.url}")
+    private String clientUrl;
+    @Value("${services.usermanagements.url}")
+    private String myUrl;
 
     public String registerUser(String name, String surname, String email, String password, String username) {
         User user = new User();
@@ -178,7 +182,7 @@ public class AuthService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
-        params.add("redirect_uri", "https://localhost:8443/login/grantcode");
+        params.add("redirect_uri", "https://"+ myUrl +"/login/grantcode");
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("scope", "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile");
@@ -233,7 +237,7 @@ public class AuthService {
 
         resetPasswordTokenRepository.save(resetPasswordToken);
 
-        String link = "http://localhost:3000/changepassword?token=" + resetPasswordToken.getToken();
+        String link = "http://"+ clientUrl +"/changepassword?token=" + resetPasswordToken.getToken();
 
         EmailDetails emailDetails = new EmailDetails();
         emailDetails.setRecipient(user.getEmail());

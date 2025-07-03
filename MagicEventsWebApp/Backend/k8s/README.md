@@ -1,5 +1,10 @@
 # Step for running kubernetes cluster
 
+The preliminary step is to install [mkcert](https://github.com/FiloSottile/mkcert) and run:
+```bash 
+mkcert -install
+```
+
 Follow and run this command in order:
 
 1) ```bash 
@@ -64,29 +69,27 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
     ```bash
     kubectl apply -f .
     ```
-6) Always in k8s folder run:
+6) Go in tls folder (run ``` cd tls```) and run:
     ```bash
-    kubectl create secret tls magicevents-tls \
-    --cert=tls/tls.crt \
-    --key=tls/tls.key \
-    -n magicevents
-    secret/magicevents-tls created
+   kubectl -n magicevents create secret tls magicevents-tls \
+   --cert=magicevents.local.pem \
+   --key=magicevents.local-key.pem
     ```
-    For create certificate secret in kubernetes
+   For create certificate secret in kubernetes
 
    Windows version:
    ```shell
-   kubectl create secret tls magicevents-tls `--cert=tls\tls.crt `--key=tls\tls.key `-n magicevents
+   kubectl -n magicevents create secret tls magicevents-tls ` --cert=magicevents.local.pem ` --key=magicevents.local-key.pem
    ```
-7) Go to ingress folder (run ``` cd ingress```)  and run:
+7) Go to ingress folder (run ``` cd ../ingress```)  and run:
     ```bash
     kubectl apply -f .
     ```
 
-8) Open the dashboard with this command:
-   ```bash
-   minikube dashboard
-   ```
+Open the dashboard with this command:
+```bash
+minikube dashboard
+```
 
 In windows make sure you do in a terminal running as administrator:
 ```shell
