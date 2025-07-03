@@ -72,3 +72,12 @@ export function deleteUser(email) {
 		}).toString(),
 	});
 }
+
+export function callback(accessToken){
+	return fetch(`https://${userManagementUrl}/login/userprofile?accessToken=${accessToken}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+	});
+}

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import { callback } from '../../api/authentication';
 
 function GoogleCallbackPage({ setLogged }) {
 	const navigate = useNavigate();
@@ -15,12 +16,7 @@ function GoogleCallbackPage({ setLogged }) {
 				return;
 			}
 			try {
-				const res = await fetch(`https://localhost:8443/login/userprofile?accessToken=${accessToken}`, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-				});
+				const res = await callback(accessToken);
 				if (!res.ok) throw new Error('User not found');
 				const data = await res.json();
 				console.log('Success:', data);

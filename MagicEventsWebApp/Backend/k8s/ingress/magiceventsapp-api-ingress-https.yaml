@@ -6,14 +6,14 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2        # riscrive il path
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 # riscrive il path
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - magicevents.local
-      secretName: magicevents-tls  # cert. per TLS esterno
+      secretName: magicevents-tls
   rules:
     - host: magicevents.local
       http:

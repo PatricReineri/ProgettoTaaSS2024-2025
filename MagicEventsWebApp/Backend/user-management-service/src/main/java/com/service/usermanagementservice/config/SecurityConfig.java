@@ -58,6 +58,8 @@ public class SecurityConfig {
                                     "https://localhost:8443",
                                     "https://magicevents.local",
                                     "http://magicevents.local",
+                                    //"https://magicevents.local.nip.io",
+                                    //"http://magicevents.local.nip.io",
                                     eventManagementServiceUrl
                             )
                     );
