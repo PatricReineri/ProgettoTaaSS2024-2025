@@ -167,9 +167,10 @@ public class EventGestorController {
     @GetMapping("/geteventid")
     public List<Long> getEventId(
             @RequestParam("title") String title,
-            @RequestParam("day") LocalDateTime day
+            @RequestParam("day") LocalDateTime day,
+            @RequestParam("magicEventTag") Long magicEventTag
     ){
-        return eventGestorService.getEventId(title, day);
+        return eventGestorService.getEventId(magicEventTag, title, day);
     }
 
     @GetMapping("/getadminsforevent")
@@ -187,10 +188,10 @@ public class EventGestorController {
         return eventGestorService.delete(eventId, creatorId);
     }
 
-    @GetMapping("/getEventEnabledServices")
+    @GetMapping("/geteventenabledservices")
     public ResponseEntity<ServicesDTO> getEventEnabledServices(
             @RequestParam("eventId") Long eventId,
-            @RequestParam("magicEventsTag") Long magicEventsTag
+            @RequestParam("magicEventTag") Long magicEventsTag
     ) {
         try {
             ServicesDTO services = eventGestorService.getEventEnabledServices(eventId, magicEventsTag);

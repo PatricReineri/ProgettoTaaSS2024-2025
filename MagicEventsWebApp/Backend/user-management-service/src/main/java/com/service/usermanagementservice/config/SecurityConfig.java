@@ -42,7 +42,8 @@ public class SecurityConfig {
             "/login/modifyuser",
             "/login/helloserver",
             "/info",
-            "/info/isauthenticated"
+            "/info/isauthenticated",
+            "/info/profile"
     };
 
     @Bean

@@ -2,14 +2,11 @@ package com.service.usermanagementservice.controller;
 
 import com.service.usermanagementservice.dto.LoginWithTokenDTO;
 import com.service.usermanagementservice.dto.UserDTO;
-import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

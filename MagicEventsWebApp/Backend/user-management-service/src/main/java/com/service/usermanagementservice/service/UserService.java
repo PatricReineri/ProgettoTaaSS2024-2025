@@ -1,5 +1,6 @@
 package com.service.usermanagementservice.service;
 
+import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.model.OauthToken;
 import com.service.usermanagementservice.model.User;
 import com.service.usermanagementservice.repository.OauthTokenRepository;
@@ -42,5 +43,19 @@ public class UserService {
         }else{
             throw new Exception("User not exist");
         }
+    }
+
+    public UserDTO userProfile(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("User not found: " + id));
+        return new UserDTO(
+                user.getMagicEventTag(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getProfileImageUrl(),
+                user.getName(),
+                user.getSurname(),
+                user.getRole()
+        );
     }
 }

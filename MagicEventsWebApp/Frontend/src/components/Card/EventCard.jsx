@@ -10,7 +10,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 	const navigate = useNavigate();
 	const address = useCoordinatesConverter(location);
 
-	const [eventDisabled, setEventDisabled] = useState(false);
+	const [eventEnabled, setEventEnabled] = useState(false);
 	const [eventId, setEventId] = useState(-1);
 
 	useEffect(() => {
@@ -18,11 +18,10 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 			try {
 				const res = await getEventId(eventName, localDataTime);
 				const id = await res.json();
-				setEventId(id);
-				const status = await isActive(id);
+				setEventId(id[0]);
+				const status = await isActive(id[0]);
 				const flag = await status.json();
-				console.log(flag);
-				setEventDisabled(flag);
+				setEventEnabled(flag);
 			} catch (err) {
 				console.error('Error contacting server:', err);
 			}
@@ -34,12 +33,12 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 	const handleClick = async (e) => {
 		e.stopPropagation();
 		try {
-			if (eventDisabled) {
+			if (eventEnabled) {
 				await annullEvent(eventId);
 			} else {
 				await deannullEvent(eventId);
 			}
-			setEventDisabled((prev) => !prev);
+			setEventEnabled((prev) => !prev);
 		} catch (err) {
 			console.error('Error contacting server:', err);
 		}
@@ -80,7 +79,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 
 			{/* Pulsante */}
 			<div className="mt-4 self-end flex flex-row space-x-1">
-				{eventDisabled && (
+				{eventEnabled && (
 					<Button
 						text="Modifica evento"
 						onClick={async (e) => {
@@ -104,7 +103,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 						}
 					}}
 				></Button>
-				<Button text={!eventDisabled ? 'Attiva evento' : 'Annulla evento'} onClick={handleClick} />
+				<Button text={!eventEnabled ? 'Attiva evento' : 'Annulla evento'} onClick={handleClick} />
 			</div>
 		</div>
 	);

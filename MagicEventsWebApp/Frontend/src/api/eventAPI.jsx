@@ -23,7 +23,10 @@ export function getEventsc() {
 }
 
 export function getEventId(title, day) {
-	return fetch(`http://localhost:8080/gestion/geteventid?title=${title}&day=${day}`, {
+	const user = JSON.parse(sessionStorage.getItem('user'));
+	const magicEventsTag = user?.magicEventTag;
+
+	return fetch(`http://localhost:8080/gestion/geteventid?title=${title}&day=${day}&magicEventTag=${magicEventsTag}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -161,7 +164,7 @@ export function getEventService(eventId) {
 	const params = new URLSearchParams();
 	params.append('eventId', eventId);
 	params.append('magicEventsTag', JSON.parse(sessionStorage.getItem('user')).magicEventTag);
-	return fetch(`http://localhost:8080/gestion/getEventEnabledServices?${params}`, {
+	return fetch(`http://localhost:8080/gestion/geteventenabledservices?${params}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -188,7 +191,7 @@ export function deleteEvent(eventId) {
 
 export function isActive(eventId) {
 	return fetch(
-		`http://localhost:8080/gestion/isActive?creatorId=${
+		`http://localhost:8080/gestion/isactive?creatorId=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}&eventId=${eventId}`,
 		{
