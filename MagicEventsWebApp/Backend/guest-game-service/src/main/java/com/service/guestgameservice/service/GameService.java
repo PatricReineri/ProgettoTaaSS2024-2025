@@ -128,6 +128,7 @@ public class GameService {
             double accuracy = getAccuracy(dataset, tree);
 
             String treeString = tree.toString();
+            System.out.println("Decision Tree:\n" + treeString);
             TreeNodeDTO rootNode = parseTreeFromString(treeString);
 
             return new DecisionTreeDTO(rootNode, accuracy, dataset.size());
@@ -184,63 +185,199 @@ public class GameService {
 
     private TreeNodeDTO parseTreeFromString(String treeString) {
         String[] lines = treeString.split("\n");
-
+        // Find the first actual tree line (skip headers)
         int startLine = 0;
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].trim();
-            if (!line.isEmpty() && !line.startsWith("J48") && !line.startsWith("---") && !line.startsWith("=")) {
+            if (!line.isEmpty() && !line.startsWith("J48") && !line.startsWith("---") && !line.startsWith("=") 
+                && !line.startsWith("Number of") && !line.startsWith("Size of")) {
                 startLine = i;
                 break;
             }
         }
 
-        return parseTreeNode(lines, startLine, new int[]{startLine});
-    }
+        // Extract only the tree lines (stop at statistics)
+        List<String> treeLines = new ArrayList<>();
+        for (int i = startLine; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.trim().isEmpty() || line.trim().startsWith("Number of") || line.trim().startsWith("Size of")) {
+                break;
+            }
+            treeLines.add(line);
+        }
 
-    private TreeNodeDTO parseTreeNode(String[] lines, int startLine, int[] currentLine) {
-        if (currentLine[0] >= lines.length) {
+        if (treeLines.isEmpty()) {
             return null;
         }
 
-        String line = lines[currentLine[0]];
-        String trimmedLine = line.trim();
-
-        if (trimmedLine.isEmpty()) {
-            currentLine[0]++;
-            return parseTreeNode(lines, startLine, currentLine);
+        // Caso speciale: albero con solo 2 linee (split semplice)
+        if (treeLines.size() == 2) {
+            return parseSimpleTree(treeLines);
         }
 
-        currentLine[0]++;
+        int[] lineIndex = {0};
+        return parseComplexNode(treeLines, 0, lineIndex);
+    }
 
-        if (trimmedLine.contains(":") && !trimmedLine.endsWith(":")) {
-            String[] parts = trimmedLine.split(":");
-            if (parts.length >= 2) {
-                String className = parts[1].trim();
-                if (className.contains("(")) {
-                    className = className.substring(0, className.indexOf("(")).trim();
-                }
-                return new TreeNodeDTO(className);
-            }
+    private TreeNodeDTO parseSimpleTree(List<String> lines) {
+        // Per alberi semplici con solo 2 linee: "condition1: class1" e "condition2: class2"
+        String line1 = lines.get(0).trim();
+        String line2 = lines.get(1).trim();
+        
+        // Estrai la condizione base dalla prima linea
+        String condition1 = extractBaseCondition(line1);
+        String condition2 = extractBaseCondition(line2);
+        
+        // Verifica che siano dello stesso attributo con <= e >
+        if (areComplementaryConditions(condition1, condition2)) {
+            String question = formatQuestion(condition1);
+            
+            // Crea i nodi foglia
+            String class1 = extractClassFromLeaf(line1);
+            String class2 = extractClassFromLeaf(line2);
+            
+            TreeNodeDTO leftChild = new TreeNodeDTO(class1);
+            TreeNodeDTO rightChild = new TreeNodeDTO(class2);
+            
+            return new TreeNodeDTO(question, leftChild, rightChild);
+        }
+        
+        // Se non sono complementari, tratta come nodi separati
+        String class1 = extractClassFromLeaf(line1);
+        return new TreeNodeDTO(class1);
+    }
+
+    private boolean areComplementaryConditions(String cond1, String cond2) {
+        if (cond1.contains("<=") && cond2.contains(">")) {
+            String attr1 = cond1.split("<=")[0].trim();
+            String attr2 = cond2.split(">")[0].trim();
+            return attr1.equals(attr2);
+        }
+        return false;
+    }
+
+    private TreeNodeDTO parseComplexNode(List<String> lines, int expectedDepth, int[] lineIndex) {
+        if (lineIndex[0] >= lines.size()) {
+            return null;
         }
 
-        String condition = extractCondition(trimmedLine);
-        String question = formatQuestion(condition);
+        String currentLine = lines.get(lineIndex[0]);
+        int currentDepth = getDepth(currentLine);
+        
+        // Se siamo tornati a un livello più superficiale, fermati
+        if (currentDepth < expectedDepth) {
+            return null;
+        }
+        
+        // Se il livello è più profondo del previsto, errore
+        if (currentDepth > expectedDepth) {
+            return null;
+        }
 
-        TreeNodeDTO leftChild = parseTreeNode(lines, startLine, currentLine);
+        // Consuma la linea corrente
+        lineIndex[0]++;
+        
+        String cleanLine = currentLine.trim().replaceAll("^\\|+\\s*", "");
+        
+        // Se è una foglia, restituiscila
+        if (isLeafNode(cleanLine)) {
+            String className = extractClassFromLeaf(cleanLine);
+            return new TreeNodeDTO(className);
+        }
 
-        TreeNodeDTO rightChild = parseTreeNode(lines, startLine, currentLine);
+        // È un nodo di decisione
+        String baseCondition = extractBaseCondition(cleanLine);
+        String question = formatQuestion(baseCondition);
+
+        // Parsa il sottoalbero sinistro (tutti i figli con profondità maggiore)
+        TreeNodeDTO leftChild = parseSubtree(lines, expectedDepth + 1, lineIndex);
+
+        // Cerca il ramo destro (stessa profondità, condizione complementare)
+        TreeNodeDTO rightChild = findAndParseRightBranch(lines, expectedDepth, baseCondition, lineIndex);
 
         return new TreeNodeDTO(question, leftChild, rightChild);
     }
 
-    private String extractCondition(String line) {
-        String condition = line.replaceAll("^[|\\s]+", "").trim();
-
-        if (condition.endsWith(":")) {
-            condition = condition.substring(0, condition.length() - 1).trim();
+    private TreeNodeDTO parseSubtree(List<String> lines, int targetDepth, int[] lineIndex) {
+        if (lineIndex[0] >= lines.size()) {
+            return null;
         }
 
-        return condition;
+        String nextLine = lines.get(lineIndex[0]);
+        int nextDepth = getDepth(nextLine);
+        
+        if (nextDepth == targetDepth) {
+            return parseComplexNode(lines, targetDepth, lineIndex);
+        }
+        
+        return null;
+    }
+
+    private TreeNodeDTO findAndParseRightBranch(List<String> lines, int expectedDepth, String leftCondition, int[] lineIndex) {
+        // Cerca una linea alla stessa profondità con condizione complementare
+        while (lineIndex[0] < lines.size()) {
+            String currentLine = lines.get(lineIndex[0]);
+            int currentDepth = getDepth(currentLine);
+            
+            // Se siamo tornati a un livello più superficiale, fermati
+            if (currentDepth < expectedDepth) {
+                break;
+            }
+            
+            // Se troviamo una linea alla stessa profondità
+            if (currentDepth == expectedDepth) {
+                String cleanLine = currentLine.trim().replaceAll("^\\|+\\s*", "");
+                String currentCondition = extractBaseCondition(cleanLine);
+                
+                // Verifica se è la condizione complementare
+                if (areComplementaryConditions(leftCondition, currentCondition)) {
+                    lineIndex[0]++; // Consuma la linea
+                    
+                    if (isLeafNode(cleanLine)) {
+                        String className = extractClassFromLeaf(cleanLine);
+                        return new TreeNodeDTO(className);
+                    } else {
+                        // Parsa il sottoalbero destro
+                        return parseSubtree(lines, expectedDepth + 1, lineIndex);
+                    }
+                }
+            }
+            
+            // Salta le linee più profonde fino a trovare quella giusta
+            lineIndex[0]++;
+        }
+        
+        return null;
+    }
+
+    private int getDepth(String line) {
+        int depth = 0;
+        for (char c : line.toCharArray()) {
+            if (c == '|') {
+                depth++;
+            } else if (c != ' ') {
+                break;
+            }
+        }
+        return depth;
+    }
+
+    private boolean isLeafNode(String line) {
+        return line.matches(".*:\\s*\\w+\\s*\\([0-9.]+\\)\\s*$");
+    }
+
+    private String extractClassFromLeaf(String line) {
+        int colonIndex = line.indexOf(":");
+        String afterColon = line.substring(colonIndex + 1).trim();
+        int parenIndex = afterColon.indexOf("(");
+        return afterColon.substring(0, parenIndex).trim();
+    }
+
+    private String extractBaseCondition(String line) {
+        if (isLeafNode(line)) {
+            return line.substring(0, line.indexOf(":")).trim();
+        }
+        return line.trim();
     }
 
     private String formatQuestion(String condition) {
