@@ -1,3 +1,5 @@
+import { url } from '../utils/utils';
+
 export function login(formData) {
 	const params = new URLSearchParams();
 	for (const key in formData) {
@@ -5,7 +7,7 @@ export function login(formData) {
 	}
 
 	try {
-		return fetch(`https://localhost:8443/login/form?${params.toString()}`, {
+		return fetch(`https://${url}:8443/login/form?${params.toString()}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -18,7 +20,7 @@ export function login(formData) {
 }
 
 export function forgotPasswordRequest(email) {
-	return fetch('https://localhost:8443/login/generateresetpasswordlink', {
+	return fetch(`https://${url}:8443/login/generateresetpasswordlink`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: new URLSearchParams({
@@ -32,7 +34,7 @@ export function register(formData) {
 	for (const key in formData) {
 		params.append(key, formData[key]);
 	}
-	return fetch('https://localhost:8443/login/register', {
+	return fetch(`https://${url}:8443/login/register`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +44,7 @@ export function register(formData) {
 }
 
 export function modifyUser(user) {
-	return fetch('https://localhost:8443/login/modifyuser', {
+	return fetch(`https://${url}:8443/login/modifyuser`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -52,7 +54,7 @@ export function modifyUser(user) {
 }
 
 export function deleteUser(email) {
-	return fetch('https://localhost:8443/login/deleteuser', {
+	return fetch(`https://${url}:8443/login/deleteuser`, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',

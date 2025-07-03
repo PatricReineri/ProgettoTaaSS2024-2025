@@ -1,6 +1,8 @@
+import { url } from '../utils/utils';
+
 export function getMessages(eventID, pageNumber) {
 	return fetch(
-		`http://localhost:8081/board/getBoard/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`http://${url}:8081/board/getBoard/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{

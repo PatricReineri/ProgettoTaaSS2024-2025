@@ -1,6 +1,8 @@
+import { url } from '../utils/utils';
+
 export function getImages(eventID, pageNumber) {
 	return fetch(
-		`http://localhost:8085/gallery/getGallery/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`http://${url}:8085/gallery/getGallery/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -12,7 +14,7 @@ export function getImages(eventID, pageNumber) {
 
 export function getImagesPopular(eventID, pageNumber) {
 	return fetch(
-		`http://localhost:8085/gallery/getGalleryPopular/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`http://${url}:8085/gallery/getGalleryPopular/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{

@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import clsx from 'clsx';
+import { isAdmin } from '../../../utils/utils';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -30,12 +31,14 @@ const GalleryPage = () => {
 	const [messageFinishp, setMessageFinishp] = useState(false);
 
 	const { eventId } = useParams();
+	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
 	async function loadMore() {
 		if (messageFinish) {
 			return;
 		}
 		setPage((prev) => prev + 1);
+		setIsAdminVar(isAdmin(eventId));
 		let res = await getImages(eventId, page);
 		if (!res.ok) throw new Error('Error on load more images');
 		const data = await res.json();
@@ -235,6 +238,7 @@ const GalleryPage = () => {
 				<h1 className="font-bold text-2xl">{title ? title : 'Nessun titolo'}</h1>
 			</div>
 			<ImageList
+				isAdmin={isAdminVar}
 				displayOnloadMore={!messageFinishp}
 				onLoadMore={loadMorep}
 				onClickImage={(img) => openImage(img)}
@@ -244,6 +248,7 @@ const GalleryPage = () => {
 			/>
 			<h1>Galleria</h1>
 			<ImageGrid
+				isAdmin={isAdminVar}
 				displayOnloadMore={!messageFinish}
 				onLoadMore={loadMore}
 				onClickImage={(img) => openImage(img)}
@@ -251,10 +256,6 @@ const GalleryPage = () => {
 				onDelete={(img) => deleteImage(img)}
 				images={images}
 			/>
-			<Button
-				custom="absolute right-4 bottom-4  shadow-[20rem] !rounded-full "
-				text={<FontAwesomeIcon icon={faPlus} />}
-			></Button>
 			<ImageDropImage onSend={(title, image) => sendImage(title, image)} />
 			{/* POpup image open */}
 			<div
