@@ -31,7 +31,8 @@ public class EventGestorController {
     ) {
         for(String partecipantEmail : eventDTO.getPartecipants()){
             if(eventDTO.getAdmins().contains(partecipantEmail)){
-                eventDTO.getPartecipants().remove(partecipantEmail);
+                /// There must be no duplicate emails in partecipants and admins lists
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
             }
         }
         if(
