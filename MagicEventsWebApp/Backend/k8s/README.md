@@ -60,9 +60,12 @@ Follow and run this command in order:
     ```bash
     kubectl apply -f .
     ```
+   ```bash
+   minikube addons enable ingress
+   ```
 8) Open the dashboard with this command:
    ```bash
-     minikube dashboard
+   minikube dashboard
    ```
 
 For stopping minikube:
