@@ -81,3 +81,15 @@ export function callback(accessToken){
 		},
 	});
 }
+
+export function logout(){
+	return fetch(`https://${userManagementUrl}/login/logoutuser`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			email: JSON.parse(sessionStorage.getItem('user')).email,
+		}).toString(),
+	});
+}

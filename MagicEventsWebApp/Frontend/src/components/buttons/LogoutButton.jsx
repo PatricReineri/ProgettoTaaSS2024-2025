@@ -1,6 +1,7 @@
 import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
+import { logout } from '../../api/authentication';
 
 function LogoutButton({ setLogged }) {
 	const navigate = useNavigate();
@@ -9,16 +10,7 @@ function LogoutButton({ setLogged }) {
 	const handleLogout = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetch('https://localhost:8443/login/logoutuser', {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({
-					email: JSON.parse(sessionStorage.getItem('user')).email,
-				}).toString(),
-			});
-
+			const res = await logout();
 			if (!res.ok) throw new Error('logout failed');
 			console.log('Success:', res);
 			setUser(null);
