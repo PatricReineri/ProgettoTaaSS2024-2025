@@ -176,8 +176,6 @@ export function getEventService(eventId) {
 
 export function createEvent(event) {
 	var temp = JSON.parse(JSON.stringify(event));
-	console.log(temp);
-
 	temp.participants = temp.participants.filter((item) => !temp.admins.includes(item));
 	console.log(temp);
 	return fetch(`http://${eventsetupUrl}/eventSetup`, {

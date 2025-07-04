@@ -18,12 +18,12 @@ Be sure to edit the hosts file mapping localhost as follows
 
 In Windows:
 ```
-  127.0.0.1 magicevents.local
+  127.0.0.1 magicevents.com
 ```
 
 In MacOS or Linux:
 ```
-  magicevents.192.168.49.2.nip.io magicevents.local
+  magicevents.192.168.49.2.nip.io magicevents.com
 ```
 
 For modify hosts file in MacOS or Linux run:
@@ -79,7 +79,7 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
 
    Windows version:
    ```shell
-   kubectl -n magicevents create secret tls magicevents-tls ` --cert=magicevents.local.pem ` --key=magicevents.local-key.pem
+   kubectl -n magicevents create secret tls magicevents-tls ` --cert=magicevents.com.pem ` --key=magicevents.com-key.pem
    ```
 7) Go to ingress folder (run ``` cd ../ingress```)  and run:
     ```bash
@@ -97,7 +97,7 @@ minikube tunnel
 ```
 And leave the terminal open. Test connection with this command:
 ```shell
-ping magicevents.local
+ping magicevents.com
 ```
 
 For stopping minikube:
