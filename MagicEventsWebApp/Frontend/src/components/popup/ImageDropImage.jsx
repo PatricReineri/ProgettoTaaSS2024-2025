@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+
+import imageCompression from 'browser-image-compression';
 import Popup from './Popup';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,16 +25,23 @@ const ImageDropImage = ({ onSend }) => {
 		addImageRef.current.click();
 	}
 
-	function imageUploaded(file) {
+	async function imageUploaded(file) {
 		let base64String = '';
 
 		let reader = new FileReader();
+		const options = {
+			maxSizeMB: 0.05, // Massimo 500KB
+			maxWidthOrHeight: 800, // Massimo 800px
+			useWebWorker: true, // Usa Web Worker per non bloccare l'UI
+			fileType: 'image/jpeg', // Forza JPEG per migliore compressione
+		};
+		const compressedFile = await imageCompression(file, options);
 
 		reader.onload = function () {
 			base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
 			setImage(base64String);
 		};
-		reader.readAsDataURL(file);
+		reader.readAsDataURL(compressedFile);
 	}
 
 	function selectImage() {

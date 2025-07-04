@@ -9,7 +9,7 @@ import { useCoordinatesConverter } from '../../utils/coordinatesConverter';
 const EventCard = ({ localDataTime, day, month, eventName, time, location, description }) => {
 	const navigate = useNavigate();
 	const address = useCoordinatesConverter(location);
-
+	const [loadingAPI, setLoadingAPI] = useState(true);
 	const [eventEnabled, setEventEnabled] = useState(false);
 	const [eventId, setEventId] = useState(-1);
 
@@ -22,6 +22,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 				const status = await isActive(id[0]);
 				const flag = await status.json();
 				setEventEnabled(flag);
+				setLoadingAPI(false);
 			} catch (err) {
 				console.error('Error contacting server:', err);
 			}
@@ -54,7 +55,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 				}
 			}}
 			className={clsx(
-				'flex flex-col rounded-xl p-4 mb-6 shadow-md bg-white',
+				'flex flex-col rounded-xl p-4 mb-6 shadow-md bg-[#E4DCEF]',
 				'hover:shadow-lg transition-shadow duration-300'
 			)}
 		>
@@ -64,7 +65,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 			</div>
 
 			{/* Contenuto */}
-			<div className="flex items-center gap-4">
+			<div className="flex items-center gap-4 text-[#363540]">
 				{/* Info Evento */}
 				<div className="flex flex-col">
 					<h3 className="text-lg font-semibold">{eventName}</h3>
@@ -92,18 +93,24 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 						}}
 					></Button>
 				)}
-				<Button
-					text="Elimina evento"
-					onClick={async (e) => {
-						e.stopPropagation();
-						try {
-							await deleteEvent(eventId);
-						} catch (err) {
-							console.error('Error contacting server:', err);
-						}
-					}}
-				></Button>
-				<Button text={!eventEnabled ? 'Attiva evento' : 'Annulla evento'} onClick={handleClick} />
+				{!loadingAPI ? (
+					<>
+						<Button
+							text="Elimina evento"
+							onClick={async (e) => {
+								e.stopPropagation();
+								try {
+									await deleteEvent(eventId);
+								} catch (err) {
+									console.error('Error contacting server:', err);
+								}
+							}}
+						></Button>
+						<Button text={!eventEnabled ? 'Attiva evento' : 'Annulla evento'} onClick={handleClick} />
+					</>
+				) : (
+					''
+				)}
 			</div>
 		</div>
 	);

@@ -24,7 +24,7 @@ export function login(formData) {
 export function helloServer(protocol) {
 	return fetch(`https://${userManagementUrl}/login/helloserver?protocol=` + protocol, {
 		method: 'GET',
-	});	
+	});
 }
 
 export function forgotPasswordRequest(email) {
@@ -73,7 +73,7 @@ export function deleteUser(email) {
 	});
 }
 
-export function callback(accessToken){
+export function callback(accessToken) {
 	return fetch(`https://${userManagementUrl}/login/userprofile?accessToken=${accessToken}`, {
 		method: 'GET',
 		headers: {
@@ -82,7 +82,7 @@ export function callback(accessToken){
 	});
 }
 
-export function logout(){
+export function logout() {
 	return fetch(`https://${userManagementUrl}/login/logoutuser`, {
 		method: 'PUT',
 		headers: {
@@ -91,5 +91,14 @@ export function logout(){
 		body: new URLSearchParams({
 			email: JSON.parse(sessionStorage.getItem('user')).email,
 		}).toString(),
+	});
+}
+
+export function getUserFromId(userId) {
+	return fetch(`https://${userManagementUrl}/info/profile?magicEventTag=${userId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }

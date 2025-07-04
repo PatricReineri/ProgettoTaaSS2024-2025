@@ -9,6 +9,7 @@ const GamePage = () => {
 	const navigate = useNavigate();
 
 	const [tree, setTree] = useState(null);
+	const [error, setError] = useState('');
 
 	useEffect(() => {
 		async function fetchAPI() {
@@ -20,10 +21,13 @@ const GamePage = () => {
 				return;
 			}
 
-			const res = await getGame(eventId);
-			const res2 = await res.json();
-
-			setTree(res2.root);
+			try {
+				const res = await getGame(eventId);
+				const res2 = await res.json();
+				setTree(res2.root);
+			} catch (error) {
+				setError('Non sono del umore, riprova più tardi');
+			}
 		}
 
 		if (!eventId) {
@@ -35,13 +39,15 @@ const GamePage = () => {
 
 	return (
 		<div className="h-full overflow-y-auto bg-gradient-to-r from-[#EE0E51]  to-[#E4DCEF] relative   ">
-			{tree ? (
-				<div className=" gameBackground  w-full h-full">
+			<div className=" gameBackground  w-full h-full">
+				{tree ? (
 					<GameNode startingNode={tree} />
-				</div>
-			) : (
-				<p>Caricamento...</p>
-			)}
+				) : error ? (
+					<p className="text-[#E8F2FC] p-4 w-fit m-4 text-center bg-[#505458] rounded-md backdrop-blur-3xl ">{error}</p>
+				) : (
+					<p>Caricamento...</p>
+				)}
+			</div>
 		</div>
 	);
 };

@@ -8,30 +8,30 @@ function UserProfilePage({ setLogged }) {
 	if (!user) {
 		return <p style={{ textAlign: 'center' }}>User not found</p>;
 	}
-	
+
 	let img = user.profileImageUrl;
-	if(img === null || !img){
-		img = '/default-avatar.png'
+	if (img === null || !img) {
+		img = '/default-avatar.png';
 	}
 
 	return (
-		<div className="h-full overflow-y-auto bg-[#505458] p-4">
+		<div className="h-full overflow-y-auto bg-[#505458] flex items-center justify-center ">
 			<div
 				style={{
 					maxWidth: '400px',
-					margin: '50px auto',
+					margin: '',
 					padding: '20px',
 					borderRadius: '12px',
 					boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
 					fontFamily: 'Arial',
-					backgroundColor: '#f9f9f9',
+					backgroundColor: '#E4DCEF',
 				}}
 			>
 				<h2 className="text-2xl font-bold mb-4 text-center">Profilo utente</h2>
 
 				<img
 					src={
-							img.startsWith('http')
+						img.startsWith('http')
 							? img.replace(/'+$/, '')
 							: img.startsWith('/default-avatar.png')
 							? img

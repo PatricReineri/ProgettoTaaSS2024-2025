@@ -171,7 +171,7 @@ const BoardPage = () => {
 			<div className="w-64 mt-4 shadow-2xl h-fit rounded-r-2xl bg-[#363540] text-[#E4DCEF] p-4 max-sm:hidden ">
 				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
 				<h1 className="font-bold">{title}</h1>
-				<p className="text-xs">{description}</p>
+				<p className="text-xs break-words text-clip  w-full ">{description}</p>
 			</div>
 			<MessageList
 				isAdmin={isAdminVar}
