@@ -4,7 +4,7 @@ services:
   # ==============================
   # DATABASE SERVICES
   # ==============================
-  
+
   # User Management Database
   user-management-db:
     image: postgres:15
@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - user_management_data:/var/lib/postgresql/data
       - ./PostgresSQL/UserManagement:/docker-entrypoint-initdb.d
@@ -30,7 +30,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5431:5432"
+      - '5431:5432'
     volumes:
       - events_management_data:/var/lib/postgresql/data
       - ./PostgresSQL/EventsManagement:/docker-entrypoint-initdb.d
@@ -46,7 +46,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"
+      - '5433:5432'
     volumes:
       - board_service_data:/var/lib/postgresql/data
       - ./PostgresSQL/BoardService:/docker-entrypoint-initdb.d
@@ -62,7 +62,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5434:5432"
+      - '5434:5432'
     volumes:
       - guest_game_data:/var/lib/postgresql/data
       - ./PostgresSQL/GuestGameService:/docker-entrypoint-initdb.d
@@ -78,7 +78,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5435:5432"
+      - '5435:5432'
     volumes:
       - gallery_data:/var/lib/postgresql/data
       - ./PostgresSQL/GalleryService:/docker-entrypoint-initdb.d
@@ -88,7 +88,7 @@ services:
   # ==============================
   # MESSAGE BROKER
   # ==============================
-  
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -96,8 +96,8 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - '5672:5672'
+      - '15672:15672'
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -115,7 +115,7 @@ services:
       dockerfile: Dockerfile
     container_name: user-management-service
     ports:
-      - "8443:8443"
+      - '8443:8443'
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-management-db:5432/UserManagementMEADB
       SPRING_DATASOURCE_USERNAME: user
@@ -133,7 +133,7 @@ services:
       dockerfile: Dockerfile
     container_name: events-management-service
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://events-management-db:5432/EventsManagementMEADB
       SPRING_DATASOURCE_USERNAME: user
@@ -155,7 +155,7 @@ services:
       dockerfile: Dockerfile
     container_name: eventsetup-service
     ports:
-      - "8086:8086"
+      - '8086:8086'
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       # Aggiungi queste righe per mappare correttamente le proprietà Spring Boot:
@@ -163,7 +163,6 @@ services:
       SERVICES_BOARDSERVICE_URL: http://board-service:8081
       SERVICES_GALLERYSERVICE_URL: http://gallery-service:8085
       SERVICES_GUESTGAMESERVICE_URL: http://guest-game-service:8083
-
 
     depends_on:
       - rabbitmq
@@ -179,7 +178,7 @@ services:
       dockerfile: Dockerfile
     container_name: board-service
     ports:
-      - "8081:8081"
+      - '8081:8081'
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://board-db:5432/Board
@@ -202,7 +201,7 @@ services:
       dockerfile: Dockerfile
     container_name: guest-game-service
     ports:
-      - "8083:8083"
+      - '8083:8083'
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://guest-game-db:5432/GuestGame
@@ -225,7 +224,7 @@ services:
       dockerfile: Dockerfile
     container_name: gallery-service
     ports:
-      - "8085:8085"
+      - '8085:8085'
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://gallery-db:5432/Gallery
@@ -239,6 +238,26 @@ services:
       - events-management-service
     networks:
       - magicevents-network
+
+# Frontend Service
+frontend:
+  image: magicevents/frontend:latest
+  build:
+    context: ../Frontend
+    dockerfile: Dockerfile
+  container_name: frontend
+  ports:
+    - '3000:3000'
+  environment:
+    NODE_ENV: production
+  depends_on:
+    - user-management-service
+    - events-management-service
+    - board-service
+    - guest-game-service
+    - gallery-service
+  networks:
+    - magicevents-network
 
 # ==============================
 # VOLUMES
