@@ -96,7 +96,7 @@ function UserEditPage({ setLogged }) {
 					/>
 					<button
 						onClick={() => setEditingImage(true)}
-						className="absolute top-0 right-0 bg-white bg-opacity-75 rounded-full p-1 text-[#505458] hover:text-[#363540] shadow-md"
+						className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center bg-white bg-opacity-75 rounded-full text-[#505458] hover:text-[#363540] shadow-md"
 						aria-label="Modifica immagine"
 					>
 						<FontAwesomeIcon icon={faEdit} />
@@ -104,7 +104,7 @@ function UserEditPage({ setLogged }) {
 
 					<button
 						onClick={handleRemoveImage}
-						className="absolute right-0 top-10 bg-white bg-opacity-75 rounded-full p-1 text-[#505458] hover:text-[#363540] shadow-md"
+						className="absolute top-9 right-0 w-8 h-8 flex items-center justify-center bg-white bg-opacity-75 rounded-full text-[#505458] hover:text-[#363540] shadow-md"
 						aria-label="Rimuovi immagine"
 					>
 						<FontAwesomeIcon icon={faClose} />
@@ -127,7 +127,7 @@ function UserEditPage({ setLogged }) {
 										imgInput.current.value = '';
 										setEditingImage(false);
 									}}
-									text={<FontAwesomeIcon icon={faClose} />}
+									text={<FontAwesomeIcon icon={faClose} className="text-black" />}
 								/>
 							}
 						/>

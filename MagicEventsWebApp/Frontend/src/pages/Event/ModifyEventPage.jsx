@@ -144,7 +144,7 @@ const ModifyEventPage = () => {
 									handleRemoveImage();
 									setEditingImage(false);
 								}}
-								text={<FontAwesomeIcon icon={faClose} />}
+								text={<FontAwesomeIcon icon={faClose} className="text-black"/>}
 							/>
 						}
 					/>
