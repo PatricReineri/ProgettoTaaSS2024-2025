@@ -62,7 +62,7 @@ function App() {
 						<div className={'flex gap-2 items-center'}>
 							<LogoutButton setLogged={setLogged}></LogoutButton>
 							<NavLink to="/userprofile">
-								<button className="bg-[#E4DCEF] text-[#363540] px-4  inner-shadow p-1 cursor-pointer hover:scale-105 rounded-full">
+								<button className="inline-flex items-center px-4 py-1 bg-[#E4DCEF] text-[#363540] inner-shadow cursor-pointer hover:scale-105 rounded-full max-h-[40px] overflow-hidden text-ellipsis whitespace-nowrap">
 									{JSON.parse(sessionStorage.getItem('user')).username}
 								</button>
 							</NavLink>

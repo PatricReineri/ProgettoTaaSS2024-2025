@@ -1,10 +1,10 @@
 import { url } from '../utils/utils';
 
-const galleryUrl = url === 'localhost' ? `${url}:8085` : `${url}/api/galleries`;
+const galleryUrl = url === 'localhost' ? `https://${url}:8085` : `https://${url}/api/galleries`;
 
 export function getImages(eventID, pageNumber) {
 	return fetch(
-		`http://${galleryUrl}/gallery/getGallery/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`${galleryUrl}/gallery/getGallery/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -16,7 +16,7 @@ export function getImages(eventID, pageNumber) {
 
 export function getImagesPopular(eventID, pageNumber) {
 	return fetch(
-		`http://${galleryUrl}/gallery/getGalleryPopular/${eventID}/${pageNumber}?userMagicEventsTag=${
+		`${galleryUrl}/gallery/getGalleryPopular/${eventID}/${pageNumber}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{

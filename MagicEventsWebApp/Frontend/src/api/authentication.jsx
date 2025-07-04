@@ -1,6 +1,6 @@
 import { url } from '../utils/utils';
 
-const userManagementUrl = url === 'localhost' ? `${url}:8443` : `${url}/api/users`;
+const userManagementUrl = url === 'localhost' ? `https://${url}:8443` : `https://${url}/api/users`;
 
 export function login(formData) {
 	const params = new URLSearchParams();
@@ -9,7 +9,7 @@ export function login(formData) {
 	}
 
 	try {
-		return fetch(`https://${userManagementUrl}/login/form?${params.toString()}`, {
+		return fetch(`${userManagementUrl}/login/form?${params.toString()}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,13 +22,13 @@ export function login(formData) {
 }
 
 export function helloServer(protocol) {
-	return fetch(`https://${userManagementUrl}/login/helloserver?protocol=` + protocol, {
+	return fetch(`${userManagementUrl}/login/helloserver?protocol=` + protocol, {
 		method: 'GET',
-	});	
+	});
 }
 
 export function forgotPasswordRequest(email) {
-	return fetch(`https://${userManagementUrl}/login/generateresetpasswordlink`, {
+	return fetch(`${userManagementUrl}/login/generateresetpasswordlink`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: new URLSearchParams({
@@ -42,7 +42,7 @@ export function register(formData) {
 	for (const key in formData) {
 		params.append(key, formData[key]);
 	}
-	return fetch(`https://${userManagementUrl}/login/register`, {
+	return fetch(`${userManagementUrl}/login/register`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -52,7 +52,7 @@ export function register(formData) {
 }
 
 export function modifyUser(user) {
-	return fetch(`https://${userManagementUrl}/login/modifyuser`, {
+	return fetch(`${userManagementUrl}/login/modifyuser`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export function modifyUser(user) {
 }
 
 export function deleteUser(email) {
-	return fetch(`https://${userManagementUrl}/login/deleteuser`, {
+	return fetch(`${userManagementUrl}/login/deleteuser`, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -73,8 +73,8 @@ export function deleteUser(email) {
 	});
 }
 
-export function callback(accessToken){
-	return fetch(`https://${userManagementUrl}/login/userprofile?accessToken=${accessToken}`, {
+export function callback(accessToken) {
+	return fetch(`${userManagementUrl}/login/userprofile?accessToken=${accessToken}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -82,8 +82,8 @@ export function callback(accessToken){
 	});
 }
 
-export function logout(){
-	return fetch(`https://${userManagementUrl}/login/logoutuser`, {
+export function logout() {
+	return fetch(`${userManagementUrl}/login/logoutuser`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -91,5 +91,14 @@ export function logout(){
 		body: new URLSearchParams({
 			email: JSON.parse(sessionStorage.getItem('user')).email,
 		}).toString(),
+	});
+}
+
+export function getUserFromId(userId) {
+	return fetch(`${userManagementUrl}/info/profile?magicEventTag=${userId}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }

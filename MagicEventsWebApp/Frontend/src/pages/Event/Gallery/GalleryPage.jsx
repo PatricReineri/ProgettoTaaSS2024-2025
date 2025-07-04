@@ -206,8 +206,6 @@ const GalleryPage = () => {
 			console.log('Not connected to WebSocket');
 			return;
 		}
-
-		console.log(image);
 		let user = JSON.parse(sessionStorage.getItem('user'));
 		const galleryImage = {
 			userMagicEventsTag: user.magicEventTag.toString(),
@@ -216,7 +214,6 @@ const GalleryPage = () => {
 			eventID: eventId,
 			likedCount: 0,
 		};
-		console.log(galleryImage);
 
 		try {
 			send(stompClient, `/app/gallery/imageLike/${eventId}`, galleryImage);

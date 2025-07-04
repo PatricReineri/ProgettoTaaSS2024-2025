@@ -10,10 +10,12 @@ const MyEventsPage = () => {
 		setReady(false);
 		async function fetchAPI() {
 			const res = await getEventsc();
+
 			if (!res.ok) {
 				console.log(res);
 
 				setEvents([]);
+				setReady(true);
 				return;
 			}
 			const data = await res.json();
@@ -28,7 +30,15 @@ const MyEventsPage = () => {
 	}, []);
 	return (
 		<div className="h-full overflow-y-auto bg-[#505458] p-4">
-			{ready ? <EventList events={events} /> : <p className="p-4">Caricamento...</p>}
+			{ready ? (
+				events.length > 0 ? (
+					<EventList events={events} />
+				) : (
+					<p className="p-6 text-current/30 font-bold text-center w-full ">Non hai creato ancora nessun evento</p>
+				)
+			) : (
+				<p className="p-6 text-current/30 font-bold text-center w-full ">Caricamento...</p>
+			)}
 		</div>
 	);
 };

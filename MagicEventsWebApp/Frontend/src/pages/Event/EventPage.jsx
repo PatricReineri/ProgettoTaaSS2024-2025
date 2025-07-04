@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faArrowAltCircleRight,
 	faClipboard,
+	faClose,
 	faGamepad,
 	faImage,
 	faMap,
@@ -17,14 +18,19 @@ import { APIProvider, Map, Marker, useMapsLibrary } from '@vis.gl/react-google-m
 import ErrorContainer from '../../components/Error/ErrorContainer';
 import { convertDataTime } from '../../utils/dataFormatter';
 import { setAdmin } from '../../utils/utils';
+import Button from '../../components/buttons/Button';
+import clsx from 'clsx';
+import LoadingContainer from '../../components/Error/LoadingContainer';
 
 const EventsPage = () => {
 	const { eventId } = useParams();
 	const [event, setEvent] = useState(null);
+	const [loading, setLoading] = useState(true);
 	const [eventServices, setEventServices] = useState(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [lat, setLat] = useState(0);
 	const [lng, setLng] = useState(0);
+	const [openPopup, setOpenPopup] = useState(0);
 
 	useEffect(() => {
 		async function fetchAPI() {
@@ -35,7 +41,13 @@ const EventsPage = () => {
 			}
 			const data = await res.json();
 
-			setAdmin(eventId);
+			if (data.admins.includes(JSON.parse(sessionStorage.getItem('user')).email)) {
+				setAdmin(eventId);
+			}
+
+			if (data.creator === JSON.parse(sessionStorage.getItem('user')).magicEventTag) {
+				setAdmin(eventId);
+			}
 
 			setEvent(data);
 			if (data.location) {
@@ -43,6 +55,7 @@ const EventsPage = () => {
 				setLat(Number(coordinates[0]));
 				setLng(Number(coordinates[1]));
 			}
+			setLoading(false);
 		}
 
 		async function fetchAPIServices() {
@@ -62,7 +75,11 @@ const EventsPage = () => {
 	}, [eventId]);
 
 	return !event ? (
-		<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
+		loading ? (
+			<LoadingContainer />
+		) : (
+			<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
+		)
 	) : (
 		<div className="h-full text-[#E4DCEF]  p-4 flex flex-col gap-2 relative  bg-[#505458] overflow-y-auto ">
 			<Menu
@@ -160,7 +177,7 @@ const EventsPage = () => {
 					},
 				]}
 			></Menu>
-			<Image src={event.image} />
+			<Image onClick={() => setOpenPopup(true)} src={event.image} />
 			<h1 className=" text-xl rounded-full p-2  font-extrabold w-fit ">{event.title}</h1>
 			<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm  h-fit  rounded-md">
 				{event.description}
@@ -174,6 +191,26 @@ const EventsPage = () => {
 				<h1 className="bg-[#E4DCEF]  text-[#363540] rounded-full p-2 m-2 font-bold w-fit ">
 					{convertDataTime(event.ending)}
 				</h1>
+			</div>
+			<div
+				className={clsx({
+					'absolute p-4  top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px]  h-full w-full flex max-sm:flex-col items-center justify-center ':
+						openPopup,
+					hidden: !openPopup,
+				})}
+			>
+				<div className="sm:h-full max-sm:h-[calc(100%-5.5rem)]">
+					<img
+						className="aspect-4/5 object-cover h-full  rounded-sm "
+						src={'data:image/*;base64,' + event.image}
+						alt="test"
+					/>
+				</div>
+				<Button
+					onClick={() => setOpenPopup(false)}
+					custom="absolute top-4 right-4"
+					text={<FontAwesomeIcon icon={faClose} />}
+				></Button>
 			</div>
 		</div>
 	);

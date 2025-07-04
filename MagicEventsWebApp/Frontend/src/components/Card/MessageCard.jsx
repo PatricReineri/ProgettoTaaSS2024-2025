@@ -40,7 +40,7 @@ const MessageCard = ({
 						'hover:bg-[#363540]/20 p-2 rounded-full': true,
 						'!text-[#363540]': !isSendbyMe,
 						'!text-[#E4DCEF]': isSendbyMe,
-						hidden: isAdmin,
+						hidden: !isAdmin,
 					})}
 					text={<FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>}
 				></Button>

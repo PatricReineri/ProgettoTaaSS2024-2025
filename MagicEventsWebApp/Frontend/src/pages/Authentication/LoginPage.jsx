@@ -16,6 +16,13 @@ function LoginPage({ setLogged }) {
 	const [forgotFlag, setForgotFlag] = useState(false);
 
 	useEffect(() => {
+		const user = JSON.parse(sessionStorage.getItem('user'));
+		if (user) {
+			navigate('/', { replace: true });
+		}
+	}, [navigate]);
+
+	useEffect(() => {
 		const protocol = window.location.protocol.replace(':', '');
 		console.log('✅ Trying to contact server...');
 		const detectClientProtocol = async () => {

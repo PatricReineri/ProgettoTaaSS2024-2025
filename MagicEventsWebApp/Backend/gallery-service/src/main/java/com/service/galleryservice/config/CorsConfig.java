@@ -16,6 +16,7 @@ public class CorsConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:*",
                 "ws://localhost:*",
+                "https://localhost:*",
                 "https://magicevents.com",
                 "http://magicevents.com"
         ));

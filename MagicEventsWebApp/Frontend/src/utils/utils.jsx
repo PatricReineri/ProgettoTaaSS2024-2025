@@ -1,16 +1,21 @@
 export function isAdmin(eventId) {
-	return localStorage.getItem('admin') !== null && JSON.parse(localStorage.getItem('admin')).includes(eventId);
+	const userId = JSON.parse(sessionStorage.getItem('user')).magicEventTag;
+	return (
+		sessionStorage.getItem('admin' + userId) !== null &&
+		JSON.parse(sessionStorage.getItem('admin' + userId)).includes(eventId.toString())
+	);
 }
 
 export function setAdmin(eventId) {
-	if (localStorage.getItem('admin')) {
-		var admin = JSON.parse(localStorage.getItem('admin'));
+	const userId = JSON.parse(sessionStorage.getItem('user')).magicEventTag;
+	if (sessionStorage.getItem('admin' + userId)) {
+		var admin = JSON.parse(sessionStorage.getItem('admin' + userId));
 		if (!admin.includes(eventId)) {
 			admin.push(eventId);
-			localStorage.setItem('admin', JSON.stringify(admin));
+			sessionStorage.setItem('admin' + userId, JSON.stringify(admin));
 		}
 	} else {
-		localStorage.setItem('admin', JSON.stringify([eventId]));
+		sessionStorage.setItem('admin' + userId, JSON.stringify([eventId]));
 	}
 }
 

@@ -1,12 +1,12 @@
 import { url } from '../utils/utils';
 
 
-const eventsManagementUrl = url === 'localhost' ? `${url}:8080` : `${url}/api/events`;
-const eventsetupUrl = url === 'localhost' ? `${url}:8086` : `${url}/api/eventsetup`;
+const eventsManagementUrl = url === 'localhost' ? `'https://${url}:8080` : `https://${url}/api/events`;
+const eventsetupUrl = url === 'localhost' ? `https://${url}:8086` : `${url}/api/eventsetup`;
 
 export function getEventsp() {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/geteventslistp?partecipantId=${
+		`${eventsManagementUrl}/gestion/geteventslistp?partecipantId=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -18,7 +18,7 @@ export function getEventsp() {
 
 export function getEventsc() {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/geteventslistc?creatorId=${JSON.parse(sessionStorage.getItem('user')).magicEventTag}`,
+		`${eventsManagementUrl}/gestion/geteventslistc?creatorId=${JSON.parse(sessionStorage.getItem('user')).magicEventTag}`,
 		{
 			method: 'GET',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -30,7 +30,7 @@ export function getEventId(title, day) {
 	const user = JSON.parse(sessionStorage.getItem('user'));
 	const magicEventsTag = user?.magicEventTag;
 
-	return fetch(`http://${eventsManagementUrl}/gestion/geteventid?title=${title}&day=${day}&magicEventTag=${magicEventsTag}`, {
+	return fetch(`${eventsManagementUrl}/gestion/geteventid?title=${title}&day=${day}&magicEventTag=${magicEventsTag}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -38,7 +38,7 @@ export function getEventId(title, day) {
 
 export function annullEvent(eventId) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/annullevent?eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/annullevent?eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -52,7 +52,7 @@ export function activateServices(eventId, services) {
 	const user = JSON.parse(sessionStorage.getItem('user'));
 	const magicEventsTag = user?.magicEventTag;
 
-	const url = `http://${eventsManagementUrl}/gestion/activeservices?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
+	const url = `${eventsManagementUrl}/gestion/activeservices?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
 
 	return fetch(url, {
 		method: 'PUT',
@@ -65,7 +65,7 @@ export function activateServices(eventId, services) {
 
 export function getAdmins(eventId) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/getadminsforevent?eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/getadminsforevent?eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -76,7 +76,7 @@ export function getAdmins(eventId) {
 }
 
 export function getPartecipants(eventId) {
-	return fetch(`http://${eventsManagementUrl}/gestion/getpartecipantsforevent?eventId=${eventId}`, {
+	return fetch(`${eventsManagementUrl}/gestion/getpartecipantsforevent?eventId=${eventId}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -86,7 +86,7 @@ export function modifyEvent(eventId, event) {
 	const user = JSON.parse(sessionStorage.getItem('user'));
 	const magicEventsTag = user?.magicEventTag;
 
-	const url = `http://${eventsManagementUrl}/gestion/modify?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
+	const url = `${eventsManagementUrl}/gestion/modify?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
 
 	return fetch(url, {
 		method: 'PUT',
@@ -99,7 +99,7 @@ export function modifyEvent(eventId, event) {
 
 export function deannullEvent(eventId) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/de-annullevent?eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/de-annullevent?eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -111,7 +111,7 @@ export function deannullEvent(eventId) {
 
 export function updateAdmins(eventId, newAdmins) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/updateadmins?admins=${newAdmins}&eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/updateadmins?admins=${newAdmins}&eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -123,7 +123,7 @@ export function updateAdmins(eventId, newAdmins) {
 
 export function updatePartecipants(eventId, newPartecipants) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/addpartecipants?partecipants=${newPartecipants}&eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/addpartecipants?partecipants=${newPartecipants}&eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -135,7 +135,7 @@ export function updatePartecipants(eventId, newPartecipants) {
 
 export function removePartecipant(eventId, partecipantEmail) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/removepartecipant?partecipant=${partecipantEmail}&eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/removepartecipant?partecipant=${partecipantEmail}&eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -147,7 +147,7 @@ export function removePartecipant(eventId, partecipantEmail) {
 
 export function removeAdmin(eventId, adminEmail) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/removeadmin?admin=${adminEmail}&eventId=${eventId}&magicEventsTag=${
+		`${eventsManagementUrl}/gestion/removeadmin?admin=${adminEmail}&eventId=${eventId}&magicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -158,7 +158,7 @@ export function removeAdmin(eventId, adminEmail) {
 }
 
 export function getEvent(eventId) {
-	return fetch(`http://${eventsManagementUrl}/gestion/geteventinfo?eventId=${eventId}`, {
+	return fetch(`${eventsManagementUrl}/gestion/geteventinfo?eventId=${eventId}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -168,7 +168,7 @@ export function getEventService(eventId) {
 	const params = new URLSearchParams();
 	params.append('eventId', eventId);
 	params.append('magicEventTag', JSON.parse(sessionStorage.getItem('user')).magicEventTag);
-	return fetch(`http://${eventsManagementUrl}/gestion/geteventenabledservices?${params}`, {
+	return fetch(`${eventsManagementUrl}/gestion/geteventenabledservices?${params}`, {
 		method: 'GET',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	});
@@ -178,7 +178,7 @@ export function createEvent(event) {
 	var temp = JSON.parse(JSON.stringify(event));
 	temp.participants = temp.participants.filter((item) => !temp.admins.includes(item));
 	console.log(temp);
-	return fetch(`http://${eventsetupUrl}/eventSetup`, {
+	return fetch(`${eventsetupUrl}/eventSetup`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(temp),
@@ -189,7 +189,7 @@ export function deleteEvent(eventId) {
 	const user = JSON.parse(sessionStorage.getItem('user'));
 	const magicEventsTag = user?.magicEventTag;
 
-	const urldelete = `http://${eventsManagementUrl}/gestion/delete?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
+	const urldelete = `${eventsManagementUrl}/gestion/delete?eventId=${eventId}&magicEventsTag=${magicEventsTag}`;
 
 	return fetch(urldelete, {
 		method: 'DELETE',
@@ -198,7 +198,7 @@ export function deleteEvent(eventId) {
 
 export function isActive(eventId) {
 	return fetch(
-		`http://${eventsManagementUrl}/gestion/isactive?creatorId=${
+		`${eventsManagementUrl}/gestion/isactive?creatorId=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}&eventId=${eventId}`,
 		{

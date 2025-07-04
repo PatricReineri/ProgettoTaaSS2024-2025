@@ -15,6 +15,7 @@ import Input from '../../components/inputs/Input';
 import ImageEdit from '../../components/imagesComponent/ImageEdit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDataTime } from '../../utils/dataFormatter';
+import LoadingContainer from '../../components/Error/LoadingContainer';
 
 const ModifyEventPage = () => {
 	const user = JSON.parse(sessionStorage.getItem('user'));
@@ -26,6 +27,7 @@ const ModifyEventPage = () => {
 	const [adminInput, setAdminInput] = useState('');
 	const [lat, setLat] = useState(0);
 	const [lng, setLng] = useState(0);
+	const [loading, setLoading] = useState(true);
 	const [eventDetail, setEventDetail] = useState({
 		title: '',
 		description: '',
@@ -111,13 +113,18 @@ const ModifyEventPage = () => {
 				setLat(Number(coordinates[0]));
 				setLng(Number(coordinates[1]));
 			}
+			setLoading(false);
 		}
 
 		fetchAPI();
 	}, [eventId]);
 
 	return !event ? (
-		<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
+		loading ? (
+			<LoadingContainer />
+		) : (
+			<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
+		)
 	) : (
 		<div className="h-full overflow-y-auto bg-[#505458] p-4 text-[#E4DCEF]">
 			<ImageEdit src={event.image} alt={event.title} onEditClick={() => setEditingImage(true)} />
@@ -137,7 +144,7 @@ const ModifyEventPage = () => {
 									handleRemoveImage();
 									setEditingImage(false);
 								}}
-								text={<FontAwesomeIcon icon={faClose} />}
+								text={<FontAwesomeIcon icon={faClose} className="text-black"/>}
 							/>
 						}
 					/>
@@ -202,7 +209,7 @@ const ModifyEventPage = () => {
 				</div>
 			</div>
 
-			<div className="flex flex-row justify-between justify-center">
+			<div className="flex flex-row  justify-center">
 				<Button
 					text="Conferma modifiche"
 					onClick={async () => {

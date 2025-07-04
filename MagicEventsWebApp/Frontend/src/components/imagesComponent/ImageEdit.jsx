@@ -11,7 +11,7 @@ const ImageEdit = ({src, alt, onEditClick}) => {
       />
       <button
         onClick={onEditClick}
-        className="absolute top-2 right-2 bg-white bg-opacity-75 rounded-full p-1 text-[#505458] hover:text-[#363540] shadow-md"
+        className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white bg-opacity-75 rounded-full text-[#505458] hover:text-[#363540] shadow-md"
         aria-label="Modifica immagine"
       >
         <FontAwesomeIcon icon={faEdit} />
