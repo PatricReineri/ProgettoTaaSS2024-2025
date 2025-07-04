@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: magicevents-ingress-https
+  name: magicevents-ingress-api
   namespace: magicevents
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -23,6 +23,41 @@ spec:
     - host: magicevents.com
       http:
         paths:
+          - path: /api/events(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: events-management-service
+                port:
+                  number: 8080
+          - path: /api/eventsetup(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: eventsetup-service
+                port:
+                  number: 8086
+          - path: /api/boards(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: board-service
+                port:
+                  number: 8081
+          - path: /api/games(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: guest-game-service
+                port:
+                  number: 8083
+          - path: /api/galleries(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: gallery-service
+                port:
+                  number: 8085
           - path: /api/users(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
@@ -30,5 +65,3 @@ spec:
                 name: user-management-service
                 port:
                   number: 8443
-
-
