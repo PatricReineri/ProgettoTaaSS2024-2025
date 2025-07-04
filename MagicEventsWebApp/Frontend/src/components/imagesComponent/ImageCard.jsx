@@ -21,12 +21,12 @@ const ImageCard = ({ mex, onLike, onDelete, onClick, isAdmin = false }) => {
 							e.stopPropagation();
 							onLike(mex);
 						}}
-						custom=" !rounded-full bg-transparent !border-none justify-center group flex items-center"
+						custom=" !rounded-full bg-transparent !border-none justify-center group/like flex items-center !hover:bg-[#E8F2FC] "
 						text={
 							<FontAwesomeIcon
 								className={clsx({
 									'text-2xl !px-0   ': true,
-									'text-[#EE0E51]  ': mex.userLike,
+									'text-[#EE0E51]  group-hover/like:!text-[#E8F2FC] ': mex.userLike,
 									'text-[##E8F2FC] ': !mex.userLike,
 								})}
 								icon={faHeart}

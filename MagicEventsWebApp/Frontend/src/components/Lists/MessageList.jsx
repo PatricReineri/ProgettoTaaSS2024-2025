@@ -43,7 +43,7 @@ const MessageList = ({
 						text="Invia"
 					/>
 				</div>
-				<p className="p-6 text-current/30 font-bold text-center w-full ">Nessun messaggio</p>;
+				<p className="p-6 text-current/30 font-bold text-center w-full ">Nessun messaggio</p>
 			</div>
 		);
 	}

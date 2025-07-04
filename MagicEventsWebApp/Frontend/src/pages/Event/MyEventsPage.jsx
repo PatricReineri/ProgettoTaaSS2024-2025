@@ -37,7 +37,7 @@ const MyEventsPage = () => {
 					<p className="p-6 text-current/30 font-bold text-center w-full ">Non hai creato ancora nessun evento</p>
 				)
 			) : (
-				<p className="p-4">Caricamento...</p>
+				<p className="p-6 text-current/30 font-bold text-center w-full ">Caricamento...</p>
 			)}
 		</div>
 	);

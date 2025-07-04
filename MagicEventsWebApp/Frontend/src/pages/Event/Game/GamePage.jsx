@@ -45,7 +45,9 @@ const GamePage = () => {
 				) : error ? (
 					<p className="text-[#E8F2FC] p-4 w-fit m-4 text-center bg-[#505458] rounded-md backdrop-blur-3xl ">{error}</p>
 				) : (
-					<p>Caricamento...</p>
+					<p className="text-[#E8F2FC] p-4 w-fit m-4 text-center bg-[#505458] rounded-md backdrop-blur-3xl ">
+						Aspetta sto pensando alle domande...
+					</p>
 				)}
 			</div>
 		</div>
