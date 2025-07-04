@@ -1,10 +1,10 @@
 import { url } from '../utils/utils';
 
-const guestGameUrl = url === 'localhost' ? `${url}:8083` : `${url}/api/games`;
+const guestGameUrl = url === 'localhost' ? `https://${url}:8083` : `https://${url}/api/games`;
 
 export function getGame(eventID) {
 	return fetch(
-		`http://${guestGameUrl}/guest-game/createDecisionTree/${eventID}?userMagicEventsTag=${
+		`${guestGameUrl}/guest-game/createDecisionTree/${eventID}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -16,7 +16,7 @@ export function getGame(eventID) {
 
 export function isDataInGame(eventID) {
 	return fetch(
-		`http://${guestGameUrl}/guest-game/hasUserInsertedInfo/${eventID}?userMagicEventsTag=${
+		`${guestGameUrl}/guest-game/hasUserInsertedInfo/${eventID}?userMagicEventsTag=${
 			JSON.parse(sessionStorage.getItem('user')).magicEventTag
 		}`,
 		{
@@ -27,7 +27,7 @@ export function isDataInGame(eventID) {
 }
 
 export function insertInfo(formData) {
-	return fetch(`http://${guestGameUrl}/guest-game/insertGuestInfo`, {
+	return fetch(`${guestGameUrl}/guest-game/insertGuestInfo`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(formData),

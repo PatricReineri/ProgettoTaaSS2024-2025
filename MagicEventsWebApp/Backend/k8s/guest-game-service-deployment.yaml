@@ -79,7 +79,7 @@ spec:
       containers:
         - env:
             - name: SERVICES_EVENTMANAGEMENT_URL
-              value: http://events-management-service:8080
+              value: https://events-management-service:8080
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
             - name: SPRING_DATASOURCE_URL

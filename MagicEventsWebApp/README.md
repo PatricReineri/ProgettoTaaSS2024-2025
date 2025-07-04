@@ -14,7 +14,7 @@ Follow and run this command in order:
    minikube addons enable ingress
    ```
 
-Be sure to edit the hosts file mapping localhost as follows
+Be sure to edit the hosts file mapping localhost as follows.
 
 In Windows:
 ```
@@ -23,7 +23,7 @@ In Windows:
 
 In MacOS or Linux:
 ```
-  magicevents.192.168.49.2.nip.io magicevents.com
+  magicevents.[minikube ip].nip.io magicevents.com
 ```
 
 For modify hosts file in MacOS or Linux run:
@@ -35,7 +35,7 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
 2) ```bash 
    eval $(minikube docker-env) 
    ```
-   To redirect docker commands to minikube docker
+   To redirect docker commands to minikube docker.
 
    Windows version:
    ```shell 
@@ -53,17 +53,17 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
    ```
    Note: you have to do these operations in same terminal where you start minukube.
    
-   In folder Backend (run ``` cd ..```) is present a script for build all Dockerfile services.
+   In folder MagicEventsWebApp is present a script for build all Dockerfile services.
 
    Check that the images have been created correctly:
    ```bash
    docker image ls
    ```
-4) Now go in k8s folder (run ``` cd k8s```) and run: 
+4) Now go in k8s folder (run ``` cd Backend/k8s```) and run: 
     ```bash 
     kubectl apply -f magicevents-namespace.yaml
    ```
-   For create the namespace
+   For create the namespace.
 
 5) Always in k8s folder run:
     ```bash
@@ -75,7 +75,7 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
    --cert=magicevents.local.pem \
    --key=magicevents.local-key.pem
     ```
-   For create certificate secret in kubernetes
+   For create certificate secret in kubernetes.
 
    Windows version:
    ```shell
