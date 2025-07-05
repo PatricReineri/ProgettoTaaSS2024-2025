@@ -127,7 +127,7 @@ const GalleryPage = () => {
 					setImagesPopular((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
-					console.log('Subscribe!!!');
+					console.log('Subscribe!');
 
 					setImages((prev) =>
 						prev.map((item) =>

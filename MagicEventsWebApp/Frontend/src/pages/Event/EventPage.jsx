@@ -194,24 +194,25 @@ const EventsPage = () => {
 			</div>
 			<div
 				className={clsx({
-					'absolute p-4  top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px]  h-full w-full flex max-sm:flex-col items-center justify-center ':
+					'absolute p-4 top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px] h-full w-full flex max-sm:flex-col items-center justify-center':
 						openPopup,
 					hidden: !openPopup,
 				})}
 			>
-				<div className="sm:h-full max-sm:h-[calc(100%-5.5rem)]">
-					<img
-						className="aspect-4/5 object-cover h-full  rounded-sm "
-						src={'data:image/*;base64,' + event.image}
-						alt="test"
-					/>
-				</div>
-				<Button
-					onClick={() => setOpenPopup(false)}
-					custom="absolute top-4 right-4"
-					text={<FontAwesomeIcon icon={faClose} />}
-				></Button>
+			<div className="h-full w-full flex items-center justify-center">
+				<img
+					className="max-h-full max-w-full object-contain rounded-sm"
+					src={'data:image/*;base64,' + event.image}
+					alt="popup image"
+				/>
 			</div>
+			<Button
+				onClick={() => setOpenPopup(false)}
+				custom="absolute top-4 right-4"
+				text={<FontAwesomeIcon icon={faClose} />}
+			></Button>
+		</div>
+
 		</div>
 	);
 };

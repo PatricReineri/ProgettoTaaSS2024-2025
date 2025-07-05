@@ -55,8 +55,8 @@ function LoginPage({ setLogged }) {
 	};
 
 	return (
-		<div className=" backgroundLogin   h-full sh-[calc(100vh-3.5rem)] p-4 ">
-			<div className="relative bg-[#363540] text-[#E8F2FC] p-4 h-fit max-h-full max-w-[30rem] flex flex-col rounded-md shadow-2xl space-y-4 overflow-y-auto  ">
+		<div className="backgroundLogin h-full sh-[calc(100vh-3.5rem)] p-4 flex items-center justify-center">
+			<div className="relative bg-[#363540] text-[#E8F2FC] p-8 h-fit max-h-full max-w-[42rem] w-full flex flex-col rounded-xl shadow-2xl space-y-6 overflow-y-auto text-lg">
 				<h2 className=" font-bold text-2xl">Login</h2>
 				{/* Login with email e password */}
 				<form
