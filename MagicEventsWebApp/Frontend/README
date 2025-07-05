@@ -1,8 +1,0 @@
-### Setting https protocol 
-In Windows:
-```bash
-    $env:HTTPS="true"
-```
-```bash
-    npm start
-```

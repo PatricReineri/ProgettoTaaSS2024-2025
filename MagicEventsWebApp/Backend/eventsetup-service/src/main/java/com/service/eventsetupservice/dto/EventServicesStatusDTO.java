@@ -8,15 +8,22 @@ public class EventServicesStatusDTO {
     private boolean gameCreated;
     private String errorMessage;
 
-    public EventServicesStatusDTO() {}
+    public EventServicesStatusDTO() {
+        this.eventCreated = false;
+        this.boardCreated = false;
+        this.galleryCreated = false;
+        this.gameCreated = false;
+    }
 
-    public EventServicesStatusDTO(Long eventId, boolean eventCreated, boolean boardCreated, 
-                                 boolean galleryCreated, boolean gameCreated) {
+    public EventServicesStatusDTO(
+            Long eventId,
+            boolean eventCreated
+    ) {
         this.eventId = eventId;
         this.eventCreated = eventCreated;
-        this.boardCreated = boardCreated;
-        this.galleryCreated = galleryCreated;
-        this.gameCreated = gameCreated;
+        this.boardCreated = false;
+        this.galleryCreated = false;
+        this.gameCreated = false;
     }
 
     public Long getEventId() { return eventId; }
