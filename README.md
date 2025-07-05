@@ -24,7 +24,7 @@ When a user initiates the event creation process, a request is sent to the event
 The SAGA pattern is simulated, executed synchronously to ensure that the event becomes immediately available and can be accessed without delay.
 
 
-# Gallery Service 
+## Gallery Service 
 The gallery service is responsible for managing the realtime gallery chat, where users can share images and add likes/dislike to them. The Service uses WebSockets to provide real-time updates to users when new images are added or when likes/dislikes are made.
 
 ## Board Service
