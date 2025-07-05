@@ -383,7 +383,7 @@ public class EventSetupService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-            System.out.println("Attivazione servizi esito: " + result + " per evento " + eventId + " creatore " + creatorMagicEventsTag);
+            System.out.println("Active service result: " + result + " for event: " + eventId + ", creator: " + creatorMagicEventsTag);
             System.out.println("Services: " + servicesDTO.getBoard() + " " + servicesDTO.getGallery() + " " + servicesDTO.getGuestGame());
         } catch (Exception e) {
             System.err.println("Failed to activate services: " + e.getMessage());

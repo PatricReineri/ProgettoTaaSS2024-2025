@@ -16,8 +16,10 @@ import ImageEdit from '../../components/imagesComponent/ImageEdit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDataTime } from '../../utils/dataFormatter';
 import LoadingContainer from '../../components/Error/LoadingContainer';
+import { useNavigate } from 'react-router-dom';
 
 const ModifyEventPage = () => {
+	const navigate = useNavigate();
 	const user = JSON.parse(sessionStorage.getItem('user'));
 	const magicEventsTag = user?.magicEventTag;
 
@@ -226,6 +228,7 @@ const ModifyEventPage = () => {
 							} else {
 								setMessage('Modifica riuscita');
 							}
+							navigate(`/${eventId}`);
 						} catch (err) {
 							setError(err.message);
 						}
@@ -313,6 +316,7 @@ const ModifyEventPage = () => {
 								} else {
 									setMessage('Modifica riuscita');
 								}
+								navigate(`/${eventId}`);
 							} catch (err) {
 								setError(err.message);
 							}
@@ -400,6 +404,7 @@ const ModifyEventPage = () => {
 								} else {
 									setMessage('Modifica riuscita');
 								}
+								navigate(`/${eventId}`);
 							} catch (err) {
 								setError(err.message);
 							}
