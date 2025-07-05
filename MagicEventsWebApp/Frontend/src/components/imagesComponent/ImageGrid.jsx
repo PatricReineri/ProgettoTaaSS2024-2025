@@ -29,12 +29,12 @@ const ImageGrid = ({
 	}, [images]);
 
 	return (
-		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3    max-[1080px]:grid-cols-4  grid-cols-5   gap-[1px] space-y-2 p-2">
+		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3 max-[1080px]:grid-cols-4  grid-cols-5   gap-[1px] space-y-2 p-2">
 			{list.length > 0 ? (
 				list
 			) : (
-				<div className=" snap-x w-full  bg-[#505458]/50 backdrop-blur-4xl text-[#E8F2FC] rounded-md  flex flex-row gap-2 p-2 overflow-x-auto col-span-full">
-					Nessauna immaggine
+				<div className=" snap-x w-full bg-[#505458]/50 backdrop-blur-4xl text-[#E8F2FC] rounded-md  flex flex-row gap-2 p-2 overflow-x-auto col-span-full">
+					Nessuna immagine
 				</div>
 			)}
 			{displayOnloadMore ? <Button onClick={onLoadMore} custom="!col-span-full " text="Carica più immagini" /> : ''}

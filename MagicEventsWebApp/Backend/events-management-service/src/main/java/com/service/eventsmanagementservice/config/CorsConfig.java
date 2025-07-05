@@ -17,6 +17,7 @@ public class CorsConfig {
                 "http://localhost:*",
                 "https://localhost:*",
                 "ws://localhost:*",
+                "wss://localhost:*",
                 "https://magicevents.com",
                 "http://magicevents.com"
         ));

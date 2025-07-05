@@ -8,7 +8,8 @@ import { subscribe } from '../../../utils/WebSocket';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { isAdmin } from '../../../utils/utils';
+import { isAdmin, url } from '../../../utils/utils';
+import LoadingContainer from '../../../components/Error/LoadingContainer';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -18,6 +19,7 @@ const BoardPage = () => {
 	const board2 = document.getElementById('board2');
 	const [stompClient, setStompClient] = useState(null);
 	const [connected, setConnected] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 
@@ -26,6 +28,8 @@ const BoardPage = () => {
 	const { eventId } = useParams();
 
 	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
+
+	const boardUrl = url === 'localhost' ? `https://${url}:8081` : `https://${url}/api/boards`;
 
 	async function loadMore() {
 		if (messageFinish) {
@@ -62,14 +66,14 @@ const BoardPage = () => {
 		async function fetchAPI() {
 			let res = await getMessages(eventId, 0);
 
-			if (!res.ok) throw new Error('Credential invalid');
+			if (!res.ok) throw new Error('Messages error');
 			setPage(1);
 			const data = await res.json();
 			console.log(data);
 			setTitle(data.title);
 			setDescription(data.description);
 			setMessages(data.messages);
-			//sessionStorage.setItem('user', JSON.stringify({ username: 'Xandro01' }));
+			setLoading(false);
 		}
 
 		if (!eventId) return;
@@ -87,8 +91,7 @@ const BoardPage = () => {
 
 	const connect = () => {
 		if (!eventId || connected) return;
-		setConnected(true);
-		const socket = new SockJS('http://localhost:8081/chat');
+		const socket = new SockJS(`${boardUrl}/chat`);
 		const client = Stomp.over(socket);
 		// Disable debug output (optional)
 		client.debug = null;
@@ -120,6 +123,8 @@ const BoardPage = () => {
 	const deleteMessage = (mex) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 
@@ -144,6 +149,8 @@ const BoardPage = () => {
 	const sendMessage = (content) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 
@@ -166,7 +173,9 @@ const BoardPage = () => {
 		}
 	};
 
-	return (
+	return loading ? (
+		<LoadingContainer />
+	) : (
 		<div className="h-full bg-[#363540] relative bg-gradient-to-r  to-[#363540]  from-[#E4DCEF] flex flex-row ">
 			<div className="w-64 mt-4 shadow-2xl h-fit rounded-r-2xl bg-[#363540] text-[#E4DCEF] p-4 max-sm:hidden ">
 				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>

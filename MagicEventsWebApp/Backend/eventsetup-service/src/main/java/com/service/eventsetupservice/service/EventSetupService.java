@@ -74,7 +74,7 @@ public class EventSetupService {
             }
 
             // Activate services in event management only if optional services are enabled
-            if (request.getGalleryEnabled() || request.getGameEnabled()) {
+            if (request.getBoardEnabled() || request.getGalleryEnabled() || request.getGameEnabled()) {
                 activateServices(eventId, request.getCreatorMagicEventsTag(), status);
             }
 
@@ -383,7 +383,8 @@ public class EventSetupService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-
+            System.out.println("Active service result: " + result + " for event: " + eventId + ", creator: " + creatorMagicEventsTag);
+            System.out.println("Services: " + servicesDTO.getBoard() + " " + servicesDTO.getGallery() + " " + servicesDTO.getGuestGame());
         } catch (Exception e) {
             System.err.println("Failed to activate services: " + e.getMessage());
         }

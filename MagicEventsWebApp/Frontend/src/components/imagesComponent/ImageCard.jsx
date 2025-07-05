@@ -7,7 +7,7 @@ const ImageCard = ({ mex, onLike, onDelete, onClick, isAdmin = false }) => {
 	return (
 		<div
 			onClick={() => onClick(mex)}
-			className="snap-start hover:scale-110 group  aspect-4/5 hover:border-2 hover:z-100 border-[#E8F2FC] shadow-xl relative h-64"
+			className="snap-start hover:scale-110 group aspect-4/5 hover:border-2 hover:z-100 border-[#E8F2FC] shadow-xl relative h-64"
 		>
 			<div className="absolute items-center bottom-2 left-0 px-2 py-0 h-fit flex flex-row gap-4 justify-between w-full">
 				<div className=" text-[#E8F2FC] group-hover:hidden max-w-[10rem] bg-[#505458]/70 p-1 px-4 rounded-md text-clip  line-clamp-2 backdrop-blur-xl">
@@ -35,7 +35,7 @@ const ImageCard = ({ mex, onLike, onDelete, onClick, isAdmin = false }) => {
 					></Button>
 				</div>
 			</div>
-			<div className={clsx({ 'absolute top-2 right-2': true, hidden: isAdmin })}>
+			<div className={clsx({ 'absolute top-2 right-2': true, hidden: !isAdmin })}>
 				<Button
 					onClick={(e) => {
 						e.preventDefault();

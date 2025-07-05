@@ -11,7 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import clsx from 'clsx';
-import { isAdmin } from '../../../utils/utils';
+import { isAdmin, url } from '../../../utils/utils';
+import LoadingContainer from '../../../components/Error/LoadingContainer';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -27,11 +28,14 @@ const GalleryPage = () => {
 	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [pagep, setPagep] = useState(0);
+	const [loading, setLoading] = useState(true);
 	const [messageFinish, setMessageFinish] = useState(false);
 	const [messageFinishp, setMessageFinishp] = useState(false);
 
 	const { eventId } = useParams();
 	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
+
+	const galleryUrl = url === 'localhost' ? `https://${url}:8085` : `https://${url}/api/galleries`;
 
 	async function loadMore() {
 		if (messageFinish) {
@@ -89,6 +93,7 @@ const GalleryPage = () => {
 			setTitle(data.title);
 			setImages(data.images);
 			setImagesPopular(datap.images);
+			setLoading(false);
 		}
 
 		if (!eventId) return;
@@ -106,8 +111,8 @@ const GalleryPage = () => {
 
 	const connect = () => {
 		if (!eventId || connected) return;
-		setConnected(true);
-		const socket = new SockJS('http://localhost:8085/gallery');
+
+		const socket = new SockJS(`${galleryUrl}/gallery`);
 		const client = Stomp.over(socket);
 		// Disable debug output (optional)
 		client.debug = null;
@@ -125,7 +130,7 @@ const GalleryPage = () => {
 					setImagesPopular((prev) => prev.filter((item) => !(item.imageID === deletedMessage.imageID)));
 				});
 				subscribe(client, `/topic/gallery/imageLike/${eventId}`, (receivedImageLike, hash) => {
-					console.log('Subscribe!!!');
+					console.log('Subscribe!');
 
 					setImages((prev) =>
 						prev.map((item) =>
@@ -163,6 +168,8 @@ const GalleryPage = () => {
 	const deleteImage = (mex) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 		let user = JSON.parse(sessionStorage.getItem('user'));
@@ -182,6 +189,8 @@ const GalleryPage = () => {
 	const sendImage = (title, image) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 
@@ -204,6 +213,8 @@ const GalleryPage = () => {
 	const likeImage = (image) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 		let user = JSON.parse(sessionStorage.getItem('user'));
@@ -228,7 +239,9 @@ const GalleryPage = () => {
 		setOpenPopup(true);
 	}
 
-	return (
+	return loading ? (
+		<LoadingContainer />
+	) : (
 		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
 			<div className=" mt-4  flex items-center flex-row gap-2  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
 				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>
@@ -254,7 +267,7 @@ const GalleryPage = () => {
 				images={images}
 			/>
 			<ImageDropImage onSend={(title, image) => sendImage(title, image)} />
-			{/* POpup image open */}
+			{/* Popup image open */}
 			<div
 				className={clsx({
 					'absolute p-4  top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px]  h-full w-full flex max-sm:flex-col items-center justify-center ':

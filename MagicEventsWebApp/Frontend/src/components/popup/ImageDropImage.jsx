@@ -30,7 +30,7 @@ const ImageDropImage = ({ onSend }) => {
 
 		let reader = new FileReader();
 		const options = {
-			maxSizeMB: 0.05, // Massimo 500KB
+			maxSizeMB: 0.02, // Massimo 50KB
 			maxWidthOrHeight: 800, // Massimo 800px
 			useWebWorker: true, // Usa Web Worker per non bloccare l'UI
 			fileType: 'image/jpeg', // Forza JPEG per migliore compressione
@@ -85,7 +85,11 @@ const ImageDropImage = ({ onSend }) => {
 					) : (
 						<div className="space-y-4">
 							<div className="h-fit ring-2 ring-offset-1 rounded-md  ring-[#E4DCEF] relative">
-								<img className="aspect-4/5 object-cover h-64" src={'data:image/*;base64,' + image} alt="drag&drop" />
+								<img
+									className="aspect-4/5 object-cover h-64 w-full"
+									src={'data:image/*;base64,' + image}
+									alt="drag&drop"
+								/>
 								<Button
 									secondary
 									onClick={deselectImage}

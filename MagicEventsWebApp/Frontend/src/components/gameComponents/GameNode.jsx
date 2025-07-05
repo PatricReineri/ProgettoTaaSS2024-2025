@@ -22,7 +22,11 @@ const GameNode = ({ startingNode }) => {
 						<div className=" w-20 h-20 rounded-full bg-clip-border ">
 							<img
 								className=" rounded-full object-cover h-full w-full object-center   "
-								src={json.profileImageUrl ? 'data:image/*;base64,' + json.profileImageUrl : '/default-avatar.png'}
+								src={
+									json.profileImageUrl ? 
+									(json.profileImageUrl.startsWith('http') ? json.profileImageUrl.replace(/'+$/, '') : 'data:image/*;base64,' + json.profileImageUrl) 
+									: '/default-avatar.png'
+								}
 								alt="test"
 							/>
 						</div>
@@ -51,20 +55,20 @@ const GameNode = ({ startingNode }) => {
 					) : (
 						''
 					)}
-					<div className="flex flex-row justify-between gap-4 w-full px-4 ">
-						<Button
-							custom=" !p-4 !bg-[#E8F2FC] !text-[#363540] hover:!shadow-2xl hover:!shadow-[#E8F2FC]  "
-							onClick={() => setNode((prev) => prev.leftNode)}
-							text="SI"
-						/>
-						<h1 className=" bg-[#363540]/70 text-[#E8F2FC]  backdrop-blur-2xl p-4 rounded-md ">
-							{node.splitFeatureQuestion}
-						</h1>
-						<Button
-							custom=" !p-4 !bg-[#E8F2FC] !text-[#363540]  hover:!shadow-2xl hover:!shadow-[#E8F2FC] "
-							onClick={() => setNode((prev) => prev.rightNode)}
-							text="NO"
-						/>
+					<div className="flex flex-row justify-between gap-4 w-full px-4">
+					<Button
+						custom="w-30 !p-4 !bg-[#E8F2FC] !text-[#363540] hover:!shadow-2xl hover:!shadow-[#E8F2FC]"
+						onClick={() => setNode((prev) => prev.leftNode)}
+						text="SI"
+					/>
+					<h1 className="bg-[#363540]/70 text-[#E8F2FC] backdrop-blur-2xl p-4 rounded-md">
+						{node.splitFeatureQuestion}
+					</h1>
+					<Button
+						custom="w-30 !p-4 !bg-[#E8F2FC] !text-[#363540] hover:!shadow-2xl hover:!shadow-[#E8F2FC]"
+						onClick={() => setNode((prev) => prev.rightNode)}
+						text="NO"
+					/>
 					</div>
 				</>
 			) : (

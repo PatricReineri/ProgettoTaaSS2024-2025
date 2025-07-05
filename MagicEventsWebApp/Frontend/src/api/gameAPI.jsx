@@ -9,7 +9,10 @@ export function getGame(eventID) {
 		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -21,7 +24,10 @@ export function isDataInGame(eventID) {
 		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -29,7 +35,7 @@ export function isDataInGame(eventID) {
 export function insertInfo(formData) {
 	return fetch(`${guestGameUrl}/guest-game/insertGuestInfo`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { Authorization: JSON.parse(sessionStorage.getItem('user')).token, 'Content-Type': 'application/json' },
 		body: JSON.stringify(formData),
 	});
 }

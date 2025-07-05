@@ -1,7 +1,6 @@
 import { url } from '../utils/utils';
 
-
-const eventsManagementUrl = url === 'localhost' ? `'https://${url}:8080` : `https://${url}/api/events`;
+const eventsManagementUrl = url === 'localhost' ? `https://${url}:8080` : `https://${url}/api/events`;
 const eventsetupUrl = url === 'localhost' ? `https://${url}:8086` : `https://${url}/api/eventsetup`;
 
 export function getEventsp() {
@@ -11,17 +10,25 @@ export function getEventsp() {
 		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
 
 export function getEventsc() {
 	return fetch(
-		`${eventsManagementUrl}/gestion/geteventslistc?creatorId=${JSON.parse(sessionStorage.getItem('user')).magicEventTag}`,
+		`${eventsManagementUrl}/gestion/geteventslistc?creatorId=${
+			JSON.parse(sessionStorage.getItem('user')).magicEventTag
+		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -32,7 +39,10 @@ export function getEventId(title, day) {
 
 	return fetch(`${eventsManagementUrl}/gestion/geteventid?title=${title}&day=${day}&magicEventTag=${magicEventsTag}`, {
 		method: 'GET',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }
 
@@ -43,7 +53,10 @@ export function annullEvent(eventId) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -57,6 +70,7 @@ export function activateServices(eventId, services) {
 	return fetch(url, {
 		method: 'PUT',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify(services),
@@ -70,7 +84,10 @@ export function getAdmins(eventId) {
 		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -78,7 +95,10 @@ export function getAdmins(eventId) {
 export function getPartecipants(eventId) {
 	return fetch(`${eventsManagementUrl}/gestion/getpartecipantsforevent?eventId=${eventId}`, {
 		method: 'GET',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }
 
@@ -91,6 +111,7 @@ export function modifyEvent(eventId, event) {
 	return fetch(url, {
 		method: 'PUT',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify(event),
@@ -104,7 +125,10 @@ export function deannullEvent(eventId) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -116,7 +140,10 @@ export function updateAdmins(eventId, newAdmins) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -128,7 +155,10 @@ export function updatePartecipants(eventId, newPartecipants) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -140,7 +170,10 @@ export function removePartecipant(eventId, partecipantEmail) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -152,7 +185,10 @@ export function removeAdmin(eventId, adminEmail) {
 		}`,
 		{
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }
@@ -160,7 +196,10 @@ export function removeAdmin(eventId, adminEmail) {
 export function getEvent(eventId) {
 	return fetch(`${eventsManagementUrl}/gestion/geteventinfo?eventId=${eventId}`, {
 		method: 'GET',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }
 
@@ -170,7 +209,10 @@ export function getEventService(eventId) {
 	params.append('magicEventTag', JSON.parse(sessionStorage.getItem('user')).magicEventTag);
 	return fetch(`${eventsManagementUrl}/gestion/geteventenabledservices?${params}`, {
 		method: 'GET',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
 	});
 }
 
@@ -180,7 +222,7 @@ export function createEvent(event) {
 	console.log(temp);
 	return fetch(`${eventsetupUrl}/eventSetup`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { Authorization: JSON.parse(sessionStorage.getItem('user')).token, 'Content-Type': 'application/json' },
 		body: JSON.stringify(temp),
 	});
 }
@@ -193,6 +235,9 @@ export function deleteEvent(eventId) {
 
 	return fetch(urldelete, {
 		method: 'DELETE',
+		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+		},
 	});
 }
 
@@ -203,7 +248,10 @@ export function isActive(eventId) {
 		}&eventId=${eventId}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }

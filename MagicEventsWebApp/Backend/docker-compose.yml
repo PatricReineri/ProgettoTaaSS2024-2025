@@ -238,26 +238,6 @@ services:
     networks:
       - magicevents-network
 
-  # Frontend Service
-  frontend:
-    image: magicevents/frontend:latest
-    build:
-      context: ../Frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - '3000:3000'
-    environment:
-      NODE_ENV: production
-    depends_on:
-      - user-management-service
-      - events-management-service
-      - board-service
-      - guest-game-service
-      - gallery-service
-    networks:
-      - magicevents-network
-
 # ==============================
 # VOLUMES
 # ==============================

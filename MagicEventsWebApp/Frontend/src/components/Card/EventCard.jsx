@@ -48,6 +48,9 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 	return (
 		<div
 			onClick={async () => {
+				if (loadingAPI) {
+					return;
+				}
 				try {
 					navigate(`/${eventId}`);
 				} catch (err) {
@@ -104,6 +107,7 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 								} catch (err) {
 									console.error('Error contacting server:', err);
 								}
+								navigate('/');
 							}}
 						></Button>
 						<Button text={!eventEnabled ? 'Attiva evento' : 'Annulla evento'} onClick={handleClick} />

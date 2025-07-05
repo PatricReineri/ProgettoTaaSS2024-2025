@@ -45,6 +45,7 @@ public class AckMessageListener {
                     if(!eventDeleting.getIsSuccess()){
                         rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventDeleting.getEventId());
                     }else{
+                        System.out.println("board deleted for event: " + eventDeleting.getEventId());
                         event.setBoardEnabled(false);
                     }
                     break;
@@ -52,6 +53,7 @@ public class AckMessageListener {
                     if(!eventDeleting.getIsSuccess()){
                         rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventDeleting.getEventId());
                     }else {
+                        System.out.println("gallery deleted for event: " + eventDeleting.getEventId());
                         event.setGalleryEnabled(false);
                     }
                     break;
@@ -59,6 +61,7 @@ public class AckMessageListener {
                     if(!eventDeleting.getIsSuccess()){
                         rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventDeleting.getEventId());
                     }else {
+                        System.out.println("guest-game deleted for event: " + eventDeleting.getEventId());
                         event.setGuestGameEnabled(false);
                     }
                     break;
@@ -74,6 +77,7 @@ public class AckMessageListener {
                     admin.getEvents().remove(event);
                 }
                 adminsRepository.saveAll(admins);
+                System.out.println("deleting event: " + eventDeleting.getEventId() + "...");
                 eventsRepository.deleteById(eventDeleting.getEventId());
             }else{
                 eventsRepository.save(event);
