@@ -24,13 +24,13 @@ spec:
       containers:
         - env:
             - name: SERVICES_BOARDSERVICE_URL
-              value: http://board-service:8081
+              value: https://board-service:8081
             - name: SERVICES_EVENTMANAGEMENT_URL
-              value: http://events-management-service:8080
+              value: https://events-management-service:8080
             - name: SERVICES_GALLERYSERVICE_URL
-              value: http://gallery-service:8085
+              value: https://gallery-service:8085
             - name: SERVICES_GUESTGAMESERVICE_URL
-              value: http://guest-game-service:8083
+              value: https://guest-game-service:8083
             - name: SPRING_RABBITMQ_HOST
               value: rabbitmq
           image: magicevents/eventsetup-service:latest

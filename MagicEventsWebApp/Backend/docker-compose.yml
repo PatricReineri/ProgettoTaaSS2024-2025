@@ -158,11 +158,10 @@ services:
       - '8086:8086'
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
-      # Aggiungi queste righe per mappare correttamente le proprietà Spring Boot:
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
-      SERVICES_BOARDSERVICE_URL: http://board-service:8081
-      SERVICES_GALLERYSERVICE_URL: http://gallery-service:8085
-      SERVICES_GUESTGAMESERVICE_URL: http://guest-game-service:8083
+      SERVICES_EVENTMANAGEMENT_URL: https://events-management-service:8080
+      SERVICES_BOARDSERVICE_URL: https://board-service:8081
+      SERVICES_GALLERYSERVICE_URL: https://gallery-service:8085
+      SERVICES_GUESTGAMESERVICE_URL: https://guest-game-service:8083
 
     depends_on:
       - rabbitmq
@@ -185,7 +184,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: https://events-management-service:8080
     depends_on:
       - board-db
       - rabbitmq
@@ -208,7 +207,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: https://events-management-service:8080
     depends_on:
       - guest-game-db
       - rabbitmq
@@ -231,7 +230,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_RABBITMQ_HOST: rabbitmq
-      SERVICES_EVENTMANAGEMENT_URL: http://events-management-service:8080
+      SERVICES_EVENTMANAGEMENT_URL: https://events-management-service:8080
     depends_on:
       - gallery-db
       - rabbitmq
@@ -239,25 +238,25 @@ services:
     networks:
       - magicevents-network
 
-# Frontend Service
-frontend:
-  image: magicevents/frontend:latest
-  build:
-    context: ../Frontend
-    dockerfile: Dockerfile
-  container_name: frontend
-  ports:
-    - '3000:3000'
-  environment:
-    NODE_ENV: production
-  depends_on:
-    - user-management-service
-    - events-management-service
-    - board-service
-    - guest-game-service
-    - gallery-service
-  networks:
-    - magicevents-network
+  # Frontend Service
+  frontend:
+    image: magicevents/frontend:latest
+    build:
+      context: ../Frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - user-management-service
+      - events-management-service
+      - board-service
+      - guest-game-service
+      - gallery-service
+    networks:
+      - magicevents-network
 
 # ==============================
 # VOLUMES
