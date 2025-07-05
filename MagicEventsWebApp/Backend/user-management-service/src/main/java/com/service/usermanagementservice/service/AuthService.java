@@ -237,7 +237,7 @@ public class AuthService {
 
         resetPasswordTokenRepository.save(resetPasswordToken);
 
-        String link = "http://"+ clientUrl +"/changepassword?token=" + resetPasswordToken.getToken();
+        String link = "https://"+ clientUrl +"/changepassword?token=" + resetPasswordToken.getToken();
 
         EmailDetails emailDetails = new EmailDetails();
         emailDetails.setRecipient(user.getEmail());
