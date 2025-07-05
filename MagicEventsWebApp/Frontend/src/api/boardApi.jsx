@@ -9,7 +9,10 @@ export function getMessages(eventID, pageNumber) {
 		}`,
 		{
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				Authorization: JSON.parse(sessionStorage.getItem('user')).token,
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
 		}
 	);
 }

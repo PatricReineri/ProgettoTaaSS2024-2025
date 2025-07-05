@@ -48,6 +48,9 @@ const EventCard = ({ localDataTime, day, month, eventName, time, location, descr
 	return (
 		<div
 			onClick={async () => {
+				if (loadingAPI) {
+					return;
+				}
 				try {
 					navigate(`/${eventId}`);
 				} catch (err) {

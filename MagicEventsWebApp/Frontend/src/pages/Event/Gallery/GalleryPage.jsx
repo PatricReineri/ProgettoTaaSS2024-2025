@@ -12,6 +12,7 @@ import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawes
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import clsx from 'clsx';
 import { isAdmin, url } from '../../../utils/utils';
+import LoadingContainer from '../../../components/Error/LoadingContainer';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -27,6 +28,7 @@ const GalleryPage = () => {
 	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [pagep, setPagep] = useState(0);
+	const [loading, setLoading] = useState(true);
 	const [messageFinish, setMessageFinish] = useState(false);
 	const [messageFinishp, setMessageFinishp] = useState(false);
 
@@ -34,7 +36,7 @@ const GalleryPage = () => {
 	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
 	const galleryUrl = url === 'localhost' ? `https://${url}:8085` : `https://${url}/api/galleries`;
-	
+
 	async function loadMore() {
 		if (messageFinish) {
 			return;
@@ -91,6 +93,7 @@ const GalleryPage = () => {
 			setTitle(data.title);
 			setImages(data.images);
 			setImagesPopular(datap.images);
+			setLoading(false);
 		}
 
 		if (!eventId) return;
@@ -108,7 +111,7 @@ const GalleryPage = () => {
 
 	const connect = () => {
 		if (!eventId || connected) return;
-		setConnected(true);
+
 		const socket = new SockJS(`${galleryUrl}/gallery`);
 		const client = Stomp.over(socket);
 		// Disable debug output (optional)
@@ -165,6 +168,8 @@ const GalleryPage = () => {
 	const deleteImage = (mex) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 		let user = JSON.parse(sessionStorage.getItem('user'));
@@ -184,6 +189,8 @@ const GalleryPage = () => {
 	const sendImage = (title, image) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 
@@ -206,6 +213,8 @@ const GalleryPage = () => {
 	const likeImage = (image) => {
 		if (!stompClient || !connected || !stompClient.connected) {
 			console.log('Not connected to WebSocket');
+			alert('Ops, qualcosa è andato storto');
+			navigate('/home');
 			return;
 		}
 		let user = JSON.parse(sessionStorage.getItem('user'));
@@ -230,7 +239,9 @@ const GalleryPage = () => {
 		setOpenPopup(true);
 	}
 
-	return (
+	return loading ? (
+		<LoadingContainer />
+	) : (
 		<div className="h-full  bg-[#363540]  bg-gradient-to-r   p-2 to-[#363540] gap-1 from-[#E4DCEF] flex flex-col overflow-y-auto ">
 			<div className=" mt-4  flex items-center flex-row gap-2  h-fit rounded-r-2xl text-[#363540] p-4 max-sm:hidden ">
 				<Button onClick={() => navigate('/' + eventId)} text={<FontAwesomeIcon icon={faArrowLeft} />}></Button>

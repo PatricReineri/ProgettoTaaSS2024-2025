@@ -35,7 +35,7 @@ const ImageCard = ({ mex, onLike, onDelete, onClick, isAdmin = false }) => {
 					></Button>
 				</div>
 			</div>
-			<div className={clsx({ 'absolute top-2 right-2': true, hidden: isAdmin })}>
+			<div className={clsx({ 'absolute top-2 right-2': true, hidden: !isAdmin })}>
 				<Button
 					onClick={(e) => {
 						e.preventDefault();

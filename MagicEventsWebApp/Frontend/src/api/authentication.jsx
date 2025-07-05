@@ -55,6 +55,7 @@ export function modifyUser(user) {
 	return fetch(`${userManagementUrl}/login/modifyuser`, {
 		method: 'PUT',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/json',
 		},
 		body: user,
@@ -65,6 +66,7 @@ export function deleteUser(email) {
 	return fetch(`${userManagementUrl}/login/deleteuser`, {
 		method: 'DELETE',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
@@ -86,6 +88,7 @@ export function logout() {
 	return fetch(`${userManagementUrl}/login/logoutuser`, {
 		method: 'PUT',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 		body: new URLSearchParams({
@@ -98,6 +101,7 @@ export function getUserFromId(userId) {
 	return fetch(`${userManagementUrl}/info/profile?magicEventTag=${userId}`, {
 		method: 'GET',
 		headers: {
+			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 	});
