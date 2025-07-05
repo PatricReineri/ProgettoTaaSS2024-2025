@@ -26,23 +26,23 @@ public class SecurityConfig {
     private String clientUrl;
 
     private static final String[] WHITELIST_URLS = {
-            "/login/form",
-            "/login/register",
-            "/login/grantcode",
-            "/login/logoutuser",
-            "/login/refreshaccesstoken",
             "/test",
             "/test/users",
             "/test/tokens",
             "/favicon.ico",
+
+            "/login/form",
+            "/login/register",
+            "/login/grantcode",
             "/login/userprofile",
             "/login/changepassword",
             "/login/generateresetpasswordlink",
-            "/login/deleteuser",
-            "/login/modifyuser",
             "/login/helloserver",
+
+            "/info/logoutuser",
+            "/info/deleteuser",
+            "/info/modifyuser",
             "/info",
-            "/info/isauthenticated",
             "/info/profile"
     };
 

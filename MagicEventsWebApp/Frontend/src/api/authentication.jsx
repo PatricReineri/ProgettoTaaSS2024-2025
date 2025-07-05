@@ -52,18 +52,18 @@ export function register(formData) {
 }
 
 export function modifyUser(user) {
-	return fetch(`${userManagementUrl}/login/modifyuser`, {
+	return fetch(`${userManagementUrl}/info/modifyuser`, {
 		method: 'PUT',
 		headers: {
 			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/json',
 		},
-		body: user,
+		body: JSON.stringify(user),
 	});
 }
 
 export function deleteUser(email) {
-	return fetch(`${userManagementUrl}/login/deleteuser`, {
+	return fetch(`${userManagementUrl}/info/deleteuser`, {
 		method: 'DELETE',
 		headers: {
 			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
@@ -85,7 +85,7 @@ export function callback(accessToken) {
 }
 
 export function logout() {
-	return fetch(`${userManagementUrl}/login/logoutuser`, {
+	return fetch(`${userManagementUrl}/info/logoutuser`, {
 		method: 'PUT',
 		headers: {
 			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
