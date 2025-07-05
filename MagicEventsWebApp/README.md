@@ -1,7 +1,7 @@
 # How to run services:
 Before running the services make sure you generate a certificate.
 
-You can find a simple certificate generator in `MagicEventsWebApp/Backend/user-management-service/src/main/resources/KeysGenerator.bat`.
+You can find a simple certificate generator in `MagicEventsWebApp/Backend/KeysGenerator.bat`.
 
 The certificate must be placed in the resources folder along with the file `application.properties`.
 
