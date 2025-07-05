@@ -18,7 +18,7 @@ public class UserDTO {
     @NotNull(message = "Surname is required")
     private String surname;
     @NotNull(message = "Role is required")
-    private String role;
+    private String token;
 
     public UserDTO(
             Long magicEventTag,
@@ -27,7 +27,7 @@ public class UserDTO {
             String profileImageUrl,
             String name,
             String surname,
-            String role
+            String token
     ) {
         this.magicEventTag = magicEventTag;
         this.username = username;
@@ -35,7 +35,7 @@ public class UserDTO {
         this.profileImageUrl = profileImageUrl;
         this.name = name;
         this.surname = surname;
-        this.role = role;
+        this.token = token;
     }
 
     public Long getMagicEventTag() {
@@ -86,12 +86,12 @@ public class UserDTO {
         this.surname = surname;
     }
 
-    public String getRole() {
-        return role;
+    public String getToken() {
+        return token;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setToken(String role) {
+        this.token = role;
     }
 }
 
