@@ -22,3 +22,16 @@ The eventsetup service acts as an orchestrator and is designed to be stateless. 
 When a user initiates the event creation process, a request is sent to the eventsetup service, which in turn interacts with the events-management service and other microservices involved in the event lifecycle.
 
 The SAGA pattern is simulated, executed synchronously to ensure that the event becomes immediately available and can be accessed without delay.
+
+
+### Gallery Service 
+The gallery service is responsible for managing the realtime gallery chat, where users can share images and add likes/dislike to them. The Service uses WebSockets to provide real-time updates to users when new images are added or when likes/dislikes are made.
+
+### Board Service
+The board service is responsible for managing the event board, where users can post messages. It uses WebSockets to provide real-time updates to users when new messages are posted or when comments are made.
+
+### Guest-Game Service
+The guest-game service is responsible for managing the guest game, where users can play an Akinator-like game. It uses Weka Library to create a decision tree based on the guest-information provided by the users.
+
+### Deployment
+The application is deployed using Kubernetes, with each microservice running in its own pod. The services are exposed via an Ingress controller, allowing external access to the application. RabbitMQ is used for message brokering between the microservices, ensuring reliable communication and coordination.
