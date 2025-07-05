@@ -19,5 +19,5 @@ export function setAdmin(eventId) {
 	}
 }
 
-// export const url = 'localhost';
-export const url = 'magicevents.com';
+export const url = 'localhost';
+// export const url = 'magicevents.com';
