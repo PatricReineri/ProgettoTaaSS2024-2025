@@ -85,7 +85,7 @@ const ImageDropImage = ({ onSend }) => {
 					) : (
 						<div className="space-y-4">
 							<div className="h-fit ring-2 ring-offset-1 rounded-md  ring-[#E4DCEF] relative">
-								<img className="aspect-4/5 object-cover h-64" src={'data:image/*;base64,' + image} alt="drag&drop" />
+								<img className="aspect-4/5 object-cover h-64 w-full" src={'data:image/*;base64,' + image} alt="drag&drop" />
 								<Button
 									secondary
 									onClick={deselectImage}

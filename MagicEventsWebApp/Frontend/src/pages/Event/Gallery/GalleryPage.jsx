@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBackspace, faBackward, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImageDropImage from '../../../components/popup/ImageDropImage';
 import clsx from 'clsx';
-import { isAdmin } from '../../../utils/utils';
+import { isAdmin, url } from '../../../utils/utils';
 
 const GalleryPage = () => {
 	const [images, setImages] = useState([]);
@@ -33,6 +33,8 @@ const GalleryPage = () => {
 	const { eventId } = useParams();
 	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
+	const galleryUrl = url === 'localhost' ? `https://${url}:8085` : `https://${url}/api/galleries`;
+	
 	async function loadMore() {
 		if (messageFinish) {
 			return;
@@ -107,7 +109,7 @@ const GalleryPage = () => {
 	const connect = () => {
 		if (!eventId || connected) return;
 		setConnected(true);
-		const socket = new SockJS('http://localhost:8085/gallery');
+		const socket = new SockJS(`${galleryUrl}/gallery`);
 		const client = Stomp.over(socket);
 		// Disable debug output (optional)
 		client.debug = null;

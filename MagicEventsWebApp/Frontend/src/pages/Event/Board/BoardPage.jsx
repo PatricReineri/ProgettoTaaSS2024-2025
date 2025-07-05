@@ -8,7 +8,7 @@ import { subscribe } from '../../../utils/WebSocket';
 import Button from '../../../components/buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { isAdmin } from '../../../utils/utils';
+import { isAdmin, url } from '../../../utils/utils';
 
 const BoardPage = () => {
 	const [messages, setMessages] = useState([]);
@@ -27,6 +27,8 @@ const BoardPage = () => {
 
 	const [isAdminVar, setIsAdminVar] = useState(isAdmin(eventId));
 
+	const boardUrl = url === 'localhost' ? `https://${url}:8081` : `https://${url}/api/boards`;
+	
 	async function loadMore() {
 		if (messageFinish) {
 			return;
@@ -88,7 +90,7 @@ const BoardPage = () => {
 	const connect = () => {
 		if (!eventId || connected) return;
 		setConnected(true);
-		const socket = new SockJS('http://localhost:8081/chat');
+		const socket = new SockJS(`${boardUrl}/chat`);
 		const client = Stomp.over(socket);
 		// Disable debug output (optional)
 		client.debug = null;

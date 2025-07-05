@@ -405,6 +405,7 @@ public class EventGestorService {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
         if(event.getCreator().equals(creatorId)) {
+            System.out.println(servicesDTO.getBoard().toString() + " " + servicesDTO.getGallery().toString() + " " + servicesDTO.getGuestGame().toString());
             event.setBoardEnabled(servicesDTO.getBoard());
             event.setGalleryEnabled(servicesDTO.getGallery());
             event.setGuestGameEnabled(servicesDTO.getGuestGame());
