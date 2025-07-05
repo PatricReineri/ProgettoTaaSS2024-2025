@@ -80,8 +80,9 @@ public class AuthService {
 
         if(user != null && passwordEncoder.matches(password, user.getPassword())){
             OauthToken oauthToken = tokenRepository.findByUser(user);
+            LoginWithTokenDTO loginWithTokenDTO = new LoginWithTokenDTO();
             if(oauthToken == null) {
-                saveTokenForUser(user);
+                loginWithTokenDTO = saveTokenForUser(user);
             }
             return new UserDTO(
                     user.getMagicEventTag(),
@@ -90,7 +91,7 @@ public class AuthService {
                     user.getProfileImageUrl(),
                     user.getName(),
                     user.getSurname(),
-                    user.getRole()
+                    loginWithTokenDTO.getAccessToken()
             );
         }
 
@@ -138,7 +139,7 @@ public class AuthService {
                 user.getProfileImageUrl(),
                 user.getName(),
                 user.getSurname(),
-                user.getRole()
+                accessToken
         );
     }
 
