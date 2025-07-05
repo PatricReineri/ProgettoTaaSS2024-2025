@@ -256,7 +256,7 @@ const GalleryPage = () => {
 				images={images}
 			/>
 			<ImageDropImage onSend={(title, image) => sendImage(title, image)} />
-			{/* POpup image open */}
+			{/* Popup image open */}
 			<div
 				className={clsx({
 					'absolute p-4  top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px]  h-full w-full flex max-sm:flex-col items-center justify-center ':

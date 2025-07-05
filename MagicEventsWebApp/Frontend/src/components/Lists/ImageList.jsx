@@ -33,7 +33,7 @@ const ImageList = ({
 				</div>
 			) : (
 				<div className=" bg-[#505458]/50 backdrop-blur-4xl snap-x w-full   text-[#E8F2FC] rounded-md  flex flex-row gap-2 p-2 overflow-x-auto ">
-					Nessauna immaggine popolare
+					Nessuna immagine popolare
 				</div>
 			)}
 		</div>

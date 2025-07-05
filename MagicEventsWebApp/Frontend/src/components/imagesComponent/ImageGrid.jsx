@@ -34,7 +34,7 @@ const ImageGrid = ({
 				list
 			) : (
 				<div className=" snap-x w-full  bg-[#505458]/50 backdrop-blur-4xl text-[#E8F2FC] rounded-md  flex flex-row gap-2 p-2 overflow-x-auto col-span-full">
-					Nessauna immaggine
+					Nessuna immagine
 				</div>
 			)}
 			{displayOnloadMore ? <Button onClick={onLoadMore} custom="!col-span-full " text="Carica più immagini" /> : ''}
