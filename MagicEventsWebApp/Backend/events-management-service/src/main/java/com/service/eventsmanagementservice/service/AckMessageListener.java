@@ -27,6 +27,9 @@ public class AckMessageListener {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Value("${spring.rabbitmq.exchange.event}")
+    private String exchangeName;
+
     @Value("${spring.rabbitmq.routing-key.delete-event-board}")
     private String deleteBoardRoutingKey;
     @Value("${spring.rabbitmq.routing-key.delete-event-gallery}")
@@ -43,7 +46,7 @@ public class AckMessageListener {
             switch (eventDeleting.getServiceType()) {
                 case "board":
                     if(!eventDeleting.getIsSuccess()){
-                        rabbitTemplate.convertAndSend(deleteBoardRoutingKey, eventDeleting.getEventId());
+                        rabbitTemplate.convertAndSend(exchangeName, deleteBoardRoutingKey, eventDeleting.getEventId());
                     }else{
                         System.out.println("board deleted for event: " + eventDeleting.getEventId());
                         event.setBoardEnabled(false);
@@ -51,7 +54,7 @@ public class AckMessageListener {
                     break;
                 case "gallery":
                     if(!eventDeleting.getIsSuccess()){
-                        rabbitTemplate.convertAndSend(deleteGalleryRoutingKey, eventDeleting.getEventId());
+                        rabbitTemplate.convertAndSend(exchangeName, deleteGalleryRoutingKey, eventDeleting.getEventId());
                     }else {
                         System.out.println("gallery deleted for event: " + eventDeleting.getEventId());
                         event.setGalleryEnabled(false);
@@ -59,7 +62,7 @@ public class AckMessageListener {
                     break;
                 case "guest-game":
                     if(!eventDeleting.getIsSuccess()){
-                        rabbitTemplate.convertAndSend(deleteGuestgameRoutingKey, eventDeleting.getEventId());
+                        rabbitTemplate.convertAndSend(exchangeName, deleteGuestgameRoutingKey, eventDeleting.getEventId());
                     }else {
                         System.out.println("guest-game deleted for event: " + eventDeleting.getEventId());
                         event.setGuestGameEnabled(false);

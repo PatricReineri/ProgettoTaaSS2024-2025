@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class DeleteGameMessageListener {
+    @Value("${spring.rabbitmq.exchange.game}")
+    private String exchangeName;
+
     @Value("${spring.rabbitmq.routing-key.delete-ack}")
     private String deleteAckRoutingKey;
 
@@ -29,10 +32,10 @@ public class DeleteGameMessageListener {
         try {
             EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "guest-game", true);
             gameRepository.deleteById(eventID);
-            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
+            rabbitTemplate.convertAndSend(exchangeName, deleteAckRoutingKey, response);
         } catch (Exception e) {
             EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "guest-game", false);
-            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
+            rabbitTemplate.convertAndSend(exchangeName, deleteAckRoutingKey, response);
         }
     }
 }
