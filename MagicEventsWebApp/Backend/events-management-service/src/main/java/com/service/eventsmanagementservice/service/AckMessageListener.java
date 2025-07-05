@@ -43,6 +43,7 @@ public class AckMessageListener {
         try {
             Event event = eventsRepository.findById(eventDeleting.getEventId())
                     .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventDeleting.getEventId()));
+            
             switch (eventDeleting.getServiceType()) {
                 case "board":
                     if(!eventDeleting.getIsSuccess()){
@@ -69,23 +70,28 @@ public class AckMessageListener {
                     }
                     break;
             }
-            if(!(event.getBoardEnabled() && event.getGalleryEnabled() && event.getGuestGameEnabled())) {
+            
+            // Elimina l'evento solo quando TUTTI i servizi sono stati disabilitati
+            if(!event.getBoardEnabled() && !event.getGalleryEnabled() && !event.getGuestGameEnabled()) {
                 List<Partecipant> partecipants = event.getPartecipants();
                 for (Partecipant partecipant : partecipants) {
                     partecipant.getEvents().remove(event);
                 }
                 partecipantsRepository.saveAll(partecipants);
+                
                 List<Admin> admins = event.getAdmins();
                 for (Admin admin : admins) {
                     admin.getEvents().remove(event);
                 }
                 adminsRepository.saveAll(admins);
+                
                 System.out.println("deleting event: " + eventDeleting.getEventId() + "...");
                 eventsRepository.deleteById(eventDeleting.getEventId());
-            }else{
+            } else {
                 eventsRepository.save(event);
             }
         } catch (Exception e) {
+            System.err.println("Error processing deletion ack for event " + eventDeleting.getEventId() + ": " + e.getMessage());
         }
     }
 }
