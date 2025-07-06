@@ -136,9 +136,9 @@ const GalleryPage = () => {
 						prev.map((item) =>
 							item.imageID === receivedImageLike.imageID
 								? {
-										...item,
-										likes: receivedImageLike.likedCount,
-										userLike: receivedImageLike.like,
+									...item,
+									likes: receivedImageLike.likedCount,
+									userLike: receivedImageLike.like,
 								  }
 								: item
 						)
@@ -147,9 +147,9 @@ const GalleryPage = () => {
 						prev.map((item) =>
 							item.imageID === receivedImageLike.imageID
 								? {
-										...item,
-										likes: receivedImageLike.likedCount,
-										userLike: receivedImageLike.like,
+									...item,
+									likes: receivedImageLike.likedCount,
+									userLike: receivedImageLike.like,
 								  }
 								: item
 						)

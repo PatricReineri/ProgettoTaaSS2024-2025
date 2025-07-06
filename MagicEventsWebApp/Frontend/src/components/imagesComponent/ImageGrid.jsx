@@ -29,7 +29,7 @@ const ImageGrid = ({
 	}, [images]);
 
 	return (
-		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3 max-[1080px]:grid-cols-4  grid-cols-5   gap-[1px] space-y-2 p-2">
+		<div className="grid max-[666px]:grid-cols-2 max-[852px]:grid-cols-3 max-[1080px]:grid-cols-4 grid-cols-5 gap-[1px] space-y-2 p-2">
 			{list.length > 0 ? (
 				list
 			) : (
