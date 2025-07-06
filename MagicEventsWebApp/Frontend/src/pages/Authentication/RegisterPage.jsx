@@ -56,11 +56,18 @@ function RegisterPage({ setLogged }) {
 	};
 
 	return (
-		<div className=" backgroundLogin  h-full sh-[calc(100vh-3.5rem)] p-4 overflow-y-auto ">
+		<div className="backgroundLogin h-full sh-[calc(100vh-3.5rem)] p-4 flex items-center justify-center">
 			<div className="relative bg-[#363540] text-[#E8F2FC] p-4 h-fit max-h-full max-w-[30rem] flex flex-col rounded-md shadow-2xl space-y-4 ">
 				<h2 className=" font-bold text-2xl">Create your account</h2>
-				<form onSubmit={handleSubmit} className="flex  flex-row flex-wrap space-y-2 gap-2 p-2  rounded-md   ">
-					<Input label="Name" name="name" value={formData.name} onChange={handleChange} required />
+				<form onSubmit={handleSubmit} className="flex flex-row flex-wrap space-y-2 gap-2 p-2  rounded-md">
+					<Input 
+						customClassContainer="flex-auto"
+						label="Name" 
+						name="name" 
+						value={formData.name} 
+						onChange={handleChange} 
+						required 
+					/>
 					<Input
 						customClassContainer="flex-auto"
 						label="Surname"

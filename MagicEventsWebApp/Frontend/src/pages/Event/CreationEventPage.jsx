@@ -169,7 +169,7 @@ const CreationEventPage = () => {
 		<div className="h-full bg-[#363540] flex flex-col ">
 			<div className="flex-auto flex flex-row p-4 gap-2 overflow-x-auto ">
 				<div className=" border border-[#E8F2FC]/60 text-[#E8F2FC] rounded-md p-4 gap-2 flex flex-col ">
-					<h1 className="font-semibold mb-4">What event are you thinking about?</h1>
+					<h1 className="font-semibold mb-4">A quale evento stai pensando?</h1>
 					<Input
 						onChange={(e) => handleChange(e, 'title')}
 						value={eventDetail.title}
@@ -221,7 +221,7 @@ const CreationEventPage = () => {
 					></Input>
 				</div>
 				<div className=" border border-[#E8F2FC]/60 text-[#E8F2FC] bg-[#505458] rounded-md p-4 gap-2 flex flex-col ">
-					<h1 className="font-semibold mb-4">Info for board</h1>
+					<h1 className="font-semibold mb-4">Informazioni bacheca</h1>
 					<Input
 						onChange={(e) => handleChange(e, 'boardTitle')}
 						value={eventDetail.boardTitle}
@@ -312,13 +312,7 @@ const CreationEventPage = () => {
 								''
 							)}
 							{eventDetail.gameEnabled ? (
-								<InputArea
-									onChange={(e) => handleChange(e, 'gameDescription')}
-									value={eventDetail.gameDescription}
-									label="Descrizione del gioco"
-									customClass="bg-[#363540] text-[#E8F2FC]"
-									name="descrizione"
-								/>
+								''
 							) : (
 								''
 							)}{' '}
