@@ -18,6 +18,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-response-headers: "X-User-Email,X-User-Role,X-User-ID"
     nginx.ingress.kubernetes.io/auth-cache-key: "$http_authorization"
     nginx.ingress.kubernetes.io/auth-cache-duration: "300s"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
   ingressClassName: nginx
   tls:
