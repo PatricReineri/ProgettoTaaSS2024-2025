@@ -92,8 +92,8 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
 6) Go in tls folder (run ``` cd tls```) and run:
     ```bash
    kubectl -n magicevents create secret tls magicevents-tls \
-   --cert=magicevents.local.pem \
-   --key=magicevents.local-key.pem
+   --cert=magicevents.com.pem \
+   --key=magicevents.com-key.pem
     ```
    For create certificate secret in kubernetes.
 
