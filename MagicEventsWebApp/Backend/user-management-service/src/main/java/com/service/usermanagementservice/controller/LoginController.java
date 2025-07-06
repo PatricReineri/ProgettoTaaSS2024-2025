@@ -5,7 +5,6 @@ import com.service.usermanagementservice.dto.UserDTO;
 import com.service.usermanagementservice.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,11 +40,6 @@ public class LoginController {
         return authService.login(email, password);
     }
 
-    @PutMapping("/modifyuser")
-    public UserDTO modifyUser(@Valid @RequestBody UserDTO userDTO) {
-        return authService.modify(userDTO);
-    }
-
     @PostMapping("/generateresetpasswordlink")
     public String generateResetPasswordLink(@RequestParam String email) {
         return authService.initiateResetPasswordLink(email);
@@ -71,20 +65,5 @@ public class LoginController {
         LoginWithTokenDTO oauthToken = authService.processGrantCode(code);
         String redirectUrl = this.clientProtocol + "://" + clientUrl + "/googlecallback?accessToken=" + oauthToken.getAccessToken();
         response.sendRedirect(redirectUrl);
-    }
-
-    @PutMapping("/logoutuser")
-    public String logoutUser(@RequestParam("email") String email) {
-        return authService.logout(email);
-    }
-
-    @DeleteMapping("/deleteuser")
-    public String deleteUser(@RequestParam("email") String email) {
-        return authService.deleteUser(email);
-    }
-
-    @PutMapping("/refreshaccesstoken")
-    public LoginWithTokenDTO refreshAccessToken(@RequestParam("refresh_token") String refreshToken) {
-        return authService.refreshAccessToken(refreshToken);
     }
 }

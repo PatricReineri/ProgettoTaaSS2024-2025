@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: magicevents-ingress-api
+  name: magicevents-ingress-api-private
   namespace: magicevents
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -13,6 +13,12 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "Authorization, Content-Type"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/auth-url: "https://magicevents.com/api/users/auth/verify"
+    nginx.ingress.kubernetes.io/auth-method: "GET"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-User-Email,X-User-Role,X-User-ID"
+    nginx.ingress.kubernetes.io/auth-cache-key: "$http_authorization"
+    nginx.ingress.kubernetes.io/auth-cache-duration: "300s"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
   ingressClassName: nginx
   tls:
@@ -58,10 +64,3 @@ spec:
                 name: gallery-service
                 port:
                   number: 8085
-          - path: /api/users(/|$)(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: user-management-service
-                port:
-                  number: 8443

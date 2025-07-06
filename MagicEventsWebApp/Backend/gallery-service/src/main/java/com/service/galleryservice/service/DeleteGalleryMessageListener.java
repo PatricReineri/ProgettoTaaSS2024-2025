@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class DeleteGalleryMessageListener {
+    @Value("${spring.rabbitmq.exchange.gallery}")
+    private String exchangeName;
+
     @Value("${spring.rabbitmq.routing-key.delete-ack}")
     private String deleteAckRoutingKey;
 
@@ -29,10 +32,10 @@ public class DeleteGalleryMessageListener {
         try {
             EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "gallery", true);
             galleryRepository.deleteByEventID(eventID);
-            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
+            rabbitTemplate.convertAndSend(exchangeName, deleteAckRoutingKey, response);
         } catch (Exception e) {
             EventDeletionAckDTO response = new EventDeletionAckDTO(eventID, "gallery", false);
-            rabbitTemplate.convertAndSend(deleteAckRoutingKey, response);
+            rabbitTemplate.convertAndSend(exchangeName, deleteAckRoutingKey, response);
         }
     }
 }

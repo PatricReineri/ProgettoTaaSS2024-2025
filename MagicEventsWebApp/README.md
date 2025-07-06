@@ -122,5 +122,5 @@ ping magicevents.com
 
 For stopping minikube:
 ```bash
-  minikube stop
+minikube stop
 ```
