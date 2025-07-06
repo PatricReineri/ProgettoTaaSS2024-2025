@@ -58,7 +58,7 @@ export function modifyUser(user) {
 			Authorization: JSON.parse(sessionStorage.getItem('user')).token,
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(user),
+		body: user,
 	});
 }
 

@@ -28,7 +28,7 @@ public class AuthVerificationController {
     ) {
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || authHeader.startsWith("Bearer")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
