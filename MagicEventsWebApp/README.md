@@ -72,6 +72,15 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
    docker build -t magicevents/name-service:latest .
    ```
    Note: you have to do these operations in same terminal where you start minukube.
+
+   For Linux or MacOS: before building the dockerfile, go into the frontend dockerfile (run ``` cd Frontend```) and comment out the line:
+   ```
+   FROM node:22-alpine AS deps
+   ```
+   and uncomment the line:
+   ```
+   FROM --platform=linux/amd64 node:22-alpine AS deps
+   ```
    
    In folder MagicEventsWebApp is present a script for build all Dockerfile services.
 
@@ -79,7 +88,7 @@ In Windows open file in path: `C:\Windows\System32\drivers\etc\hosts`.
    ```bash
    docker image ls
    ```
-4) Now go in k8s folder (run ``` cd Backend/k8s```) and run: 
+4) Now go in k8s folder (run ``` cd ../Backend/k8s```) and run: 
     ```bash 
     kubectl apply -f magicevents-namespace.yaml
    ```
