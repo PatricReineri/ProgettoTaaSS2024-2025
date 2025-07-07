@@ -43,7 +43,7 @@ In Windows:
 
 In MacOS or Linux:
 ```
-  magicevents.[minikube ip].nip.io magicevents.com
+  [minikube ip] magicevents.com
 ```
 
 For modify hosts file in MacOS or Linux run:
