@@ -32,7 +32,7 @@ const CreationEventPage = () => {
 		galleryEnabled: false,
 		boardTitle: '',
 		boardDescription: '',
-		gameDescription: '',
+		gameDescription: 'Prova ad indovinare i partecipanti',
 	});
 
 	const geocodingAPILoaded = useMapsLibrary('geocoding');
@@ -53,10 +53,10 @@ const CreationEventPage = () => {
 
 					return;
 				}
-				setEventDetail((prev) => ({
-					...prev,
-					location: (results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString(),
-				}));
+				// setEventDetail((prev) => ({
+				// 	...prev,
+				// 	location: (results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString(),
+				// }));
 				setTimeout(() => {
 					createEventForm((results[0].geometry.location.lat() + '-' + results[0].geometry.location.lng()).toString());
 				}, 1);
@@ -311,11 +311,7 @@ const CreationEventPage = () => {
 							) : (
 								''
 							)}
-							{eventDetail.gameEnabled ? (
-								''
-							) : (
-								''
-							)}{' '}
+							{eventDetail.gameEnabled ? '' : ''}{' '}
 						</div>
 					) : tab === 'users' ? (
 						<div className="text-[#363540] border-2 border-[#363540] p-2 bg-[#e4dcefb7] flex-auto rounded-md  gap-1 flex flex-col">
