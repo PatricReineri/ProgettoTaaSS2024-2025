@@ -11,8 +11,7 @@ function App() {
 		console.log('Result from APP: ' + result);
 	}, [result]);
 	return (
-		// old: AIzaSyACkJF2yKhiXVEEfPdWZjIbZaogCu2VxP0
-		<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+		<APIProvider apiKey={''}>
 			<div className="App">
 				<header className="App-header">
 					<Geocoding geocodingResult={result} />
