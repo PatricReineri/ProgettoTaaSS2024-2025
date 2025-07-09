@@ -108,7 +108,7 @@ function App() {
 					<Route
 						path="/newevent"
 						element={
-							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+							<APIProvider apiKey={'insert api-key maps'}>
 								<CreationEventPage />
 							</APIProvider>
 						}
@@ -116,7 +116,7 @@ function App() {
 					<Route
 						path="/myevents"
 						element={
-							<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+							<APIProvider apiKey={'insert api-key maps'}>
 								<MyEventsPage />
 							</APIProvider>
 						}

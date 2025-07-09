@@ -112,7 +112,7 @@ const EventsPage = () => {
 							<div>
 								<h1>Mappa</h1>
 								<div className="border-[#E4DCEF] border rounded-md m-2">
-									<APIProvider apiKey={'AIzaSyCsKyFbFFxOb4S8luivSquBE4Y3t36rznI'}>
+									<APIProvider apiKey={'insert api-key maps'}>
 										<Map
 											key={lat + '--' + lng}
 											style={{ width: '400px', height: '400px' }}
