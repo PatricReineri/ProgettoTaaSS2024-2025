@@ -55,10 +55,9 @@ function LoginPage({ setLogged }) {
 	};
 
 	return (
-		<div className="backgroundLogin min-h-full flex items-center justify-center p-4">
-			<div className="relative bg-[#363540] text-[#E8F2FC] p-6 sm:p-8 w-full max-w-md mx-auto flex flex-col rounded-xl shadow-2xl space-y-4 sm:space-y-6">
-				<h2 className="font-bold text-xl sm:text-2xl text-center">Login</h2>
-				
+		<div className="backgroundLogin h-full sh-[calc(100vh-3.5rem)] p-4 flex items-center justify-center">
+			<div className="relative bg-[#363540] text-[#E8F2FC] p-8 h-fit max-h-full max-w-[42rem] w-full flex flex-col rounded-xl shadow-2xl space-y-6 overflow-y-auto text-lg">
+				<h2 className=" font-bold text-2xl">Login</h2>
 				{/* Login with email e password */}
 				<form
 					className={clsx({ hidden: forgotFlag })}
@@ -72,7 +71,7 @@ function LoginPage({ setLogged }) {
 						value={formData.email}
 						onChange={handleChange}
 						required
-						className="p-3 rounded-lg border border-gray-300 text-gray-800 text-sm sm:text-base"
+						style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
 					/>
 					<input
 						type="password"
@@ -81,50 +80,52 @@ function LoginPage({ setLogged }) {
 						value={formData.password}
 						onChange={handleChange}
 						required
-						className="p-3 rounded-lg border border-gray-300 text-gray-800 text-sm sm:text-base"
+						style={{ padding: 10, borderRadius: 4, border: '1px solid #ccc' }}
 					/>
 					<Button text="Login" />
 				</form>
-				
 				<Button
 					text="Password dimenticata?"
 					link={true}
 					onClick={() => {
 						setForgotFlag(true);
 					}}
-					custom="w-full text-center text-sm"
+					custom=" w-full text-end  "
 				/>
+				{/* Separator */}
+				{/* <div className=" my-1 text-center ">or</div> */}
 
 				{/*Login with Google*/}
-				<div className="flex justify-center">
+				<div style={{ display: 'flex', justifyContent: 'center' }}>
 					<GoogleButton></GoogleButton>
 				</div>
 
+				<div className=" h-full "></div>
 				{/*Registration*/}
-				<div className="flex flex-col sm:flex-row justify-center items-center gap-2 pt-4 border-t border-gray-600">
-					<p className="text-sm">Non hai un account?</p>
+				<div className=" flex justify-center gap-4 pb-4   ">
+					<p>Già registrato?</p>
 					<Link to="/register">
-						<p className="text-[#EE0E51] hover:underline text-sm font-medium">Registrati ora</p>
+						<p className=" text-[#EE0E51] hover:underline ">Registrati ora</p>
 					</Link>
 				</div>
 
 				<div
 					className={clsx({
 						hidden: !forgotFlag,
-						'bg-[#363540] p-6 sm:p-8 absolute inset-0 w-full h-full rounded-xl flex flex-col': true,
+						' bg-[#363540] p-8 absolute top-0 left-0 w-full h-full rounded-md flex flex-col items-end ': true,
 					})}
 				>
 					<button
 						onClick={() => {
 							setForgotFlag(false);
 						}}
-						className="self-end text-xl hover:bg-gray-600 w-8 h-8 rounded-full flex items-center justify-center mb-4"
+						className="hover:shadow-2xl"
 					>
-						×
+						X
 					</button>
-					<div className="flex-1 flex items-center justify-center">
-						<ForgotPassword></ForgotPassword>
-					</div>
+					<div className="flex-auto"></div>
+					<ForgotPassword></ForgotPassword>
+					<div className="flex-auto"></div>
 				</div>
 			</div>
 		</div>

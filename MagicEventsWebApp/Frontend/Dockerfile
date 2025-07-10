@@ -1,5 +1,5 @@
-FROM --platform=linux/amd64 node:22-alpine AS deps
-#FROM node:22-alpine AS deps
+#FROM --platform=linux/amd64 node:22-alpine AS deps
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* yarn.lock* ./
 RUN npm ci --legacy-peer-deps

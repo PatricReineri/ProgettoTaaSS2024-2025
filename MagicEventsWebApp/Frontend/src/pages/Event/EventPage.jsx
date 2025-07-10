@@ -7,13 +7,13 @@ import {
 	faArrowAltCircleRight,
 	faClipboard,
 	faClose,
-	faDownload,
 	faGamepad,
 	faImage,
 	faMap,
 	faMessage,
 	faUsers,
 } from '@fortawesome/free-solid-svg-icons';
+import Menu from '../../components/navigation/Menu';
 import { APIProvider, Map, Marker, useMapsLibrary } from '@vis.gl/react-google-maps';
 import ErrorContainer from '../../components/Error/ErrorContainer';
 import { convertDataTime } from '../../utils/dataFormatter';
@@ -27,21 +27,10 @@ const EventsPage = () => {
 	const [event, setEvent] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [eventServices, setEventServices] = useState(null);
+	const [menuOpen, setMenuOpen] = useState(false);
 	const [lat, setLat] = useState(0);
 	const [lng, setLng] = useState(0);
 	const [openPopup, setOpenPopup] = useState(0);
-	const [activeTab, setActiveTab] = useState(0);
-
-	const downloadImage = () => {
-		if (!event.image) return;
-
-		const link = document.createElement('a');
-		link.href = 'data:image/png;base64,' + event.image;
-		link.download = `${event.title || 'event'}-image.png`;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	};
 
 	useEffect(() => {
 		async function fetchAPI() {
@@ -85,96 +74,6 @@ const EventsPage = () => {
 		fetchAPIServices();
 	}, [eventId]);
 
-	const sidebarTabs = [
-		{
-			icon: faUsers,
-			title: 'Partecipanti',
-			content: (
-				<div className="flex flex-col gap-2 h-full">
-					<h2 className="font-bold text-lg">Partecipanti</h2>
-					<div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-2 rounded-md">
-						{event?.partecipants.map((p, index) => (
-							<p key={index} className="p-2 bg-[#363540] rounded">{p}</p>
-						))}
-					</div>
-					<h2 className="font-bold text-lg mt-4">Admin</h2>
-					<div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-2 rounded-md">
-						{event?.admins.map((p, index) => (
-							<p key={index} className="p-2 bg-[#363540] rounded">{p}</p>
-						))}
-					</div>
-				</div>
-			),
-		},
-		{
-			icon: faMap,
-			title: 'Mappa',
-			content: event?.location ? (
-				<div className="h-full">
-					<h2 className="font-bold text-lg mb-4">Posizione</h2>
-					<div className="border-[#E4DCEF] border rounded-md">
-						<APIProvider apiKey={'insert api-key maps'}>
-							<Map
-								key={lat + '--' + lng}
-								style={{ width: '100%', height: '300px' }}
-								defaultCenter={{ lat: lat, lng: lng }}
-								defaultZoom={15}
-								gestureHandling={'greedy'}
-								disableDefaultUI={true}
-							>
-								<Marker position={{ lat: lat ? lat : 0, lng: lng ? lng : 0 }}></Marker>
-							</Map>
-						</APIProvider>
-					</div>
-				</div>
-			) : (
-				<div>
-					<h2 className="font-bold text-lg mb-4">Posizione</h2>
-					<p>Nessuna location fornita</p>
-				</div>
-			),
-		},
-		{
-			icon: faClipboard,
-			title: 'Servizi',
-			content: (
-				<div className="h-full">
-					<h2 className="font-bold text-lg mb-4">Servizi Disponibili</h2>
-					{eventServices ? (
-						<div className="space-y-2">
-							{eventServices.board && (
-								<NavLink to={`/${eventId}/board`} className="block">
-									<div className="flex items-center gap-3 hover:bg-[#505458] p-3 rounded-lg transition-colors">
-										<FontAwesomeIcon icon={faMessage} />
-										<span>Bacheca</span>
-									</div>
-								</NavLink>
-							)}
-							{eventServices.gallery && (
-								<NavLink to={`/${eventId}/gallery`} className="block">
-									<div className="flex items-center gap-3 hover:bg-[#505458] p-3 rounded-lg transition-colors">
-										<FontAwesomeIcon icon={faImage} />
-										<span>Galleria</span>
-									</div>
-								</NavLink>
-							)}
-							{eventServices.guestGame && (
-								<NavLink to={`/${eventId}/game`} className="block">
-									<div className="flex items-center gap-3 hover:bg-[#505458] p-3 rounded-lg transition-colors">
-										<FontAwesomeIcon icon={faGamepad} />
-										<span>Mystery Guest Game</span>
-									</div>
-								</NavLink>
-							)}
-						</div>
-					) : (
-						<p>Errore nel caricamento dei servizi</p>
-					)}
-				</div>
-			),
-		},
-	];
-
 	return !event ? (
 		loading ? (
 			<LoadingContainer />
@@ -182,85 +81,138 @@ const EventsPage = () => {
 			<ErrorContainer errorMessage={'Nessun evento trovato'} to="/home" />
 		)
 	) : (
-		<div className="h-full flex bg-[#505458]">
-			{/* Main Content */}
-			<div className="flex-1 text-[#E4DCEF] p-4 flex flex-col gap-4 overflow-y-auto">
-				<div className="relative">
-					<Image onClick={() => setOpenPopup(true)} src={event.image} />
-					<Button
-						onClick={downloadImage}
-						custom="absolute top-2 right-2 bg-black/50 hover:bg-black/70 backdrop-blur-sm"
-						text={<FontAwesomeIcon icon={faDownload} />}
-					/>
-				</div>
-				
-				<h1 className="text-xl lg:text-2xl font-extrabold">{event.title}</h1>
-				
-				<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm rounded-md">
-					{event.description}
-				</p>
-				
-				<div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-					<p className="font-bold">Data: </p>
-					<div className="flex items-center gap-2">
-						<h1 className="bg-[#E4DCEF] text-[#363540] rounded-full px-3 py-2 font-bold text-sm">
-							{convertDataTime(event.starting)}
-						</h1>
-						<FontAwesomeIcon className="text-2xl" icon={faArrowAltCircleRight} color="#E4DCEF" />
-						<h1 className="bg-[#E4DCEF] text-[#363540] rounded-full px-3 py-2 font-bold text-sm">
-							{convertDataTime(event.ending)}
-						</h1>
-					</div>
-				</div>
+		<div className="h-full text-[#E4DCEF]  p-4 flex flex-col gap-2 relative  bg-[#505458] overflow-y-auto ">
+			<Menu
+				onClose={() => setMenuOpen(false)}
+				onOpen={() => setMenuOpen(true)}
+				open={menuOpen}
+				tabs={[
+					{
+						action: faUsers,
+						content: (
+							<div className="flex flex-col gap-1 h-full">
+								<h1>Partecipanti</h1>
+								<div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-1  rounded-md">
+									{event.partecipants.map((p) => (
+										<p className="p-2">{p}</p>
+									))}
+								</div>
+								<h1>Admin</h1>
+								<div className="flex flex-auto flex-col gap-1 overflow-y-auto bg-[#505458] p-1  rounded-md">
+									{event.admins.map((p) => (
+										<p className="p-2">{p}</p>
+									))}
+								</div>
+							</div>
+						),
+					},
+					{
+						action: faMap,
+						content: event.location ? (
+							<div>
+								<h1>Mappa</h1>
+								<div className="border-[#E4DCEF] border rounded-md m-2">
+									<APIProvider apiKey={'insert api-key maps'}>
+										<Map
+											key={lat + '--' + lng}
+											style={{ width: '400px', height: '400px' }}
+											defaultCenter={{ lat: lat, lng: lng }}
+											onCenterChanged={(value) => console.log('Center changed:' + value.detail.center)}
+											defaultZoom={15}
+											gestureHandling={'greedy'}
+											disableDefaultUI={true}
+										>
+											<Marker position={{ lat: lat ? lat : 0, lng: lng ? lng : 0 }}></Marker>
+										</Map>
+									</APIProvider>
+								</div>
+							</div>
+						) : (
+							<p>Nessuna location fornita</p>
+						),
+					},
+					{
+						action: faClipboard,
+						content: (
+							<div>
+								<h1>Servizi</h1>
+								{eventServices ? (
+									<div>
+										{eventServices.board ? (
+											<NavLink to={`/${eventId}/board`}>
+												<h1 className="flex justify-between gap-4 hover:underline p-2 items-center">
+													<FontAwesomeIcon icon={faMessage} />
+													<p>Bacheca</p>
+												</h1>
+											</NavLink>
+										) : (
+											''
+										)}
+										{eventServices.gallery ? (
+											<NavLink to={`/${eventId}/gallery`}>
+												<h1 className="flex justify-between gap-4 hover:underline p-2 items-center">
+													<FontAwesomeIcon icon={faImage} />
+													<p>Galleria</p>
+												</h1>
+											</NavLink>
+										) : (
+											''
+										)}
+										{eventServices.guestGame ? (
+											<NavLink to={`/${eventId}/game`}>
+												<h1 className="flex justify-between gap-4 hover:underline p-2 items-center">
+													<FontAwesomeIcon icon={faGamepad} />
+													<p>Mystery Guest Game</p>
+												</h1>
+											</NavLink>
+										) : (
+											''
+										)}
+									</div>
+								) : (
+									<p>Errore nel caricamenti dei servizi</p>
+								)}
+							</div>
+						),
+					},
+				]}
+			></Menu>
+			<Image onClick={() => setOpenPopup(true)} src={event.image} />
+			<h1 className=" text-xl rounded-full p-2  font-extrabold w-fit ">{event.title}</h1>
+			<p className="p-4 border bg-[#363540] border-[#E4DCEF] text-[#E4DCEF] text-sm  h-fit  rounded-md">
+				{event.description}
+			</p>
+			<div className="flex flex-row justify-between items-center">
+				<p className=" font-bold">Data: </p>
+				<h1 className="bg-[#E4DCEF] text-[#363540]  rounded-full p-2 m-2 font-bold w-fit ">
+					{convertDataTime(event.starting)}
+				</h1>
+				<FontAwesomeIcon className="text-4xl" icon={faArrowAltCircleRight} color="#E4DCEF" />
+				<h1 className="bg-[#E4DCEF]  text-[#363540] rounded-full p-2 m-2 font-bold w-fit ">
+					{convertDataTime(event.ending)}
+				</h1>
 			</div>
-
-			{/* Fixed Sidebar */}
-			<div className="w-80 bg-[#363540] text-[#E4DCEF] flex flex-col border-l border-[#E4DCEF]/20">
-				{/* Tab Headers */}
-				<div className="flex border-b border-[#E4DCEF]/20">
-					{sidebarTabs.map((tab, index) => (
-						<button
-							key={index}
-							onClick={() => setActiveTab(index)}
-							className={clsx(
-								'flex-1 p-3 flex flex-col items-center gap-1 transition-colors',
-								activeTab === index 
-									? 'bg-[#505458] text-[#EE0E51]' 
-									: 'hover:bg-[#505458]/50'
-							)}
-						>
-							<FontAwesomeIcon icon={tab.icon} />
-							<span className="text-xs">{tab.title}</span>
-						</button>
-					))}
-				</div>
-				
-				{/* Tab Content */}
-				<div className="flex-1 p-4 overflow-y-auto">
-					{sidebarTabs[activeTab]?.content}
-				</div>
-			</div>
-
-			{/* Image Popup */}
 			<div
 				className={clsx({
-					'fixed inset-0 bg-[#363540]/80 backdrop-blur-md flex items-center justify-center z-50': openPopup,
+					'absolute p-4 top-0 left-0 bg-[#363540]/20 backdrop-blur-[4px] h-full w-full flex max-sm:flex-col items-center justify-center':
+						openPopup,
 					hidden: !openPopup,
 				})}
 			>
-				<div className="relative max-h-[90vh] max-w-[90vw]">
-					<img
-						className="max-h-full max-w-full object-contain rounded-lg"
-						src={'data:image/*;base64,' + event.image}
-						alt="popup image"
-					/>
-					<Button
-						onClick={() => setOpenPopup(false)}
-						custom="absolute top-4 right-4 bg-black/50 hover:bg-black/70"
-						text={<FontAwesomeIcon icon={faClose} />}
-					/>
-				</div>
+			<div className="h-full w-full flex items-center justify-center">
+				<img
+					className="max-h-full max-w-full object-contain rounded-sm"
+					src={'data:image/*;base64,' + event.image}
+					alt="popup image"
+				/>
 			</div>
+			<Button
+				onClick={() => setOpenPopup(false)}
+				custom="absolute top-4 right-4"
+				text={<FontAwesomeIcon icon={faClose} />}
+			></Button>
+		</div>
+
 		</div>
 	);
 };
