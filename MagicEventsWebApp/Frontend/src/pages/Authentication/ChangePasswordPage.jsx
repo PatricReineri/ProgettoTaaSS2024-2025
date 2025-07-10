@@ -50,12 +50,13 @@ function ChangePasswordForm() {
 	};
 
 	return (
-		<div className=" backgroundLogin h-full sh-[calc(100vh-3.5rem)] p-4 overflow-y-auto ">
-			<div className="relative bg-[#363540] text-[#E8F2FC] p-4 h-fit max-h-full max-w-[30rem] flex flex-col rounded-md shadow-2xl space-y-4 ">
-				<h2 className=" font-bold text-2xl  ">Change password</h2>
-				<form onSubmit={handleSubmit} className="flex  flex-row flex-wrap space-y-2 gap-2 p-2  rounded-md   ">
+		<div className="backgroundLogin min-h-full flex items-center justify-center p-4">
+			<div className="relative bg-[#363540] text-[#E8F2FC] p-6 sm:p-8 w-full max-w-md mx-auto flex flex-col rounded-xl shadow-2xl space-y-4">
+				<h2 className="font-bold text-xl sm:text-2xl text-center">Change password</h2>
+				
+				<form onSubmit={handleSubmit} className="space-y-4">
 					<Input
-						customClassContainer="flex-auto"
+						customClassContainer="w-full"
 						label="Nuova password"
 						type="password"
 						name="password"
@@ -65,7 +66,7 @@ function ChangePasswordForm() {
 						required
 					/>
 					<Input
-						customClassContainer="flex-auto"
+						customClassContainer="w-full"
 						label="Conferma password"
 						type="password"
 						name="password"
@@ -73,12 +74,13 @@ function ChangePasswordForm() {
 						value={confirmPassword}
 						onChange={(e) => setConfirmPassword(e.target.value)}
 						required
-					/>
-					{error && <p style={{ color: 'red' }}>{error}</p>}
-					{successMsg && <p style={{ color: 'green' }}>{successMsg}</p>}
+						/>
+					
+					{error && <p className="text-red-400 text-sm text-center">{error}</p>}
+					{successMsg && <p className="text-green-400 text-sm text-center">{successMsg}</p>}
 
 					<Button
-						custom={clsx({ 'w-full active:animate-pulse': true, active: loading })}
+						custom={clsx({ 'w-full mt-6': true, 'opacity-50 cursor-not-allowed': loading })}
 						disabled={loading}
 						text={loading ? 'Processing...' : 'Cambia Password'}
 					/>
